@@ -1,0 +1,106 @@
+<div class="container hidden-content" ng-model="movie">
+    <div class="row">
+      <div>
+        <ol class="breadcrumb">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Movies</a></li>
+          <li class="active">{{movie.title}}</li>
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8 col-md-push-4 col-sm-8 col-sm-push-4">
+        <div class="row">
+          <div class="col-md-12">
+            <h3 class="content-title">{{movie.title}} {{'(' + movie.released + ')'}}</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <!-- <ul class="nav nav-pills item-nav">
+              <li class="active"><a href="#">Details</a></li>
+              <li><a href="#">Related</a></li>
+            </ul> -->
+            <div class="panel panel-default">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Movie Details</div>
+              <div class="panel-body">
+                <p>
+                  {{movie.summary}}
+                </p>
+              </div>
+
+              <!-- List group -->
+              <ul class="list-group list-group-details">
+                <li class="list-group-item">
+                  <div class="panel-heading">Rated: <span class="panel-heading">{{movie.rated}}</span></div>
+                </li>
+                <li class="list-group-item">
+                  <div class="panel-heading">Duration: <span class="panel-heading">{{movie.duration + ' min'}}</span></div>
+                </li>
+                <li class="list-group-item">
+                  <div class="panel-heading">Genres: <span class="panel-heading genre-list"><span ng-repeat="genre in movie.genres">{{genre}}{{{true: '', false: ', '}[$last]}}</span></span></div>
+                </li>
+                <li class="list-group-item">
+                  <div class="panel-heading">Directed By: <span class="panel-heading genre-list"><span ng-repeat="director in movie.directors">{{director}}{{{true: '', false: ', '}[$last]}}</span></span></div>
+                </li>
+                <li class="list-group-item">
+                  <div class="panel-heading">Written By: <span class="panel-heading genre-list"><span ng-repeat="writer in movie.writers">{{writer}}{{{true: '', false: ', '}[$last]}}</span></span></div>
+                </li>
+              </ul>
+            </div>
+            <div class="panel panel-default">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Cast</div>
+              <div class="panel-body">
+                  <div id="owl-demo-cast" carouselactors="movie" class="owl-carousel owl-theme actors">
+                    <!-- Actors -->
+                  </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Related</div>
+              <div class="panel-body">
+                  <div id="owl-demo-cast" carouselrelatedmovies="movie" class="owl-carousel owl-theme actors">
+                    <!-- Related movies -->
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix visible-xs"></div>
+      <div class="col-md-4 col-md-pull-8 col-sm-4 col-sm-pull-8">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="thumbnail">
+              <img ng-src="{{movie.poster_image}}" alt="{{movie.title}}">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+
+            <div class="panel panel-default item-left-panel">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Storyline</div>
+              <!-- List group -->
+                <div class="row">
+                  <div class="item-label col-md-3">Tagline:</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-9">{{movie.tagline}}</div>
+                </div>
+               <div class="row">
+                  <div class="item-label col-md-3">Keywords:</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-9"><span ng-repeat="keyword in movie.keywords">{{keyword}}{{{true: '', false: ', '}[$last]}}</span></div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,23 @@
+{
+  "name": "neo4j-app-movies-ui",
+  "version": "0.0.0",
+  "description": "Neo4j movies",
+  "main": "app.js",
+  "dependencies": {
+    "express": "~3.4.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": " "
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "kbastani",
+  "license": "BSD",
+  "readmeFilename": "README.md"
+}
