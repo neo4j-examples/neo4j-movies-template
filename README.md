@@ -5,11 +5,11 @@ This application is a movie content browser powered by Neo4j. All movie content 
 
 Tools:
 
-* Neo4j: http://www.neo4j.org/download/
-* Swagger: http://neo4j-swagger.tinj.com/
-* Node.js: http://nodejs.org/
-* Bootstrap: http://getbootstrap.com/
-* Angular.js: http://angularjs.org/
+* Neo4j: [http://www.neo4j.org/download/](http://www.neo4j.org/download/)
+* Swagger: [http://neo4j-swagger.tinj.com/](http://neo4j-swagger.tinj.com/)
+* Node.js: [http://nodejs.org/](http://nodejs.org/)
+* Bootstrap: [http://getbootstrap.com/](http://getbootstrap.com/)
+* Angular.js: [http://angularjs.org/](http://angularjs.org/)
 
 
 ## Documentation
@@ -25,12 +25,15 @@ Tools:
 
 ## Getting Started
 
-If you haven’t done so already, download this repository and navigate to it using your Terminal (if on a Mac) or command line.
-Setting up Node.js
+If you haven’t done so already, download or clone this repository and navigate to it using your Terminal (if on a Mac) or command line.
+
+
+## Setting up Node.js
+
 If you’ve never used node, this is a good first step as it verifies you have the correct libraries for running the web application. 
 
 * Install Node.js either via homebrew using `brew install node` or directly from [http://nodejs.org/](http://nodejs.org/)
-* Navigate to the `api` folder and install dependencies running  `npm install`.
+* Navigate to the `api` and `web` folders and install dependencies running  `npm install` in each.
 * Navigate to the `web` folder and run `node app.js`
 * Take a look at `http://localhost:5000/`
 * If you see some awesome movies there, success! :D
@@ -38,10 +41,10 @@ If you’ve never used node, this is a good first step as it verifies you have t
 ## Setting up Neo4j
 
 ### Installation
-So Node.js is set up and you can see the boilerplate Movies application running on `http://localhost:5000/`, great. Now we want to set up an instance of Neo4j locally or on a server so we can look at and modify the data. 
+So Node.js is set up and you can see the boilerplate Movies application running on `http://localhost:5000/`, great. Now we want to set up an instance of Neo4j locally so we can look at and modify the data. 
 
-* To install Neo4j, download Neo4j here
-* Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like ‘Neo4j’ if you want. 
+* Download Neo4j [here](http://www.neo4j.org/download)
+* Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like ‘Neo4j’, if you want
 * Navigate to the extracted folder and run `./bin/neo4j start` 
 * If all goes well, you should see the Neo4j web application running at `http://localhost:7474/`
 
@@ -60,9 +63,9 @@ Right now your Neo4j Database does not contain the Movie data.  Let’s fix that
 
 ### Setting up Swagger
 
-You can see the demonstration web app is GETing information about movies and people from `http://movieapi-neo4j.herokuapp.com`. However, we want to be able to run the web application locally or from another server. To do that, we need our own API.
+You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server. To do that, we need our own API.
 
-Learn more about Swagger. 
+[Learn more about Swagger.](Learn more about Swagger.)
 
 ### Putting it all together
 
@@ -97,11 +100,11 @@ var neo4j = require('neo4j'),
 
 In the `api/app.js` file, change `BASE_URL` to `http://localhost:3000`
 
-From your parent directory, run `node api/app.js` to get the swagger started.
+From your parent directory, run `node api/app.js` to get Swagger started.
 
 Head on over to `http://localhost:3000/docs/`, GET The Matrix [you can do a search by title, for instance](http://localhost:3000/docs/#!/movies/getMovieByTitle_get_3), and verify that this movie is now rated `awesome`.
 
-### The Front-end
+### The Front-end (needs work)
 
 Although Swagger is giving us the correct information, the web app running locally is still pointed to a remote server. 
 
@@ -112,4 +115,4 @@ Head on over to `web/dist/assets/js/controller.js` and replace all instances of
 
 Again run `node web/app.js` in the `neo4j-movies-template` directory, and `.\bin\neo4j start` from your Neo4j directory, if it isn’t already running. 
 
-Verify that *The Matrix’* is indeed rated awesome, and have fun. 
+Verify that *The Matrix* is indeed rated *awesome*, and have fun. 
