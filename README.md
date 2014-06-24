@@ -10,7 +10,7 @@ This repository is a movie content browser powered by Neo4j. All movie content i
 * Bootstrap: http://getbootstrap.com/
 * Angular.js: http://angularjs.org/
 
-![Neo4j Movies Template](http://i.imgur.com/lL2M3Z0.png)
+<a href="http://neo4jmovies.herokuapp.com">![Neo4j Movies Template](http://i.imgur.com/lL2M3Z0.png)</a>
 
 ### Prerequisites
 
