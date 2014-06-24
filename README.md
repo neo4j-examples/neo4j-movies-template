@@ -28,7 +28,7 @@ Follow the directions below for each component of the platform.
 
 #### Movies REST API
 
-* From the terminal, go to the `api` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The analytics REST API will be started at `http://localhost:3000`
+* From the terminal, go to the `api` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The movies REST API will be started at `http://localhost:3000`
 
 #### Movies Website
-* From the terminal, go to the `web` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The analytics dashboard will be started at `http://localhost:5000`
+* From the terminal, go to the `web` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The movies website will be started at `http://localhost:5000`
