@@ -63,7 +63,7 @@ Right now your Neo4j Database does not contain the Movie data.  Let’s fix that
 
 ### Setting up Swagger
 
-You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server. To do that, we need our own API.
+You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server. 
 
 [Learn more about Swagger.](Learn more about Swagger.)
 
