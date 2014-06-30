@@ -1,0 +1,9 @@
+This|To|That
+Movie|HAS_GENRE|Genre
+Movie|HAS_KEYWORD|Keyword
+Person|ACTED_IN|Movie
+Person|DIRECTED|Movie
+Person|PRODUCED|Movie
+Person|WROTE|Movie
+Person|WRITER_OF|Movie
+Person|REVIEWED|Movie
