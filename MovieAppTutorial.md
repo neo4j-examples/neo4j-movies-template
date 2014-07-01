@@ -57,9 +57,18 @@ Don't know how much to put in this section.
 
 ## Building the Database
 
-TODO:
+Although the tutorial reposoitory comes with a pre-built graph.db file, you'll need to be able to create your own graph.db file with your own data. This section will demonstrate how to re-create the existing graph.db file on your local Neo4j instance. Although there are multiple ways to create a graph.db from scratch, this tutorial will use the Cypher command LOAD CSV. 
 
-[X] Create CSV for use in this tutorial from the Kenny database.
+### Pre-requisities
+
+- Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
+- Prepare and organize your data into CSV files. 
+	- Each node should have a unique ID
+	- Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
+	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own `.csv` file
+	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctiation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
+	- Headers should be unique within files. As LOAD CSV (in this example) uses headers, make sure that each column in a file has a unique header. 
+	
 
 ### Using LOAD CSV
 
