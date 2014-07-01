@@ -109,7 +109,7 @@ Although the tutorial reposoitory comes with a pre-built graph.db file, you'll n
 	- Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
 	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
 	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctiation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
-	- Headers should be unique within files. As LOAD CSV (in this example) uses headers, make sure that each column in a file has a unique header. 
+	- Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
 	
 ### Using LOAD CSV
 
