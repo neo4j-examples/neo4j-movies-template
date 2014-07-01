@@ -1,4 +1,4 @@
-first_id|second_id|relationship
+person_id|movie_id|relationship
 5|121|WRITER_OF
 5|116|WRITER_OF
 5|0|WRITER_OF

@@ -1,4 +1,4 @@
-first_id|second_id|relationship
+person_id|movie_id|relationship
 168|87|REVIEWED
 169|37|REVIEWED
 169|111|REVIEWED

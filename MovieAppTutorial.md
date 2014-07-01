@@ -59,21 +59,126 @@ Don't know how much to put in this section.
 
 Although the tutorial reposoitory comes with a pre-built graph.db file, you'll need to be able to create your own graph.db file with your own data. This section will demonstrate how to re-create the existing graph.db file on your local Neo4j instance. Although there are multiple ways to create a graph.db from scratch, this tutorial will use the Cypher command LOAD CSV. 
 
-### Pre-requisities
+### Getting Ready
 
 - Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
-- Prepare and organize your data into CSV files. 
+- Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
 	- Each node should have a unique ID
 	- Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
-	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own `.csv` file
+	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
 	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctiation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
 	- Headers should be unique within files. As LOAD CSV (in this example) uses headers, make sure that each column in a file has a unique header. 
 	
-
 ### Using LOAD CSV
 
-[	] Don't know how much to put in this section. YET.
+Data ready, let's fill up the database. Since this tutorial assumes you're running Neo4j locally, you'll csv path will look something like `file:/` + `path from root to csv file` + `filename.csv`.
 
+Start up Neo4j and head over to `http://localhost:7474/browser/`. 
+
+Make sure you're pointing at the correct location with a test query (but write your own path in):
+
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+AS line 
+FIELDTERMINATOR '|' 
+WITH line LIMIT 4
+RETURN line
+```
+Once you're sure you know where you're pointing, start importing your data. 
+
+```
+//Clear the database of any remnants of test data:
+
+MATCH (n)
+WITH n LIMIT 10000
+OPTIONAL MATCH (n)-[r]->()
+DELETE n,r
+```
+Import your nodes
+
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+AS line 
+FIELDTERMINATOR '|'
+WITH line
+CREATE (g:Genre {id:toInt(line.id), name:line.name})
+```
+
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/person_nodes.csv" 
+AS line 
+FIELDTERMINATOR '|'
+CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)})
+
+```
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
+AS line 
+FIELDTERMINATOR '|'
+CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated})
+```
+
+Then your relationships (only one shown here, the rest can be inferred):
+
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
+MERGE (p)-[:ACTED_IN {role:line.roles}]->(m)
+
+```
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/directed_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
+MERGE (p)-[:DIRECTED]->(m)
+
+```
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
+MERGE (m)-[:HAS_GENRE]->(g)
+
+```
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/produced_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
+MERGE (p)-[:PRODUCED]->(m)
+
+```
+
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/reviewed_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
+MERGE (p)-[:REVIEWED]->(m)
+
+```
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
+MERGE (p)-[:WRITER_OF]->(m)
+
+```
 #### Resources
 
 - [LOAD CSV into Neo4j Quickly and Successfully

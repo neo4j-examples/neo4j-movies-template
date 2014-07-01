@@ -1,4 +1,4 @@
-first_id|second_id|relationship
+movie_id|genre_id|relationship
 0|180|HAS_GENRE
 0|179|HAS_GENRE
 0|177|HAS_GENRE
