@@ -25,7 +25,7 @@ _What HTML should have been_, AngularJS is an open-source web application framew
 
 The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information. So we can link together nodes into semantically rich networks.
 
-Make some UML type diagrams
+![./network_image.png]
 
 Hint at [https://github.com/kbastani/neo4j-movies-template/tree/master/api/models/neo4j](https://github.com/kbastani/neo4j-movies-template/tree/master/api/models/neo4j) talk more about this topic in the Swagger section.
 
@@ -38,7 +38,7 @@ Hint at [https://github.com/kbastani/neo4j-movies-template/tree/master/api/model
 - Navigate to the extracted folder and run./bin/neo4j start
 - If all goes well, you should see the Neo4j web application running athttp://localhost:7474/
 
-To try out Neo4j on your local machine, an empty database is not much fun.
+An empty database is not much fun. Let's put some sample data in to see Neo4j in action:
 
 - Navigate to your Neo4j directory
 - If you have Neo4j running, stop it with./bin/neo4j stopin the Neo4j directory
@@ -85,17 +85,17 @@ FIELDTERMINATOR '|'
 WITH line LIMIT 4
 RETURN line
 ```
-Once you're sure you know where you're pointing, start importing your data. 
+Once you're sure you know where you're pointing, clear the database of any test data and start importing your data. 
 
 ```
 //Clear the database of any remnants of test data:
-
 MATCH (n)
 WITH n LIMIT 10000
 OPTIONAL MATCH (n)-[r]->()
 DELETE n,r
 ```
-Import your nodes
+
+#### Import your Nodes
 
 ```
 LOAD CSV WITH HEADERS
@@ -112,8 +112,8 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/person_n
 AS line 
 FIELDTERMINATOR '|'
 CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)})
-
 ```
+
 ```
 LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
@@ -122,7 +122,7 @@ FIELDTERMINATOR '|'
 CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated})
 ```
 
-Then your relationships (only one shown here, the rest can be inferred):
+#### Import your Relationships:
 
 ```
 LOAD CSV WITH HEADERS
@@ -131,8 +131,8 @@ AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:ACTED_IN {role:line.roles}]->(m)
-
 ```
+
 ```
 LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/directed_rels.csv" 
@@ -140,8 +140,8 @@ AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:DIRECTED]->(m)
-
 ```
+
 ```
 LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
@@ -149,8 +149,8 @@ AS line
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
 MERGE (m)-[:HAS_GENRE]->(g)
-
 ```
+
 ```
 LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/produced_rels.csv" 
@@ -158,7 +158,6 @@ AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:PRODUCED]->(m)
-
 ```
 
 ```
@@ -168,7 +167,6 @@ AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:REVIEWED]->(m)
-
 ```
 ```
 LOAD CSV WITH HEADERS
@@ -177,7 +175,6 @@ AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:WRITER_OF]->(m)
-
 ```
 #### Resources
 
