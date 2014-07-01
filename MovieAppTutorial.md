@@ -23,11 +23,53 @@ _What HTML should have been_, AngularJS is an open-source web application framew
 
 # The Domain Model
 
+## Neo4j: Background
+
 The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information. So we can link together nodes into semantically rich networks.
 
-![domain model](https://raw.githubusercontent.com/whatSocks/neo4j-movies-template/master/network_image.png)
+## The Movie Database Model
 
-Hint at [https://github.com/kbastani/neo4j-movies-template/tree/master/api/models/neo4j](https://github.com/kbastani/neo4j-movies-template/tree/master/api/models/neo4j) talk more about this topic in the Swagger section.
+The model in this tutorial includes three different types of nodes, each with their own properies, and six different types of relationships, one of which has its own properites. The underlying structure of the web aplication is described in the image below:
+
+![domain model](network_image.png)
+
+The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so:
+
+```
+module.exports = {
+...
+    "Movie":{
+    "id":"Movie",
+    "properties":{
+      "id":{
+        "type":"integer"
+      },
+      "title":{
+        "type":"string"
+      },
+      "released":{
+        "type":"integer"
+      },
+      "tagline":{
+        "type":"string"
+      }
+    }
+  },
+  "Person":{
+    "id":"Person",
+    "properties":{
+      "id":{
+        "type":"string" \\question: change this to int?
+      },
+      "name":{
+        "type":"string"
+      }
+    }
+  }
+};
+```
+You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
+
 
 # Neo4j: Setting up the Database
 
