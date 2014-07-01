@@ -25,7 +25,7 @@ _What HTML should have been_, AngularJS is an open-source web application framew
 
 The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information. So we can link together nodes into semantically rich networks.
 
-[https://raw.githubusercontent.com/whatSocks/neo4j-movies-template/master/network_image.png]
+[id][https://raw.githubusercontent.com/whatSocks/neo4j-movies-template/master/network_image.png]
 
 Hint at [https://github.com/kbastani/neo4j-movies-template/tree/master/api/models/neo4j](https://github.com/kbastani/neo4j-movies-template/tree/master/api/models/neo4j) talk more about this topic in the Swagger section.
 
