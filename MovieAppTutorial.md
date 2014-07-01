@@ -19,7 +19,7 @@ Developed by Wordnik, Swagger™ defines a standard, language-agnostic interface
 
 ## AngularJS
 
-"What HTML should have been", AngularJS is an open-source web application framework, assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
+_What HTML should have been_, AngularJS is an open-source web application framework, assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
 
 # The Domain Model
 
@@ -59,19 +59,17 @@ Don't know how much to put in this section.
 
 TODO:
 
-- [] Create CSV for use in this tutorial from the Kenny database.
+[X] Create CSV for use in this tutorial from the Kenny database.
 
 ### Using LOAD CSV
 
-- [] Don't know how much to put in this section. YET.
+[	] Don't know how much to put in this section. YET.
 
 #### Resources
 
-- [] Grab resources from GraphGist
-
-## Using batch-import
-
-I think this is the best method by far to get data in. Either way, the user has to create CSVs. It's a lot less work and faster than using LOAD CSV imo.
+- [LOAD CSV into Neo4j Quickly and Successfully
+](https://gist.github.com/jexp/d788e117129c3730a042)
+- [Using LOAD CSV to Import Git History into Neo4j](http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/)
 
 ## Testing in the Console
 
@@ -83,11 +81,13 @@ I think this is the best method by far to get data in. Either way, the user has 
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. The goal is merge Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
+## Building the Routes
+code snippet and example
+and show how it plays in bigger picture
+
 ## Building the Models
 
 ### Filling the Models with Cypher
-
-## Building the Routes
 
 ## Building the Views
 
