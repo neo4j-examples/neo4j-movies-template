@@ -8,7 +8,6 @@ This repository is a movie content browser powered by Neo4j. All movie content i
 
 ##Tools:
 
-=======
 * Neo4j: [http://www.neo4j.org/download/](http://www.neo4j.org/download/)
 * Swagger: [http://neo4j-swagger.tinj.com/](http://neo4j-swagger.tinj.com/)
 * Node.js: [http://nodejs.org/](http://nodejs.org/)
