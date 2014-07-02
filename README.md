@@ -32,9 +32,7 @@ If you haven’t done so already, download or clone this repository and navigate
 
 If you’ve never used node, this is a good first step as it verifies you have the correct libraries for running the web application. 
 
-#### Movies Website
 * From the terminal, go to the `web` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The movies website will be started at `http://localhost:5000`
-=======
 * Install Node.js either via homebrew using `brew install node` or directly from [http://nodejs.org/](http://nodejs.org/)
 * Navigate to the `api` and `web` folders and install dependencies running  `npm install` in each.
 * Navigate to the `web` folder and run `node app.js`
