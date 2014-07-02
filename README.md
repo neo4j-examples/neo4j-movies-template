@@ -1,7 +1,8 @@
-# Graph-based Movie Application
+============================
+Neo4j Movie Website Template
+============================
 
-
-This application is a movie content browser powered by Neo4j. All movie content is consumed from a Neo4j REST API endpoint built using Neo4j Swagger.
+This repository is a movie content browser powered by Neo4j. All movie content is consumed from a Neo4j REST API endpoint built using Neo4j Swagger.
 
 Tools:
 
@@ -11,10 +12,7 @@ Tools:
 * Bootstrap: [http://getbootstrap.com/](http://getbootstrap.com/)
 * Angular.js: [http://angularjs.org/](http://angularjs.org/)
 
-
-## Documentation
-
-*Read the full project documentation here: Doesn’t exist yet.*
+<a href="http://neo4jmovies.herokuapp.com">![Neo4j Movies Template](http://i.imgur.com/lL2M3Z0.png)</a>
 
 ## Architecture
 
@@ -65,7 +63,7 @@ Right now your Neo4j Database does not contain the Movie data.  Let’s fix that
 
 You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server. 
 
-[Learn more about Swagger.](Learn more about Swagger.)
+[Learn more about Swagger.](http://neo4j-swagger.tinj.com/)
 
 ### Putting it all together
 
