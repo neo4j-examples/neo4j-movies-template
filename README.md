@@ -4,7 +4,9 @@ Neo4j Movie Website Template
 
 This repository is a movie content browser powered by Neo4j. All movie content is consumed from a Neo4j REST API endpoint built using Neo4j Swagger.
 
-Tools:
+<a href="http://neo4jmovies.herokuapp.com">![Neo4j Movies Template](http://i.imgur.com/lL2M3Z0.png)</a>
+
+##Tools:
 
 * Neo4j: [http://www.neo4j.org/download/](http://www.neo4j.org/download/)
 * Swagger: [http://neo4j-swagger.tinj.com/](http://neo4j-swagger.tinj.com/)
@@ -30,6 +32,9 @@ If you haven’t done so already, download or clone this repository and navigate
 
 If you’ve never used node, this is a good first step as it verifies you have the correct libraries for running the web application. 
 
+#### Movies Website
+* From the terminal, go to the `web` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The movies website will be started at `http://localhost:5000`
+=======
 * Install Node.js either via homebrew using `brew install node` or directly from [http://nodejs.org/](http://nodejs.org/)
 * Navigate to the `api` and `web` folders and install dependencies running  `npm install` in each.
 * Navigate to the `web` folder and run `node app.js`
