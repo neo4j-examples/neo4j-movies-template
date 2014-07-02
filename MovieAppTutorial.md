@@ -33,41 +33,8 @@ The model in this tutorial includes three different types of nodes, each with th
 
 ![domain model](network_image.png)
 
-The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so:
+The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so.
 
-```
-module.exports = {
-...
-    "Movie":{
-    "id":"Movie",
-    "properties":{
-      "id":{
-        "type":"integer"
-      },
-      "title":{
-        "type":"string"
-      },
-      "released":{
-        "type":"integer"
-      },
-      "tagline":{
-        "type":"string"
-      }
-    }
-  },
-  "Person":{
-    "id":"Person",
-    "properties":{
-      "id":{
-        "type":"integer"
-      },
-      "name":{
-        "type":"string"
-      }
-    }
-  }
-};
-```
 You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
 
 
@@ -247,17 +214,136 @@ Movie	HAS_GENRE	Genre
 
 ## Node-Neo4j-Swagger API: An Introduction
 
-The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. The goal is merge Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
+The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
-## Building the Models
+Let's take a look at how thoughts are organized in the Swagger part of this application, which lives in the `api` folder:
+![routes](routes.png)
 
-### Filling the Models with Cypher
+## From Routes to Models
 
-## Building the Routes
-code snippet and example
-and show how it plays in bigger picture
+Let's start at `app.js` (assuming we're in `api`). `app.js` starting the machinery of the app, and (importantly if you want to add your own models), and pulls the list of models from `routes/index.js`, which looks something like:
 
-## Building the Views
+```
+// convenience wrapper around all other files:
+exports.site = require('./site');
+exports.people = require('./people');
+exports.movies = require('./movies');
+exports.genres = require('./genres');
+```
+
+Let's take a look at the `api/routes/genres.js`:
+
+```
+// genres.js
+
+var Genres = require('../models/genres');
+... //important stuff here 
+
+/*
+ *  Util Functions
+ */
+
+... //more important stuff here 
+
+
+/*
+ * API Specs and Functions
+ */
+
+exports.list = {
+  'spec': {
+    "description" : "List all genres",
+    "path" : "/genres",
+    "notes" : "Returns all genres",
+    "summary" : "Find all genres",
+    "method": "GET",
+    "params" : [],
+    "responseClass" : "List[Genre]",
+    "errorResponses" : [swe.notFound('genre')],
+    "nickname" : "getGenre"
+  },
+  'action': function (req, res) {
+    // var friends = parseBool(req, 'friends');
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+    var start = new Date();
+
+      Genres.getAll(null, options, function (err, response) {
+        if (err || !response.results) throw swe.notFound('genres');
+        writeResponse(res, response, start);
+      });
+  }
+};
+```
+We can assume from this code snipped that the Swagger API has at least one endpoint of flavor `GET` that presumably returns 'all' the genres in the database. 
+
+More evidence is found in `app.js`, where we see the `list` method in action:
+
+```
+// Add models and methods to swagger
+swagger.addModels(models)
+.addGet(routes.genres.list)
+```
+But how does the app know what data to send? Who fills this endpoint with delicious `getAll` data? `var Genres = require('../models/genres');` in `api/routes/genres.js` is a pretty good hint. Let's take a look:
+
+```
+/**
+ *  neo4j genre functions
+ *  these are mostly written in a functional style
+ */
+
+var Genre = require('../models/neo4j/genre');
+
+... //important stuff here 
+
+/**
+ *  Result Functions
+ *  to be combined with queries using _.partial()
+ */
+... //other result functions here 
+
+// return many genres
+var _manyGenres = function (results, callback) {
+  var genres = _.map(results, function (result) {
+    return new Genre(result.genre);
+  });
+
+  callback(null, genres);
+};
+
+/**
+ *  Query Functions
+ *  to be combined with result functions using _.partial()
+ */
+
+... //other query functions here 
+
+var _matchBy = function (keys, params, options, callback) {
+  var cypher_params = _.pick(params, keys);
+
+  var query = [
+    'MATCH (genre:Genre)',
+    Cypher.where('genre', keys),
+    'RETURN genre'
+  ].join('\n');
+
+  callback(null, query, cypher_params);
+};
+
+var _matchAll = _.partial(_matchBy, []);
+
+// get all genres
+var getAll = Cypher(_matchAll, _manyGenres);
+
+// export exposed functions
+
+module.exports = {
+  getAll: getAll
+};
+```
+
+In short, `getAll` is built out of the `_matchAll` and `_manyGenres` partials. `_matchAll`, a query function, calls `_matchBy`, who presents a Cypher query to the server. `_manyGenres`, a result function, organizes the data. `getAll` is packaged into a module and exported for easy consumption. 
 
 # AngularJS: Building the Website
 

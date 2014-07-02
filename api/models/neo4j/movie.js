@@ -6,7 +6,6 @@ var Movie = module.exports = function (_node) {
   _(this).extend(_node.data);
 };
 
-
 Movie.prototype.genres = function (genre) {
     if (genre) {
     if (genre.name) {
