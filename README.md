@@ -14,8 +14,6 @@ This repository is a movie content browser powered by Neo4j. All movie content i
 * Bootstrap: [http://getbootstrap.com/](http://getbootstrap.com/)
 * Angular.js: [http://angularjs.org/](http://angularjs.org/)
 
-<a href="http://neo4jmovies.herokuapp.com">![Neo4j Movies Template](http://i.imgur.com/lL2M3Z0.png)</a>
-
 ## Architecture
 
 * Front-end web-based dashboard in Node.js and Bootstrap
@@ -26,7 +24,6 @@ This repository is a movie content browser powered by Neo4j. All movie content i
 ## Getting Started
 
 If you haven’t done so already, download or clone this repository and navigate to it using your Terminal (if on a Mac) or command line.
-
 
 ## Setting up Node.js
 
