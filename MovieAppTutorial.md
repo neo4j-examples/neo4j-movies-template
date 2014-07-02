@@ -29,7 +29,7 @@ The Neo4j data model consists of nodes and relationships, both of which can have
 
 ## The Movie Database Model
 
-The model in this tutorial includes three different types of nodes, each with their own properies, and six different types of relationships, one of which has its own properites. The underlying structure of the web aplication is described in the image below:
+The model in this tutorial includes three different types of nodes, each with their own properties, and six different types of relationships, one of which has its own properties. The underlying structure of the web application is described in the image below:
 
 ![domain model](network_image.png)
 
@@ -77,19 +77,19 @@ You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com
 
 - If you haven't done so already, download Neo4jhere
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
-- Navigate to the extracted folder and run./bin/neo4j start
-- If all goes well, you should see the Neo4j web application running athttp://localhost:7474/
+- Navigate to the extracted folder and run `./bin/neo4j start`
+- If all goes well, you should see the Neo4j web application running at http://localhost:7474/
 
 An empty database is not much fun. Let's put some sample data in to see Neo4j in action:
 
 - Navigate to your Neo4j directory
-- If you have Neo4j running, stop it with./bin/neo4j stopin the Neo4j directory
-- If you want to make sure you killed it good, check by runninglaunchctl list | grep neoandlaunchctl removeany processes that might be listed
-- If youls data, you'll see a file calledgraph.db.
-- Delete the existinggraph.db.
-- Grab the zipped movies graph database file from thedatabasesfolder in the web app repository
+- If you have Neo4j running, stop it with `./bin/neo4j stop` in the Neo4j directory
+- If you want to make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
+- If youls data, you'll see a file called `graph.db`.
+- Delete the existing `graph.db`.
+- Grab the zipped movies graph database file from the `databases` folder in the web app repository
 - Unzip it into thedatafolder
-- Run Neo4j! You should be able to see some nodes athttp://localhost:7474/
+- Run Neo4j! You should be able to see some nodes at http://localhost:7474/
 
 ## Cypher: An Introduction 
 
@@ -99,7 +99,7 @@ Don't know how much to put in this section.
 
 ## Building the Database
 
-Although the tutorial reposoitory comes with a pre-built graph.db file, you'll need to be able to create your own graph.db file with your own data. This section will demonstrate how to re-create the existing graph.db file on your local Neo4j instance. Although there are multiple ways to create a graph.db from scratch, this tutorial will use the Cypher command LOAD CSV. 
+Although the tutorial repository comes with a pre-built graph.db file, you'll need to be able to create your own graph.db file with your own data. This section will demonstrate how to re-create the existing graph.db file on your local Neo4j instance. Although there are multiple ways to create a graph.db from scratch, this tutorial will use the Cypher command LOAD CSV. 
 
 ### Getting Ready
 
