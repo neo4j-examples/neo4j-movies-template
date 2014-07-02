@@ -1,3 +1,5 @@
+//add Genre here and fill it up
+
 module.exports = {
   "Envelope":{
     "id":"Envelope",
@@ -44,7 +46,7 @@ module.exports = {
     // "required": ["id"],
     "properties":{
       "id":{
-        "type":"string"
+        "type":"int"  //changing to int
       },
       "name":{
         "type":"string"
