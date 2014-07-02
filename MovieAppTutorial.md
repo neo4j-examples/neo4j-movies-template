@@ -5,7 +5,7 @@ Movie App Tutorial
 
 This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), a Neo4j-Swagger-AngularJS version of Cineasts.net, a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
 
-This tutorial takes the reader through the steps necessary to create the application, explaining each step of the stack on the way. The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template).
+This tutorial takes the reader through the steps necessary to create the application, explaining each step of the stack on the way. The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), and resources and references are available at the end of the document. 
 
 # The Stack: An Overview
 
@@ -25,7 +25,7 @@ _What HTML should have been_, AngularJS is an open-source web application framew
 
 ## Neo4j: Background
 
-The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information. So we can link together nodes into semantically rich networks.
+The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information, allowing us to link nodes into semantically rich networks.
 
 ## The Movie Database Model
 
@@ -59,7 +59,7 @@ module.exports = {
     "id":"Person",
     "properties":{
       "id":{
-        "type":"string" \\question: change this to int?
+        "type":"integer"
       },
       "name":{
         "type":"string"
@@ -89,7 +89,7 @@ An empty database is not much fun. Let's put some sample data in to see Neo4j in
 - Delete the existing `graph.db`.
 - Grab the zipped movies graph database file from the `databases` folder in the web app repository
 - Unzip it into thedatafolder
-- Run Neo4j! You should be able to see some nodes at http://localhost:7474/
+- Run Neo4j! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
 ## Cypher: An Introduction 
 
@@ -113,11 +113,13 @@ Although the tutorial repository comes with a pre-built graph.db file, you'll ne
 	
 ### Using LOAD CSV
 
-Data ready, let's fill up the database. Since this tutorial assumes you're running Neo4j locally, you'll csv path will look something like `file:/` + `path from root to csv file` + `filename.csv`.
+Data ready, let's fill up the database. Although there are a few methods to get large amounts of data into a Neo4j database, in this tutorial we'll be using LOAD CSV. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see LOAD CSV in action before you start. 
 
-Start up Neo4j and head over to `http://localhost:7474/browser/`. 
+Since this tutorial assumes you're running Neo4j locally, you'll csv path will look something like `file:/` + `path from root to csv file` + `filename.csv`.
 
-Make sure you're pointing at the correct location with a test query (but write your own path in):
+Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the web console. 
+
+Make sure you're pointing at the correct location with a test query (but write your own path in).  
 
 ```
 LOAD CSV WITH HEADERS
@@ -125,16 +127,16 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_no
 AS line 
 FIELDTERMINATOR '|' 
 WITH line LIMIT 4
-RETURN line
+RETURN line;
 ```
-Once you're sure you know where you're pointing, clear the database of any test data and start importing your data. 
+Once you've played around a bit and are sure you know where you're pointing, clear the database of any test data and start importing your data. 
 
 ```
 //Clear the database of any remnants of test data:
 MATCH (n)
 WITH n LIMIT 10000
 OPTIONAL MATCH (n)-[r]->()
-DELETE n,r
+DELETE n,r;
 ```
 
 #### Import your Nodes
@@ -145,7 +147,7 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_no
 AS line 
 FIELDTERMINATOR '|'
 WITH line
-CREATE (g:Genre {id:toInt(line.id), name:line.name})
+CREATE (g:Genre {id:toInt(line.id), name:line.name});
 ```
 
 ```
@@ -153,7 +155,7 @@ LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/person_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
-CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)})
+CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)});
 ```
 
 ```
@@ -161,7 +163,7 @@ LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
-CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated})
+CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated});
 ```
 
 #### Import your Relationships:
@@ -172,7 +174,7 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/acted_in_
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
-MERGE (p)-[:ACTED_IN {role:line.roles}]->(m)
+MERGE (p)-[:ACTED_IN {role:line.roles}]->(m);
 ```
 
 ```
@@ -181,7 +183,7 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/directed_
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
-MERGE (p)-[:DIRECTED]->(m)
+MERGE (p)-[:DIRECTED]->(m);
 ```
 
 ```
@@ -190,7 +192,7 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_genre
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
-MERGE (m)-[:HAS_GENRE]->(g)
+MERGE (m)-[:HAS_GENRE]->(g);
 ```
 
 ```
@@ -199,7 +201,7 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/produced_
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
-MERGE (p)-[:PRODUCED]->(m)
+MERGE (p)-[:PRODUCED]->(m);
 ```
 
 ```
@@ -208,7 +210,7 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/reviewed_
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
-MERGE (p)-[:REVIEWED]->(m)
+MERGE (p)-[:REVIEWED]->(m);
 ```
 ```
 LOAD CSV WITH HEADERS
@@ -216,17 +218,29 @@ FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/writer_of
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
-MERGE (p)-[:WRITER_OF]->(m)
+MERGE (p)-[:WRITER_OF]->(m);
 ```
-#### Resources
+## Test: This to That
 
-- [LOAD CSV into Neo4j Quickly and Successfully
-](https://gist.github.com/jexp/d788e117129c3730a042)
-- [Using LOAD CSV to Import Git History into Neo4j](http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/)
+Naturally you'd want to see if you've entered your data correctly. Run the _This to That_ query:
 
-## Testing in the Console
+```
+MATCH (a)-[r]->(b)
+WHERE labels(a) <> [] AND labels(b) <> []
+RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
+LIMIT 10;
+```
+You should get a result that looks something like:
 
-## Testing in the Web Dashboard
+```
+This	To			That
+Person	ACTED_IN	Movie
+Person	DIRECTED	Movie
+Person	PRODUCED	Movie
+Person	WRITER_OF	Movie
+Person	REVIEWED	Movie
+Movie	HAS_GENRE	Genre
+```
 
 # Swagger: Querying the Database
 
@@ -234,13 +248,13 @@ MERGE (p)-[:WRITER_OF]->(m)
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. The goal is merge Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
-## Building the Routes
-code snippet and example
-and show how it plays in bigger picture
-
 ## Building the Models
 
 ### Filling the Models with Cypher
+
+## Building the Routes
+code snippet and example
+and show how it plays in bigger picture
 
 ## Building the Views
 
@@ -252,9 +266,14 @@ and show how it plays in bigger picture
 
 ## Neo4j
 
+- [LOAD CSV into Neo4j Quickly and Successfully
+](https://gist.github.com/jexp/d788e117129c3730a042)
+- [Using LOAD CSV to Import Git History into Neo4j](http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/)
+- [Movies GraphGist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc)
+
 ## Swagger
 
-[The Swagger Spec](https://github.com/wordnik/swagger-spec)
+- [The Swagger Spec](https://github.com/wordnik/swagger-spec)
 
 ## NodeJS
 
