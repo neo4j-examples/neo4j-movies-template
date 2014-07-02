@@ -37,7 +37,7 @@ exports.list = {
   'spec': {
     "description" : "List all movies",
     "path" : "/movies",
-    "notes" : "Returns all movies",
+    "notes" : "DOES THIS WORK Returns all movies",
     "summary" : "Find all movies",
     "method": "GET",
     "params" : [],

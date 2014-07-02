@@ -22,7 +22,7 @@
     "server"
   ],
   "engines": {
-    "node": "0.10.x",
+    "node": ">=0.11.x",
     "npm": "1.2.x"
   },
   "dependencies": {

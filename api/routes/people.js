@@ -1,6 +1,8 @@
 // people.js
 
 var People = require('../models/people');
+var Genres = require('../models/genres');
+
 var sw = require("swagger-node-express");
 var param = sw.params;
 var url = require("url");
@@ -53,18 +55,37 @@ exports.list = {
       neo4j: parseBool(req, 'neo4j')
     };
     var start = new Date();
-
-    // if (friends) {
-    //   People.getAllWithFriends(null, options, function (err, response) {
-    //     if (err || !response.results) throw swe.notFound('people');
-    //     writeResponse(res, response, start);
-    //   });
-    // } else {
       People.getAll(null, options, function (err, response) {
         if (err || !response.results) throw swe.notFound('people');
         writeResponse(res, response, start);
       });
-    // }
+  }
+};
+
+
+exports.listgenres = {
+  'spec': {
+    "description" : "List all genres",
+    "path" : "/genres",
+    "notes" : "Returns all genres",
+    "summary" : "Find all genres",
+    "method": "GET",
+    "params" : [],
+    "responseClass" : "List[Genre]",
+    "errorResponses" : [swe.notFound('genre')],
+    "nickname" : "getGenre"
+  },
+  'action': function (req, res) {
+    // var friends = parseBool(req, 'friends');
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+    var start = new Date();
+
+      Genres.getAll(null, options, function (err, response) {
+        if (err || !response.results) throw swe.notFound('genres');
+        writeResponse(res, response, start);
+      });
   }
 };
 

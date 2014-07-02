@@ -78,7 +78,8 @@ You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com
 - If you haven't done so already, download Neo4jhere
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
 - Navigate to the extracted folder and run `./bin/neo4j start`
-- If all goes well, you should see the Neo4j web application running at http://localhost:7474/
+- If all goes well, you should see the Neo4j web application running at [port 7474](http://localhost:7474/)
+
 
 An empty database is not much fun. Let's put some sample data in to see Neo4j in action:
 

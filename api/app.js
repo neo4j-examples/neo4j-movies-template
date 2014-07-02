@@ -2,13 +2,14 @@
  * Module dependencies.
  */
 
+
 var express     = require('express')
   , url         = require("url")
   , swagger     = require("swagger-node-express")
   , routes      = require('./routes')
   , PORT        = process.env.PORT || 3000
   , API_STRING  = '/api/v0'
-  , BASE_URL    = 'http://movieapi-neo4j.herokuapp.com' 
+  , BASE_URL    = 'http://localhost:3000' //THIS IS VERY IMPORTANT
   //process.env.BASE_URL || process.env.BASE_CALLBACK_URL || "http://localhost:"+PORT
   , app         = express()
   , subpath     = express();
@@ -19,7 +20,7 @@ app.use(API_STRING, subpath);
 subpath.configure(function () {
   // just using json for the api
   subpath.use(express.json());
-  subpath.use(express.methodOverride());
+  subpath.use(express.methodOverride());  //method deprecated, use method-override module directly 
 });
 
 app.configure(function () {
@@ -29,7 +30,7 @@ app.configure(function () {
   app.use(express.logger('dev'));
   // just using json for the api
   app.use(express.json());
-  app.use(express.methodOverride());
+  app.use(express.methodOverride()); //method deprecated, use method-override module directly 
   app.use(app.router);
   // development only
   if ('development' == app.get('env')) {
@@ -67,7 +68,7 @@ var models = require("./models/swagger_models");
 
 // Add models and methods to swagger
 swagger.addModels(models)
-.addGet(routes.people.list)
+.addGet(routes.genres.list)
 .addGet(routes.movies.list)
 .addGet(routes.movies.movieCount)
 .addGet(routes.movies.findById)
@@ -75,6 +76,7 @@ swagger.addModels(models)
 .addGet(routes.movies.findMoviesByDateRange)
 .addGet(routes.movies.findMoviesByActor)
 .addGet(routes.movies.findByGenre)
+.addGet(routes.people.list)
 .addGet(routes.people.findPersonByDirectedMovie)
 .addGet(routes.people.findActorsByCoActor)
 .addGet(routes.people.findRolesByMovie)

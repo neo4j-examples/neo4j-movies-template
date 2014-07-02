@@ -1,5 +1,3 @@
-//add Genre here and fill it up
-
 module.exports = {
   "Envelope":{
     "id":"Envelope",
@@ -7,8 +5,10 @@ module.exports = {
       "response":[
         "Person",
         "Movie",
+        "Genre",
         "List[Person]",
         "List[Movie]",
+        "List[Genre]",
       ],
       "responseTime":"integer",
       "name":{
@@ -41,12 +41,22 @@ module.exports = {
       }
     }
   },
-  "Person":{
-    "id":"Person",
-    // "required": ["id"],
+  "Genre":{
+    "id":"Genre",
     "properties":{
       "id":{
-        "type":"int"  //changing to int
+        "type":"integer"
+      },
+      "name":{
+        "type":"string"
+      }
+    }
+  },
+  "Person":{
+    "id":"Person",
+    "properties":{
+      "id":{
+        "type":"integer"  
       },
       "name":{
         "type":"string"
