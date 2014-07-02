@@ -1,0 +1,7 @@
+This|To|That
+Movie|HAS_GENRE|Genre
+Person|ACTED_IN|Movie
+Person|DIRECTED|Movie
+Person|PRODUCED|Movie
+Person|WRITER_OF|Movie
+Person|REVIEWED|Movie
