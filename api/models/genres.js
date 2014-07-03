@@ -23,7 +23,6 @@ function _randomNames (n) {
   return _.times(n, _randomName);
 }
 
-
 /**
  *  Result Functions
  *  to be combined with queries using _.partial()

@@ -11,7 +11,7 @@ This tutorial takes the reader through the steps necessary to create the applica
 
 ## Neo4j
 
-Written in Java since YEAR, [Neo4j](http://neo4j.org/)is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
+Written in Java since YEAR, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
 ## Swagger
 
@@ -42,7 +42,7 @@ You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com
 
 ## Neo4j: Getting it Running
 
-- If you haven't done so already, download Neo4jhere
+- If you haven't done so already, [download Neo4j](http://www.neo4j.org/download)
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
 - Navigate to the extracted folder and run `./bin/neo4j start`
 - If all goes well, you should see the Neo4j web application running at [port 7474](http://localhost:7474/)
@@ -51,7 +51,7 @@ You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com
 An empty database is not much fun. Let's put some sample data in to see Neo4j in action:
 
 - Navigate to your Neo4j directory
-- If you have Neo4j running, stop it with `./bin/neo4j stop` in the Neo4j directory
+- If you have Neo4j running, stop it with `./bin/neo4j stop`
 - If you want to make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
 - If youls data, you'll see a file called `graph.db`.
 - Delete the existing `graph.db`.
