@@ -8,8 +8,8 @@ var contentApp = angular.module('contentApp', [
 ]);
 
 /*TODO CRISTINA
-
-- add Genre here
+- before I start this should be using environemt variable so I can refer to my local node API more easily. 
+- add Genre here - 
 - add partialsgenre-detail.html
 - add controller GenreItemCtrl
 
