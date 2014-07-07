@@ -7,6 +7,17 @@ var contentApp = angular.module('contentApp', [
   'contentappControllers'
 ]);
 
+/*TODO CRISTINA
+
+- add Genre here
+- add partialsgenre-detail.html
+- add controller GenreItemCtrl
+
+*/
+
+
+
+
 contentApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
