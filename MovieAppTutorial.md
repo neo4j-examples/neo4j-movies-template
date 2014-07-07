@@ -11,15 +11,15 @@ This tutorial takes the reader through the steps necessary to create the applica
 
 ## Neo4j
 
-Written in Java since YEAR, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
+Written in Java since *YEAR KENNY PLEASE PUT THE YEAR IN*, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
-## Swagger
+## Node-Neo4j-Swagger-API
 
-Developed by Wordnik, Swagger™ defines a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic.
+This application uses a Swagger-compliant API written in NodeJS, based off of the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
 
 ## AngularJS
 
-_What HTML should have been_, AngularJS is an open-source web application framework, assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
+_What HTML should have been_, AngularJS is an open-source web application framework. It assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
 
 # The Domain Model
 
@@ -53,21 +53,19 @@ An empty database is not much fun. Let's put some sample data in to see Neo4j in
 - Navigate to your Neo4j directory
 - If you have Neo4j running, stop it with `./bin/neo4j stop`
 - If you want to make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
-- If youls data, you'll see a file called `graph.db`.
+- If you `ls data`, you'll see a file called `graph.db`.
 - Delete the existing `graph.db`.
 - Grab the zipped movies graph database file from the `databases` folder in the web app repository
-- Unzip it into thedatafolder
+- Unzip it into the `data` folder
 - Run Neo4j! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
-## Cypher: An Introduction 
+### Learn Cypher 
 
-Get started with Cypher on the Neo4j [Learn Cypher](http://www.neo4j.org/learn/cypher) page.
-
-Don't know how much to put in this section.
+Although basic Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) for a basic introduction to the language. 
 
 ## Building the Database
 
-Although the tutorial repository comes with a pre-built graph.db file, you'll need to be able to create your own graph.db file with your own data. This section will demonstrate how to re-create the existing graph.db file on your local Neo4j instance. Although there are multiple ways to create a graph.db from scratch, this tutorial will use the Cypher command LOAD CSV. 
+Although the tutorial repository comes with a pre-built `graph.db` file, you'll need to be able to create your own `graph.db` file with your own data. This section will demonstrate how to re-create the existing `graph.db` file on your local Neo4j instance. Although there are multiple ways to create a `graph.db` from scratch, this tutorial will use the Cypher command `LOAD CSV`. 
 
 ### Getting Ready
 
@@ -76,16 +74,16 @@ Although the tutorial repository comes with a pre-built graph.db file, you'll ne
 	- Each node should have a unique ID
 	- Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
 	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
-	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctiation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
+	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
 	- Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
 	
 ### Using LOAD CSV
 
-Data ready, let's fill up the database. Although there are a few methods to get large amounts of data into a Neo4j database, in this tutorial we'll be using LOAD CSV. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see LOAD CSV in action before you start. 
+Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
 
-Since this tutorial assumes you're running Neo4j locally, you'll csv path will look something like `file:/` + `path from root to csv file` + `filename.csv`.
+Since this tutorial assumes you're running Neo4j locally, your csv path might look something like `file:/` + `path from root to csv file/` + `filename.csv`.
 
-Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the web console. 
+Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web console. 
 
 Make sure you're pointing at the correct location with a test query (but write your own path in).  
 
@@ -210,9 +208,9 @@ Person	REVIEWED	Movie
 Movie	HAS_GENRE	Genre
 ```
 
-# Swagger: Querying the Database
+#  Node-Neo4j-Swagger API: Querying the Database
 
-## Node-Neo4j-Swagger API: An Introduction
+## An Introduction
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
@@ -237,13 +235,14 @@ Let's take a look at the `api/routes/genres.js`:
 // genres.js
 
 var Genres = require('../models/genres');
-... //important stuff here 
+
+// ...  important stuff commented out here 
 
 /*
  *  Util Functions
  */
 
-... //more important stuff here 
+// ...  more important stuff commented out here 
 
 
 /*
@@ -276,6 +275,7 @@ exports.list = {
   }
 };
 ```
+
 We can assume from this code snipped that the Swagger API has at least one endpoint of flavor `GET` that presumably returns 'all' the genres in the database. 
 
 More evidence is found in `app.js`, where we see the `list` method in action:
@@ -295,13 +295,14 @@ But how does the app know what data to send? Who fills this endpoint with delici
 
 var Genre = require('../models/neo4j/genre');
 
-... //important stuff here 
+// ...  important stuff commented out here 
 
 /**
  *  Result Functions
  *  to be combined with queries using _.partial()
  */
-... //other result functions here 
+
+// ...  important result functions commented out here 
 
 // return many genres
 var _manyGenres = function (results, callback) {
@@ -317,7 +318,7 @@ var _manyGenres = function (results, callback) {
  *  to be combined with result functions using _.partial()
  */
 
-... //other query functions here 
+// ... other query functions here 
 
 var _matchBy = function (keys, params, options, callback) {
   var cypher_params = _.pick(params, keys);
@@ -345,9 +346,93 @@ module.exports = {
 
 In short, `getAll` is built out of the `_matchAll` and `_manyGenres` partials. `_matchAll`, a query function, calls `_matchBy`, who presents a Cypher query to the server. `_manyGenres`, a result function, organizes the data. `getAll` is packaged into a module and exported for easy consumption. 
 
-# AngularJS: Building the Website
+Take note that this query can literally only export Genre nodes. If you want to export something else, you'll have to edit or write a new result function (currently, `manyGenres`). 
 
-## Why AngularJS
+Try using something like this, assuming you've wrapped your associated query in something called `breakdown`:
+
+```
+// return multiple Test Items
+var _manyBreakdown = function (results, callback) {
+  console.log(results[0]) //use this to tweak 
+  if (results.length) {
+    var output = _.map(results, function (result) {
+      return results[0].breakdown
+    });
+    callback(null,output);
+  } else {
+    callback(null, null);
+  }
+};
+``` 
+
+Test Cypher query:
+
+```
+var _getTest = function (params, options, callback) {
+  var cypher_params = {};
+
+  var query = [
+    'RETURN {cat:23, bob:45, amazing:"tomato"} AS breakdown;'
+  ].join('\n');
+
+  callback(null, query, cypher_params);
+};
+
+```
+
+
+# AngularJS: Connecting the Front to the Back
+
+Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database? 
+
+Without going too deep into AngularJS design patterns, let's take a look at the construction of the Movie item, or, basically, that stuff you see when you click on a movie poster. 
+
+```
+// this is in web/dist/assets/js/controller.js
+
+contentApp.controller('MovieItemCtrl', ['$scope', '$routeParams', '$http', '$templateCache',
+  function($scope, $routeParams, $http, $templateCache) {
+  		console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+  				'?api_key=special-key&neo4j=false');
+  		$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+  				'?api_key=special-key&neo4j=false';
+	  	var fetchMovie = function()
+	  	{
+	  		$http({method: 'GET', url: $scope.url, cache: $templateCache}).
+			    success(function(data, status, headers, config) {
+			    	$scope.movie = data;
+			    	$scope.movie.poster_image = $scope.movie.poster_image || '/assets/img/posters/' +
+			    		$scope.movie.title.replace('/', ' ')  + '.jpg';
+			    	$scope.movie.poster_image = $scope.movie.poster_image.replace("w185", "w300");
+			    }).
+			    error(function(data, status, headers, config) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			    });
+	  	}
+
+	  	fetchMovie();
+  }]);
+  
+```
+
+Take a look at the	`$scope.url`:
+
+
+```
+$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+  				'?api_key=special-key&neo4j=false';
+```
+
+Here you can see the web user interface grabbing information from the NodeJS API. When a Movie is fetched, this AngularJS machine GETs the Movie-related JSON and uses it to build the Movie item view. 
+
+You can see these items populate `web\dist\item.html` through `<body ng-controller="MovieItemCtrl">`.
+
+WHAT ELSE
+
 
 # References
 
@@ -357,11 +442,10 @@ In short, `getAll` is built out of the `_matchAll` and `_manyGenres` partials. `
 ](https://gist.github.com/jexp/d788e117129c3730a042)
 - [Using LOAD CSV to Import Git History into Neo4j](http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/)
 - [Movies GraphGist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc)
+- [Using Index Hints](http://docs.neo4j.org/chunked/milestone/query-using.html)
 
 ## Swagger
 
 - [The Swagger Spec](https://github.com/wordnik/swagger-spec)
-
-## NodeJS
 
 ## AngularJS
