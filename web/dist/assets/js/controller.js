@@ -87,7 +87,7 @@ contentApp.directive('carousel', function() {
 
 contentApp.controller('MovieListCtrl', ['$scope', '$http', '$templateCache', 
 	function($scope, $http, $templateCache) {
-	  	$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies?api_key=special-key&neo4j=false';
+	  	$scope.url = PATH_TO_API +'movies?api_key=special-key&neo4j=false';
 	  	$scope.movies = [];
 
 	  	var fetchMovies = function()
@@ -190,8 +190,8 @@ contentApp.directive('carouselrelatedmovies', function() {
 
 contentApp.controller('MovieItemCtrl', ['$scope', '$routeParams', '$http', '$templateCache',
   function($scope, $routeParams, $http, $templateCache) {
-  		console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + '?api_key=special-key&neo4j=false');
-  		$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + '?api_key=special-key&neo4j=false';
+  		//console.log(PATH_TO_API + 'movies/title/' + encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + '?api_key=special-key&neo4j=false');
+  		$scope.url = PATH_TO_API + 'movies/title/' + encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + '?api_key=special-key&neo4j=false';
 	  	var fetchMovie = function()
 	  	{
 	  		$http({method: 'GET', url: $scope.url, cache: $templateCache}).
@@ -214,7 +214,7 @@ contentApp.directive('carouselpeoplemovies', function() {
      restrict : 'A',
      link     : function (scope, element, attrs) {
            scope.$watch(attrs.carouselpeoplemovies, function(people) {  
-           	console.log(scope.people);
+           	//console.log(scope.people);
            	if(scope.people != undefined ? scope.people.movies != undefined ? scope.people.movies.length > 0 : false : false)
            	{
            		people = scope.people;
@@ -292,8 +292,7 @@ contentApp.directive('carouselrelatedpeople', function() {
 
 contentApp.controller('PeopleItemCtrl', ['$scope', '$routeParams', '$http', '$templateCache',
   function($scope, $routeParams, $http, $templateCache) {
-  		console.log('http://movieapi-neo4j.herokuapp.com/api/v0/people/name/' + encodeURIComponent(decodeURI(decodeURI($routeParams.peopleId))) + '?api_key=special-key&neo4j=false');
-  		$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/people/name/' + encodeURIComponent(decodeURI(decodeURI($routeParams.peopleId))) + '?api_key=special-key&neo4j=false';
+  		$scope.url = PATH_TO_API + 'people/name/' + encodeURIComponent(decodeURI(decodeURI($routeParams.peopleId))) + '?api_key=special-key&neo4j=false';
 	  	var fetchPeople = function()
 	  	{
 	  		$http({method: 'GET', url: $scope.url, cache: $templateCache}).

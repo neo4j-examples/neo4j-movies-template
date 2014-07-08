@@ -1,6 +1,8 @@
 'use strict';
 
 /* App Module */
+var PATH_TO_API = 'http://movieapi-neo4j.herokuapp.com/api/v0/';
+//var PATH_TO_API = 'http://localhost:3000/docs/'
 
 var contentApp = angular.module('contentApp', [
   'ngRoute',
