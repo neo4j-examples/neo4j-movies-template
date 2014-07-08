@@ -102,14 +102,17 @@ From your parent directory, run `node api/app.js` to get Swagger started.
 
 Head on over to `http://localhost:3000/docs/`, GET The Matrix [you can do a search by title, for instance](http://localhost:3000/docs/#!/movies/getMovieByTitle_get_3), and verify that this movie is now rated `awesome`.
 
-### The Front-end (needs work)
+### The Frontend
 
-Although Swagger is giving us the correct information, the web app running locally is still pointed to a remote server. 
+Assuming you've set up the local backend correctly, the frontent is still pointed to a remote API. 
 
-Head on over to `web/dist/assets/js/controller.js` and replace all instances of 
-
-* `http://movieapi-neo4j.herokuapp.com/` with `http://localhost:3000/`
-* more stuff
+Head on over to `web/dist/assets/js/app.js` and in the section below, point `PATH_TO_API` to your `http://localhost:3000/docs/`. 
+```
+/* App Module */
+var PATH_TO_API = 'http://movieapi-neo4j.herokuapp.com/api/v0/';
+//var PATH_TO_API = 'http://localhost:3000/docs/'
+```
+Make sure whaveter database you're pointing at (whether a local one on port 7474 or a remote database) are running, and you've started your Swagger API with `node api/app.js`. 
 
 Again run `node web/app.js` in the `neo4j-movies-template` directory, and `.\bin\neo4j start` from your Neo4j directory, if it isn’t already running. 
 
