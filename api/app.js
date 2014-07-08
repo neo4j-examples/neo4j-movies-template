@@ -70,7 +70,7 @@ var models = require("./models/swagger_models");
 swagger.addModels(models)
 .addGet(routes.genres.list)
 .addGet(routes.movies.list)
-.addGet(routes.movies.movieCount)
+//.addGet(routes.movies.movieCount)
 .addGet(routes.movies.findById)
 .addGet(routes.movies.findByTitle)
 .addGet(routes.movies.findMoviesByDateRange)
