@@ -11,7 +11,7 @@ This tutorial takes the reader through the steps necessary to create the applica
 
 ## Neo4j
 
-Written in Java since *YEAR KENNY PLEASE PUT THE YEAR IN*, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
+Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
 ## Node-Neo4j-Swagger-API
 
@@ -381,7 +381,7 @@ var _getTest = function (params, options, callback) {
 ```
 
 
-# AngularJS: Connecting the Front to the Back
+# AngularJS
 
 Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database? 
 
