@@ -132,6 +132,14 @@ FIELDTERMINATOR '|'
 CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated});
 ```
 
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
+AS line 
+FIELDTERMINATOR '|'
+CREATE (m:Keyword {id:toInt(line.id), name:line.name});
+```
+
 #### Import your Relationships:
 
 ```
@@ -172,20 +180,22 @@ MERGE (p)-[:PRODUCED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/reviewed_rels.csv" 
-AS line 
-FIELDTERMINATOR '|'
-MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
-MERGE (p)-[:REVIEWED]->(m);
-```
-```
-LOAD CSV WITH HEADERS
 FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:WRITER_OF]->(m);
 ```
+
+```
+LOAD CSV WITH HEADERS
+FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
+AS line 
+FIELDTERMINATOR '|'
+MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
+MERGE (m)-[:HAS_KEYWORD]->(k);
+```
+
 ## Test: This to That
 
 Naturally you'd want to see if you've entered your data correctly. Run the _This to That_ query:
