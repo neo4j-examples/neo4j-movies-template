@@ -441,9 +441,6 @@ Here you can see the web user interface grabbing information from the NodeJS API
 
 You can see these items populate `web\dist\item.html` through `<body ng-controller="MovieItemCtrl">`.
 
-WHAT ELSE
-
-
 # References
 
 ## Neo4j
