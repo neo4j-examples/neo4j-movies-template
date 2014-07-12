@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'neography'
 
-class Manager
+class CSVmaker
 
   def initialize
   	Neography.configure do |config|
@@ -79,6 +79,6 @@ queries = [
 	RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That;"
 	}
 ]
-manjson = Manager.new
+manjson = CSVmaker.new
 
 queries.each { |query| manjson.put_it_in(query) }
