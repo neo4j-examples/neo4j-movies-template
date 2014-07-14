@@ -9,15 +9,15 @@ This tutorial takes the reader through the steps necessary to create the applica
 
 ![webstack](web-stack.png)
 
-## Neo4j
+## Database: Neo4j
 
 Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
-## Node-Neo4j-Swagger-API
+## REST API: Node-Neo4j-Swagger-API
 
 This application uses a Swagger-compliant API written in NodeJS, based off of the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
 
-## AngularJS
+## Web Application: AngularJS
 
 _What HTML should have been_, AngularJS is an open-source web application framework. It assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
 
