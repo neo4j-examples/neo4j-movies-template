@@ -7,6 +7,8 @@ This tutorial takes the reader through the steps necessary to create the applica
 
 # The Stack: An Overview
 
+![webstack](web-stack.png)
+
 ## Neo4j
 
 Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
@@ -21,6 +23,8 @@ _What HTML should have been_, AngularJS is an open-source web application framew
 
 # The Domain Model
 
+![graph data model](graph-data-model.png)
+
 ## Neo4j: Background
 
 The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information, allowing us to link nodes into semantically rich networks.
@@ -29,7 +33,7 @@ The Neo4j data model consists of nodes and relationships, both of which can have
 
 The model in this tutorial includes three different types of nodes, each with their own properties, and six different types of relationships, one of which has its own properties. The underlying structure of the web application is described in the image below:
 
-![domain model](network_image.png)
+![movie data](movie-data-model.png)
 
 The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so.
 
