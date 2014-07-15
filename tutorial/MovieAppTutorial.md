@@ -46,14 +46,14 @@ To dynamically access the database, start an instance of the server on your loca
 
 - If you haven't done so already, [download Neo4j](http://www.neo4j.com/download/)
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
-- Navigate to the extracted folder on your Terminal, and run `./bin/neo4j start`
+- On your Terminal, navigate to the extracted folder with `cd PATH_TO_FOLDER`, and run `./bin/neo4j start`
 - If all goes well, you should see the Neo4j web interface running locally at [port 7474](http://localhost:7474/). This built-in browser interface provides a web-UI for users to access the database easily
 
 ### Stopping Neo4j
 
 The Neo4j server runs in the background and should be stopped after each use:
 
-- Navigate to your Neo4j directory on your Terminal
+- On your Terminal, navigate to the Neo4j directory
 - If you previously ran Neo4j, stop it with `./bin/neo4j stop`
 - To make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
 
@@ -64,8 +64,8 @@ An empty database is not much fun. Let's load some sample data in and see Neo4j 
 - If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored/persistent data in the Neo4j database
 - Delete the existing `graph.db`
 
-- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it from [GitHub](https://github.com/kbastani/neo4j-movies-template) previously). Copy the zipped _Movies_ data file into your local Neo4j database with `cp /database/graph.db.zip _PATH_TO_NEO4J_DATABASE_FOLDER_/data`, and unzip it
-- Alternatively, if you didn't clone the web app's source code repository on your desktop, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `_PATH_TO_NEO4J_DATABASE_FOLDER_/data` folder
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it from [GitHub](https://github.com/kbastani/neo4j-movies-template) previously). Copy the zipped _Movies_ data file into your local Neo4j database with `cp /database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
+- Alternatively, if you didn't clone the web app's source code repository on your desktop, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
 
 - Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
