@@ -25,7 +25,7 @@ _What HTML should have been_, [AngularJS](https://angularjs.org/) is an open-sou
 
 ### Neo4j: Background
 
-The Neo4j _property graph_ data model consists of nodes and relationships, both of which can have _key-value_-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record (node), relationships carry information that allows us to link nodes to form semantically-rich networks.
+The Neo4j _property graph_ data model consists of nodes and relationships, both of which can have _key-value_-style properties. What does that mean, exactly? Nodes are the graph-database equivalent for records (in the relational model), with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record (node), relationships carry information that allows us to link nodes to form semantically-rich networks:
 
 ![graph data model](graph-data-model.png)
 
@@ -35,19 +35,19 @@ The data model in this tutorial includes nodes with three different labels (each
 
 ![movie data](movie-data-model.png)
 
-The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so.
-
-You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
+The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so. You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
 
 
-# Neo4j: Setting up the Database
+# Neo4j: Setting up the Database Server
 
-## Running Neo4j
+### Running Neo4j
+
+To dynamically access the database, start an instance of the server on your local machine:
 
 - If you haven't done so already, [download Neo4j](http://www.neo4j.com/download/)
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
 - Navigate to the extracted folder on your Terminal, and run `./bin/neo4j start`
-- If all goes well, you should see the Neo4j web application interface running locally at [port 7474](http://localhost:7474/)
+- If all goes well, you should see the Neo4j web interface running locally at [port 7474](http://localhost:7474/). This built-in browser interface provides a web-UI for users to access the database easily
 
 ### Stopping Neo4j
 
