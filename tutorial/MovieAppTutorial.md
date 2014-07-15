@@ -58,7 +58,11 @@ The Neo4j database server runs in the background and should be stopped after eac
 - If you previously ran Neo4j, stop it with `./bin/neo4j stop`
 - To make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
 
-### Loading Data into Neo4j
+### Learning Cypher 
+
+Cypher is an expressive and efficient declarative query language for the graph database, Neo4j (think SQL to relational databases). Although simple Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) page for a basic introduction to the language. 
+
+### Loading Sample Data into Neo4j
 
 An empty database is not much fun. Let's load some sample _Movie_ data in and see Neo4j in action:
 
@@ -69,9 +73,8 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 
 - Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
-### Learning Cypher 
 
-Cypher is an expressive and efficient declarative query language for the graph database, Neo4j (think SQL to relational databases). Although simple Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) page for a basic introduction to the language. 
+
 
 ## Building the Database
 
