@@ -62,16 +62,16 @@ The Neo4j database server runs in the background and should be stopped after eac
 
 An empty database is not much fun. Let's load some sample _Movie_ data in and see Neo4j in action:
 
-- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored/persistent data in the database. Delete the existing `graph.db` file/folder
+- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` file/folder
 
 - On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movie_ sample data file into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
 - Alternatively, if you don't have the cloned repository, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
 
 - Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
-### Learn Cypher 
+### Learning Cypher 
 
-Although basic Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) for a basic introduction to the language. 
+Cypher is an expressive and efficient declarative query language for the graph database, Neo4j (think SQL to relational databases). Although simple Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) page for a basic introduction to the language. 
 
 ## Building the Database
 
