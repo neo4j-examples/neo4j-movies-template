@@ -1,7 +1,7 @@
 Building a Movie App With Neo4j
 ======
 
-This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), where each step of the stack is explained on the way. It is a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
+This tutorial walks through the creation of a complete (full stack) web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), where each step of the stack is explained along the way. It is a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
 
 The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), while resources and references are available at the end of the document. 
 
@@ -9,27 +9,27 @@ The complete source code for the app is available on [GitHub](https://github.com
 
 ![webstack](web-stack.png)
 
-## Database: Neo4j
+### Database: Neo4j
 
 Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
-## REST API: Node-Neo4j-Swagger-API
+### REST API: Node-Neo4j-Swagger-API
 
 This application uses a Swagger-compliant API written in [Node.js](http://nodejs.org/), based off the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
 
-## Web Application: AngularJS
+### Web Application: AngularJS
 
-_What HTML should have been_, [AngularJS](https://angularjs.org/) is an open-source web application framework. It assists in client-side developemnt of rich web applications that uses HTML, CSS and JavaScript. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' [two-way data binding](https://docs.angularjs.org/guide/databinding) is its most notable feature that simplifies code-writing by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data that is contained in the scope defined in the model.
+_What HTML should have been_, [AngularJS](https://angularjs.org/) is an open-source web application framework. It assists in client-side development of rich web applications that use HTML, CSS and Javascript. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' [two-way data binding](https://docs.angularjs.org/guide/databinding) is its most notable feature that simplifies code-writing by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data that is contained in the scope defined in the model.
 
 # The Domain Model
 
+### Neo4j: Background
+
+The Neo4j _property graph_ data model consists of nodes and relationships, both of which can have _key-value_-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record (node), relationships carry information that allows us to link nodes to form semantically-rich networks.
+
 ![graph data model](graph-data-model.png)
 
-## Neo4j: Background
-
-The Neo4j _property graph_ data model consists of nodes and relationships, both of which can have key-value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record (node), relationships carry information that allows us to link nodes to form semantically-rich networks.
-
-## The Movie Database 
+### The Movie Database 
 
 The data model in this tutorial includes nodes with three different labels (each with their own properties), and six different types of relationships (one of which has its own property). The underlying structure of the database is visualized in the image below:
 
