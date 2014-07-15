@@ -1,25 +1,25 @@
 Building a Movie App With Neo4j
 ======
 
-This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
+This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), where each step of the stack is explained on the way. It is a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
 
-This tutorial takes the reader through the steps necessary to create the application, explaining each step of the stack on the way. The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), and resources and references are available at the end of the document. 
+The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), while resources and references are available at the end of the document. 
 
-# The Stack: An Overview
+# The Web Stack: An Overview
 
 ![webstack](web-stack.png)
 
 ## Database: Neo4j
 
-Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
+Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
 ## REST API: Node-Neo4j-Swagger-API
 
-This application uses a Swagger-compliant API written in NodeJS, based off of the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
+This application uses a Swagger-compliant API written in [Node.js](http://nodejs.org/), based off the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
 
 ## Web Application: AngularJS
 
-_What HTML should have been_, AngularJS is an open-source web application framework. It assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
+_What HTML should have been_, [AngularJS](https://angularjs.org/) is an open-source web application framework. It assists in client-side developemnt of rich web applications that uses HTML, CSS and JavaScript. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' [two-way data binding](https://docs.angularjs.org/guide/databinding) is its most notable feature that simplifies code-writing by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data that is contained in the scope defined in the model.
 
 # The Domain Model
 
@@ -27,11 +27,11 @@ _What HTML should have been_, AngularJS is an open-source web application framew
 
 ## Neo4j: Background
 
-The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information, allowing us to link nodes into semantically rich networks.
+The Neo4j _property graph_ data model consists of nodes and relationships, both of which can have key-value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record (node), relationships carry information that allows us to link nodes to form semantically-rich networks.
 
-## The Movie Database Model
+## The Movie Database 
 
-The model in this tutorial includes three different types of nodes, each with their own properties, and six different types of relationships, one of which has its own properties. The underlying structure of the web application is described in the image below:
+The data model in this tutorial includes nodes with three different labels (each with their own properties), and six different types of relationships (one of which has its own property). The underlying structure of the database is visualized in the image below:
 
 ![movie data](movie-data-model.png)
 
@@ -42,24 +42,32 @@ You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com
 
 # Neo4j: Setting up the Database
 
-## Neo4j: Getting it Running
+## Running Neo4j
 
-- If you haven't done so already, [download Neo4j](http://www.neo4j.org/download)
+- If you haven't done so already, [download Neo4j](http://www.neo4j.com/download/)
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
-- Navigate to the extracted folder and run `./bin/neo4j start`
-- If all goes well, you should see the Neo4j web application running at [port 7474](http://localhost:7474/)
+- Navigate to the extracted folder on your Terminal, and run `./bin/neo4j start`
+- If all goes well, you should see the Neo4j web application interface running locally at [port 7474](http://localhost:7474/)
 
+### Stopping Neo4j
 
-An empty database is not much fun. Let's put some sample data in to see Neo4j in action:
+The Neo4j server runs in the background and should be stopped after each use:
 
-- Navigate to your Neo4j directory
-- If you have Neo4j running, stop it with `./bin/neo4j stop`
-- If you want to make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
-- If you `ls data`, you'll see a file called `graph.db`.
-- Delete the existing `graph.db`.
-- Grab the zipped movies graph database file from the `databases` folder in the web app repository
-- Unzip it into the `data` folder
-- Run Neo4j! You should be able to see some nodes at [port 7474](http://localhost:7474/)
+- Navigate to your Neo4j directory on your Terminal
+- If you previously ran Neo4j, stop it with `./bin/neo4j stop`
+- To make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
+
+### Loading Data into Neo4j
+
+An empty database is not much fun. Let's load some sample data in and see Neo4j in action:
+
+- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored/persistent data in the Neo4j database
+- Delete the existing `graph.db`
+
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it from [GitHub](https://github.com/kbastani/neo4j-movies-template) previously). Copy the zipped _Movies_ data file into your local Neo4j database with `cp /database/graph.db.zip _PATH_TO_NEO4J_DATABASE_FOLDER_/data`, and unzip it
+- Alternatively, if you didn't clone the web app's source code repository on your desktop, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `_PATH_TO_NEO4J_DATABASE_FOLDER_/data` folder
+
+- Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
 ### Learn Cypher 
 
