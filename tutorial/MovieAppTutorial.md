@@ -1,27 +1,29 @@
-Movie App Tutorial
+Building a Movie App With Neo4j
 ======
 
-# General Introduction
-
-This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), a Neo4j-Swagger-AngularJS version of Cineasts.net, a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
+This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
 
 This tutorial takes the reader through the steps necessary to create the application, explaining each step of the stack on the way. The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), and resources and references are available at the end of the document. 
 
 # The Stack: An Overview
 
-## Neo4j
+![webstack](web-stack.png)
+
+## Database: Neo4j
 
 Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
-## Node-Neo4j-Swagger-API
+## REST API: Node-Neo4j-Swagger-API
 
 This application uses a Swagger-compliant API written in NodeJS, based off of the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
 
-## AngularJS
+## Web Application: AngularJS
 
 _What HTML should have been_, AngularJS is an open-source web application framework. It assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
 
 # The Domain Model
+
+![graph data model](graph-data-model.png)
 
 ## Neo4j: Background
 
@@ -31,7 +33,7 @@ The Neo4j data model consists of nodes and relationships, both of which can have
 
 The model in this tutorial includes three different types of nodes, each with their own properties, and six different types of relationships, one of which has its own properties. The underlying structure of the web application is described in the image below:
 
-![domain model](network_image.png)
+![movie data](movie-data-model.png)
 
 The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so.
 
