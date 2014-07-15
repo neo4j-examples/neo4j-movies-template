@@ -51,7 +51,7 @@ To dynamically access the database, start an instance of the server on your loca
 
 ### Stopping Neo4j
 
-The Neo4j server runs in the background and should be stopped after each use:
+The Neo4j database server runs in the background and should be stopped after each use:
 
 - On your Terminal, navigate to the Neo4j directory
 - If you previously ran Neo4j, stop it with `./bin/neo4j stop`
@@ -61,11 +61,10 @@ The Neo4j server runs in the background and should be stopped after each use:
 
 An empty database is not much fun. Let's load some sample data in and see Neo4j in action:
 
-- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored/persistent data in the Neo4j database
-- Delete the existing `graph.db`
+- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored/persistent data in the database. Delete the existing `graph.db` file/folder
 
-- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it from [GitHub](https://github.com/kbastani/neo4j-movies-template) previously). Copy the zipped _Movies_ data file into your local Neo4j database with `cp /database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
-- Alternatively, if you didn't clone the web app's source code repository on your desktop, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movies_ data file into your local Neo4j database with `cp /database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
+- Alternatively, if you don't have the cloned repository, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
 
 - Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
