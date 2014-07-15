@@ -76,9 +76,7 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 
 
 ### Loading Your Own Data
-Although the tutorial repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create your own `graph.db` file with your own data set, customized to your web application. 
-
-This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
+Although the tutorial repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create your own `graph.db` file with your own data set, customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 <!-- 
 ## Building the Database
 
@@ -212,10 +210,11 @@ FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
 MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
+-->
 
-## Test: This to That
+### Test: This to That
 
-Naturally you'd want to see if you've entered your data correctly. Run the _This to That_ query:
+Naturally you'd want to see if you've imported your data correctly. Run the _This to That_ query:
 
 ```
 MATCH (a)-[r]->(b)
@@ -234,7 +233,6 @@ Person	WRITER_OF	Movie
 Person	REVIEWED	Movie
 Movie	HAS_GENRE	Genre
 ``` 
--->
 
 
 
