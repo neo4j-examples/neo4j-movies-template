@@ -450,6 +450,7 @@ You can see these items populate `web\dist\item.html` through `<body ng-controll
 - [Using LOAD CSV to Import Git History into Neo4j](http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/)
 - [Movies GraphGist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc)
 - [Using Index Hints](http://docs.neo4j.org/chunked/milestone/query-using.html)
+- [LOAD CSV – Processing hidden arrays in your CSV documents](http://www.markhneedham.com/blog/2014/07/10/neo4j-load-csv-processing-hidden-arrays-in-your-csv-documents/)
 
 ## Swagger
 
