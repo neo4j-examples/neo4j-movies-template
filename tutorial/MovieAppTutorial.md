@@ -38,7 +38,7 @@ The data model in this tutorial includes nodes with three different labels (each
 The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so. You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
 
 
-# Neo4j: Setting up the Database Server
+# Neo4j: Setting Up the Database Server
 
 ### Running Neo4j
 
@@ -78,7 +78,7 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 ### Loading Your Own Data
 Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 
-<<< insert new instructions (pending) >>>
+_<<< insert new instructions (pending) >>>_
 <!-- 
 ## Building the Database
 
@@ -214,7 +214,7 @@ MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
 -->
 
-### Test Data Import: _This to That_
+### Testing Data Import: _This to That_
 
 Naturally you'd want to see if you've imported your data correctly. Run the _This to That_ query on the Neo4j browser:
 
@@ -238,16 +238,16 @@ Movie	HAS_GENRE	Genre
 
 
 
-#  Node-Neo4j-Swagger API: Querying the Database
+# Node-Neo4j-Swagger API: Querying Database
 
-## An Introduction
+### Background
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
+### From Routes to Models
+
 Let's take a look at how thoughts are organized in the Swagger part of this application, which lives in the `api` folder:
 ![routes](routes.png)
-
-## From Routes to Models
 
 Let's start at `app.js` (assuming we're in `api`). `app.js` starting the machinery of the app, and (importantly if you want to add your own models), and pulls the list of models from `routes/index.js`, which looks something like:
 
@@ -411,7 +411,8 @@ var _getTest = function (params, options, callback) {
 ```
 
 
-# AngularJS
+
+# AngularJS: Building Dynamic Web Pages
 
 Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database? 
 
