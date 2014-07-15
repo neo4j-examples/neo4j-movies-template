@@ -75,7 +75,11 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 
 
 
+### Loading Your Own Data
+Although the tutorial repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create your own `graph.db` file with your own data set, customized to your web application. 
 
+This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
+<!-- 
 ## Building the Database
 
 Although the tutorial repository comes with a pre-built `graph.db` file, you'll need to be able to create your own `graph.db` file with your own data. This section will demonstrate how to re-create the existing `graph.db` file on your local Neo4j instance. Although there are multiple ways to create a `graph.db` from scratch, this tutorial will use the Cypher command `LOAD CSV`. 
@@ -229,7 +233,10 @@ Person	PRODUCED	Movie
 Person	WRITER_OF	Movie
 Person	REVIEWED	Movie
 Movie	HAS_GENRE	Genre
-```
+``` 
+-->
+
+
 
 #  Node-Neo4j-Swagger API: Querying the Database
 
