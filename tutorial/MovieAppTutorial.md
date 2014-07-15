@@ -76,7 +76,9 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 
 
 ### Loading Your Own Data
-Although the tutorial repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create your own `graph.db` file with your own data set, customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
+Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
+
+<<< insert new instructions (pending) >>>
 <!-- 
 ## Building the Database
 
@@ -212,9 +214,9 @@ MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
 -->
 
-### Test: This to That
+### Test Data Import: _This to That_
 
-Naturally you'd want to see if you've imported your data correctly. Run the _This to That_ query:
+Naturally you'd want to see if you've imported your data correctly. Run the _This to That_ query on the Neo4j browser:
 
 ```
 MATCH (a)-[r]->(b)
@@ -222,7 +224,7 @@ WHERE labels(a) <> [] AND labels(b) <> []
 RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
 LIMIT 10;
 ```
-You should get a result that looks something like:
+It returns the schema of this data set, specifically, how different node types are related to one another. You should get a result that looks something like:
 
 ```
 This	To			That
