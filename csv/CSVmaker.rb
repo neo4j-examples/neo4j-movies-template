@@ -5,7 +5,6 @@ require 'neography'
 PATH_FROM_CSV = "file:#{File.expand_path File.dirname(__FILE__)}"
 PATH_TO_CSV = File.expand_path File.dirname(__FILE__)
 
-
 @neo_out = Neography::Rest.new({:protocol => "http://", :server => "162.243.116.40/", :port =>  ""})
 @neo_in = Neography::Rest.new({:protocol => "http://", :server => "localhost", :port =>  "7474"})
 
@@ -29,11 +28,11 @@ def push
 end
 
 def ping_source
-	puts @neo_out.execute_query("RETURN 'source, checking in.'")["data"][0][0]
+	puts @neo_out.execute_query("RETURN 'source, checking in: '")["data"][0][0] + @neo_out.configuration
 end
 
 def ping_target
-	puts @neo_in.execute_query("RETURN 'target, checking in.'")["data"][0][0]
+	puts @neo_in.execute_query("RETURN 'target, checking in: '")["data"][0][0] + @neo_in.configuration
 end
 
 @data = [

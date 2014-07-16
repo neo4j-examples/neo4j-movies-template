@@ -78,6 +78,10 @@ Although the tutorial repository comes with a pre-built `graph.db` file, you'll 
 	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
 	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
 	- Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
+
+### Fast-Forward With Neography
+
+Don't feel like dealing with CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
 	
 ### Using LOAD CSV
 
@@ -87,11 +91,11 @@ Since this tutorial assumes you're running Neo4j locally, your csv path might lo
 
 Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web console. 
 
-Make sure you're pointing at the correct location with a test query (but write your own path in).  
+Make sure you're pointing at the correct location with a test query (but write your own path in for `PATH_TO_CSV`).  
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|' 
 WITH line LIMIT 4
@@ -111,7 +115,7 @@ DELETE n,r;
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 WITH line
@@ -120,7 +124,7 @@ CREATE (g:Genre {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/person_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/person_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)});
@@ -128,7 +132,7 @@ CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_im
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated});
@@ -136,7 +140,7 @@ CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_i
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (m:Keyword {id:toInt(line.id), name:line.name});
@@ -146,7 +150,7 @@ CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -155,7 +159,7 @@ MERGE (p)-[:ACTED_IN {role:line.roles}]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/directed_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/directed_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -164,7 +168,7 @@ MERGE (p)-[:DIRECTED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
@@ -173,7 +177,7 @@ MERGE (m)-[:HAS_GENRE]->(g);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/produced_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/produced_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -182,7 +186,7 @@ MERGE (p)-[:PRODUCED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -191,7 +195,7 @@ MERGE (p)-[:WRITER_OF]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
