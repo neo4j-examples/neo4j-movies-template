@@ -120,7 +120,7 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
-#### Import your Nodes
+#### Import your Nodes:
 
 ```
 LOAD CSV WITH HEADERS
