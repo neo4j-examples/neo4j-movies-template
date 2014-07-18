@@ -239,7 +239,7 @@ Movie	HAS_GENRE	Genre
 
 # Node-Neo4j-Swagger API: Querying Database
 
-### Background
+### An Introduction
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
@@ -410,7 +410,6 @@ var _getTest = function (params, options, callback) {
 ```
 
 
-
 # AngularJS: Building Dynamic Web Pages
 
 Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database? 
@@ -422,39 +421,39 @@ Without going too deep into AngularJS design patterns, let's take a look at the 
 
 contentApp.controller('MovieItemCtrl', ['$scope', '$routeParams', '$http', '$templateCache',
   function($scope, $routeParams, $http, $templateCache) {
-  		console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
-  				'?api_key=special-key&neo4j=false');
-  		$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
-  				'?api_key=special-key&neo4j=false';
-	  	var fetchMovie = function()
-	  	{
-	  		$http({method: 'GET', url: $scope.url, cache: $templateCache}).
-			    success(function(data, status, headers, config) {
-			    	$scope.movie = data;
-			    	$scope.movie.poster_image = $scope.movie.poster_image || '/assets/img/posters/' +
-			    		$scope.movie.title.replace('/', ' ')  + '.jpg';
-			    	$scope.movie.poster_image = $scope.movie.poster_image.replace("w185", "w300");
-			    }).
-			    error(function(data, status, headers, config) {
-			    // called asynchronously if an error occurs
-			    // or server returns response with an error status.
-			    });
-	  	}
+      console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+          '?api_key=special-key&neo4j=false');
+      $scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+          '?api_key=special-key&neo4j=false';
+      var fetchMovie = function()
+      {
+        $http({method: 'GET', url: $scope.url, cache: $templateCache}).
+          success(function(data, status, headers, config) {
+            $scope.movie = data;
+            $scope.movie.poster_image = $scope.movie.poster_image || '/assets/img/posters/' +
+              $scope.movie.title.replace('/', ' ')  + '.jpg';
+            $scope.movie.poster_image = $scope.movie.poster_image.replace("w185", "w300");
+          }).
+          error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          });
+      }
 
-	  	fetchMovie();
+      fetchMovie();
   }]);
   
 ```
 
-Take a look at the	`$scope.url`:
+Take a look at the  `$scope.url`:
 
 
 ```
 $scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
-  				'?api_key=special-key&neo4j=false';
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+          '?api_key=special-key&neo4j=false';
 ```
 
 Here you can see the web user interface grabbing information from the NodeJS API. When a Movie is fetched, this AngularJS machine GETs the Movie-related JSON and uses it to build the Movie item view. 
@@ -470,6 +469,7 @@ You can see these items populate `web\dist\item.html` through `<body ng-controll
 - [Using LOAD CSV to Import Git History into Neo4j](http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/)
 - [Movies GraphGist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc)
 - [Using Index Hints](http://docs.neo4j.org/chunked/milestone/query-using.html)
+- [LOAD CSV – Processing hidden arrays in your CSV documents](http://www.markhneedham.com/blog/2014/07/10/neo4j-load-csv-processing-hidden-arrays-in-your-csv-documents/)
 
 ## Swagger
 
