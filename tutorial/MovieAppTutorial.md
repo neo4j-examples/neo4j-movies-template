@@ -8,7 +8,6 @@ The complete source code for the app is available on [GitHub](https://github.com
 # The Web Stack: An Overview
 
 ![webstack](web-stack.png)
-
 ### Database: Neo4j
 
 Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
