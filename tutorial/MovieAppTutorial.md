@@ -74,26 +74,25 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 - Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
 
+## Building the Database with Your Own Data
 
-### Loading Your Own Data
 Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 
-_<<< insert new instructions (pending) >>>_
-<!-- 
-## Building the Database
-
-Although the tutorial repository comes with a pre-built `graph.db` file, you'll need to be able to create your own `graph.db` file with your own data. This section will demonstrate how to re-create the existing `graph.db` file on your local Neo4j instance. Although there are multiple ways to create a `graph.db` from scratch, this tutorial will use the Cypher command `LOAD CSV`. 
 
 ### Getting Ready
 
 - Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
 - Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
-	- Each node should have a unique ID
-	- Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
-	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
-	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
-	- Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
-	
+  - Each node should have a unique ID
+  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
+  - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
+  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
+  - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
+
+### Fast-Forward With Neography
+
+Don't feel like dealing with CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
+  
 ### Using LOAD CSV
 
 Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
@@ -102,11 +101,11 @@ Since this tutorial assumes you're running Neo4j locally, your csv path might lo
 
 Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web console. 
 
-Make sure you're pointing at the correct location with a test query (but write your own path in).  
+Make sure you're pointing at the correct location with a test query (but write your own path in for `PATH_TO_CSV`).  
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|' 
 WITH line LIMIT 4
@@ -126,7 +125,7 @@ DELETE n,r;
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 WITH line
@@ -135,7 +134,7 @@ CREATE (g:Genre {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/person_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/person_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)});
@@ -143,7 +142,7 @@ CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_im
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated});
@@ -151,7 +150,7 @@ CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_i
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (m:Keyword {id:toInt(line.id), name:line.name});
@@ -161,7 +160,7 @@ CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -170,7 +169,7 @@ MERGE (p)-[:ACTED_IN {role:line.roles}]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/directed_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/directed_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -179,7 +178,7 @@ MERGE (p)-[:DIRECTED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
@@ -188,7 +187,7 @@ MERGE (m)-[:HAS_GENRE]->(g);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/produced_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/produced_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -197,7 +196,7 @@ MERGE (p)-[:PRODUCED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -206,15 +205,15 @@ MERGE (p)-[:WRITER_OF]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
 MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
--->
 
-### Testing Data Import: _This to That_
+
+## Testing Data Import: _This to That_
 
 Naturally you'd want to see if you've imported your data correctly. Run the _This to That_ query on the Neo4j browser:
 
@@ -244,7 +243,7 @@ Movie	HAS_GENRE	Genre
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
-### From Routes to Models
+### Understanding the Logic Flow: From Routes to Models
 
 Let's take a look at how thoughts are organized in the Swagger part of this application, which lives in the `api` folder:
 ![routes](routes.png)
