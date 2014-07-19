@@ -45,6 +45,8 @@ var _singlePerson = function (results, callback) {
 
 // return many people
 var _manyPersons = function (results, callback) {
+
+  console.log (results)
   var people = _.map(results, function (result) {
     return new Person(result.person);
   });
@@ -201,6 +203,24 @@ var _updateName = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
+var _matchBacon = function (params, options, callback) {
+  var cypher_params = {
+    name1: params.name1,
+    name2: params.name2
+  };
+    console.log(cypher_params)
+
+  var query = [
+    'MATCH (person1:Person {name:{name1} }), (person2:Person {name:{name2} })',
+    'RETURN person2 AS person'
+  ].join('\n');
+
+  console.log(query)
+  callback(null, query, cypher_params);
+};
+
+
+
 // creates the person with cypher
 var _create = function (params, options, callback) {
   var cypher_params = {
@@ -303,6 +323,9 @@ var login = create;
 // get all people
 var getAll = Cypher(_matchAll, _manyPersons);
 
+// get people in Bacon path, return many persons 
+var getBaconPeople = Cypher(_matchBacon, _manyPersons);
+
 // get all people count
 var getAllCount = Cypher(_getAllCount, _singleCount);
 
@@ -337,5 +360,6 @@ module.exports = {
   getByName: getByName,
   getDirectorByMovie: getDirectorByMovie,
   getCoActorsByPerson: getCoActorsByPerson,
-  getRolesByMovie: getRolesByMovie
+  getRolesByMovie: getRolesByMovie,
+  getBaconPeople: getBaconPeople
 };
