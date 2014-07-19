@@ -82,6 +82,7 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 
 - Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
 - Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
+
   - Each node should have a unique ID
   - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
   - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
@@ -91,7 +92,7 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 ### Fast-Forward With Neography
 
 Don't feel like dealing with CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
-  
+
 ### Using LOAD CSV
 
 Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
