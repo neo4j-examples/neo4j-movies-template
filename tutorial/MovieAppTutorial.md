@@ -1,84 +1,97 @@
 Building a Movie App With Neo4j
 ======
 
-This tutorial walks through the creation of a complete web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
+This tutorial walks through the creation of a complete (full stack) web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), where each step of the stack is explained along the way. It is a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
 
-This tutorial takes the reader through the steps necessary to create the application, explaining each step of the stack on the way. The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), and resources and references are available at the end of the document. 
+The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), while resources and references are available at the end of the document. 
 
-# The Stack: An Overview
+# The Web Stack: An Overview
 
 ![webstack](web-stack.png)
+### Database: Neo4j
 
-## Database: Neo4j
+Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
 
-Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully transactional database (ACID) that stores data structured as graphs. Designed to be intuitive, high performance and scalable, it has a disk-based, native storage manager optimized for storing graph structures with maximum performance and scalability. Neo4j can handle graphs with many billions of nodes/relationships/properties on a single machine, but can also be scaled out across multiple machines for high availability.
+### REST API: Node-Neo4j-Swagger-API
 
-## REST API: Node-Neo4j-Swagger-API
+This application uses a Swagger-compliant API written in [Node.js](http://nodejs.org/), based off the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
 
-This application uses a Swagger-compliant API written in NodeJS, based off of the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
+### Web Application: AngularJS
 
-## Web Application: AngularJS
-
-_What HTML should have been_, AngularJS is an open-source web application framework. It assists in the creation of web applications that only require HTML, CSS, and JavaScript on the client side. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' two-way data binding is its most notable feature and reduces the amount of code written by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data contained in a scope defined in the model.
+_What HTML should have been_, [AngularJS](https://angularjs.org/) is an open-source web application framework. It assists in client-side development of rich web applications that use HTML, CSS and Javascript. Its goal is to augment web applications with model–view–controller (MVC) capability, in an effort to make both development and testing easier. AngularJS' [two-way data binding](https://docs.angularjs.org/guide/databinding) is its most notable feature that simplifies code-writing by relieving the server backend of templating responsibilities. Instead, templates are rendered in plain HTML according to data that is contained in the scope defined in the model.
 
 # The Domain Model
 
+### Neo4j: Background
+
+The Neo4j _property graph_ data model consists of nodes and relationships, both of which can have _key-value_-style properties. What does that mean, exactly? Nodes are the graph-database equivalent for records (in the relational model), with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record (node), relationships carry information that allows us to link nodes to form semantically-rich networks:
+
 ![graph data model](graph-data-model.png)
 
-## Neo4j: Background
+### The Movie Database 
 
-The Neo4j data model consists of nodes and relationships, both of which can have key/value-style properties. What does that mean, exactly? Nodes are the graph database name for records, with property keys instead of column names. That's normal enough. Relationships are the special part. In Neo4j, relationships are first-class citizens. More than a simple foreign-key reference to another record, relationships carry information, allowing us to link nodes into semantically rich networks.
-
-## The Movie Database Model
-
-The model in this tutorial includes three different types of nodes, each with their own properties, and six different types of relationships, one of which has its own properties. The underlying structure of the web application is described in the image below:
+The data model in this tutorial includes nodes with three different labels (each with their own properties), and six different types of relationships (one of which has its own property). The underlying structure of the database is visualized in the image below:
 
 ![movie data](movie-data-model.png)
 
-The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so.
-
-You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
+The Swagger API, which lies between the AngularJS web application and the Neo4j database, exports a relevant subset of the above model like so. You can see the Swagger API in action [here](http://movieapi-neo4j.herokuapp.com/docs/).
 
 
-# Neo4j: Setting up the Database
+# Neo4j: Setting Up the Database Server
 
-## Neo4j: Getting it Running
+### Running Neo4j
 
-- If you haven't done so already, [download Neo4j](http://www.neo4j.org/download)
+To dynamically access the database, start an instance of the server on your local machine:
+
+- If you haven't done so already, [download Neo4j](http://www.neo4j.com/download/)
 - Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like 'Neo4j', if you want
-- Navigate to the extracted folder and run `./bin/neo4j start`
-- If all goes well, you should see the Neo4j web application running at [port 7474](http://localhost:7474/)
+- On your Terminal, navigate to the extracted folder with `cd PATH_TO_FOLDER`, and run `./bin/neo4j start`
+- If all goes well, you should see the Neo4j web interface running locally at [port 7474](http://localhost:7474/)
+  - This built-in browser interface provides a web-UI for users to access the database easily. Learn more about it [here](http://docs.neo4j.org/chunked/stable/tools-webadmin.html)
+
+### Stopping Neo4j
+
+The Neo4j database server runs in the background and should be stopped after each use:
+
+- On your Terminal, navigate to the Neo4j directory
+- If you previously ran Neo4j, stop it with `./bin/neo4j stop`
+- To make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
+
+### Learning Cypher 
+
+Cypher is an expressive and efficient declarative query language for the graph database, Neo4j (think SQL to relational databases). Although simple Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) page for a basic introduction to the language. 
+
+### Loading Sample Data into Neo4j
+
+An empty database is not much fun. Let's load some sample _Movie_ data in and see Neo4j in action:
+
+- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` file/folder
+
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movie_ sample data file into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
+- Alternatively, if you don't have the cloned repository, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
+
+- Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
 
-An empty database is not much fun. Let's put some sample data in to see Neo4j in action:
+## Building the Database with Your Own Data
 
-- Navigate to your Neo4j directory
-- If you have Neo4j running, stop it with `./bin/neo4j stop`
-- If you want to make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
-- If you `ls data`, you'll see a file called `graph.db`.
-- Delete the existing `graph.db`.
-- Grab the zipped movies graph database file from the `databases` folder in the web app repository
-- Unzip it into the `data` folder
-- Run Neo4j! You should be able to see some nodes at [port 7474](http://localhost:7474/)
+Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 
-### Learn Cypher 
-
-Although basic Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) for a basic introduction to the language. 
-
-## Building the Database
-
-Although the tutorial repository comes with a pre-built `graph.db` file, you'll need to be able to create your own `graph.db` file with your own data. This section will demonstrate how to re-create the existing `graph.db` file on your local Neo4j instance. Although there are multiple ways to create a `graph.db` from scratch, this tutorial will use the Cypher command `LOAD CSV`. 
 
 ### Getting Ready
 
 - Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
 - Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
-	- Each node should have a unique ID
-	- Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
-	- Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
-	- Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
-	- Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
-	
+  - Each node should have a unique ID
+  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
+  - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
+  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
+  - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
+
+### Fast-Forward With Neography
+
+Don't feel like dealing with CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
+  
 ### Using LOAD CSV
 
 Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
@@ -87,11 +100,11 @@ Since this tutorial assumes you're running Neo4j locally, your csv path might lo
 
 Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web console. 
 
-Make sure you're pointing at the correct location with a test query (but write your own path in).  
+Make sure you're pointing at the correct location with a test query (but write your own path in for `PATH_TO_CSV`).  
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|' 
 WITH line LIMIT 4
@@ -107,11 +120,11 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
-#### Import your Nodes
+#### Import your Nodes:
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 WITH line
@@ -120,7 +133,7 @@ CREATE (g:Genre {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/person_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/person_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)});
@@ -128,7 +141,7 @@ CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_im
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated});
@@ -136,7 +149,7 @@ CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_i
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
 AS line 
 FIELDTERMINATOR '|'
 CREATE (m:Keyword {id:toInt(line.id), name:line.name});
@@ -146,7 +159,7 @@ CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -155,7 +168,7 @@ MERGE (p)-[:ACTED_IN {role:line.roles}]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/directed_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/directed_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -164,7 +177,7 @@ MERGE (p)-[:DIRECTED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
@@ -173,7 +186,7 @@ MERGE (m)-[:HAS_GENRE]->(g);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/produced_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/produced_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -182,7 +195,7 @@ MERGE (p)-[:PRODUCED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
@@ -191,16 +204,17 @@ MERGE (p)-[:WRITER_OF]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/Users/cristina/Documents/NT/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
 AS line 
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
 MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
 
-## Test: This to That
 
-Naturally you'd want to see if you've entered your data correctly. Run the _This to That_ query:
+## Testing Data Import: _This to That_
+
+Naturally you'd want to see if you've imported your data correctly. Run the _This to That_ query on the Neo4j browser:
 
 ```
 MATCH (a)-[r]->(b)
@@ -208,7 +222,7 @@ WHERE labels(a) <> [] AND labels(b) <> []
 RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
 LIMIT 10;
 ```
-You should get a result that looks something like:
+It returns the schema of this data set, specifically, how different node types are related to one another. You should get a result that looks something like:
 
 ```
 This	To			That
@@ -218,18 +232,20 @@ Person	PRODUCED	Movie
 Person	WRITER_OF	Movie
 Person	REVIEWED	Movie
 Movie	HAS_GENRE	Genre
-```
+``` 
 
-#  Node-Neo4j-Swagger API: Querying the Database
 
-## An Introduction
+
+# Node-Neo4j-Swagger API: Querying Database
+
+### An Introduction
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
+### Understanding the Logic Flow: From Routes to Models
+
 Let's take a look at how thoughts are organized in the Swagger part of this application, which lives in the `api` folder:
 ![routes](routes.png)
-
-## From Routes to Models
 
 Let's start at `app.js` (assuming we're in `api`). `app.js` starting the machinery of the app, and (importantly if you want to add your own models), and pulls the list of models from `routes/index.js`, which looks something like:
 
@@ -393,7 +409,7 @@ var _getTest = function (params, options, callback) {
 ```
 
 
-# AngularJS
+# AngularJS: Building Dynamic Web Pages
 
 Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database? 
 
@@ -404,39 +420,39 @@ Without going too deep into AngularJS design patterns, let's take a look at the 
 
 contentApp.controller('MovieItemCtrl', ['$scope', '$routeParams', '$http', '$templateCache',
   function($scope, $routeParams, $http, $templateCache) {
-  		console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
-  				'?api_key=special-key&neo4j=false');
-  		$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
-  				'?api_key=special-key&neo4j=false';
-	  	var fetchMovie = function()
-	  	{
-	  		$http({method: 'GET', url: $scope.url, cache: $templateCache}).
-			    success(function(data, status, headers, config) {
-			    	$scope.movie = data;
-			    	$scope.movie.poster_image = $scope.movie.poster_image || '/assets/img/posters/' +
-			    		$scope.movie.title.replace('/', ' ')  + '.jpg';
-			    	$scope.movie.poster_image = $scope.movie.poster_image.replace("w185", "w300");
-			    }).
-			    error(function(data, status, headers, config) {
-			    // called asynchronously if an error occurs
-			    // or server returns response with an error status.
-			    });
-	  	}
+      console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+          '?api_key=special-key&neo4j=false');
+      $scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+          '?api_key=special-key&neo4j=false';
+      var fetchMovie = function()
+      {
+        $http({method: 'GET', url: $scope.url, cache: $templateCache}).
+          success(function(data, status, headers, config) {
+            $scope.movie = data;
+            $scope.movie.poster_image = $scope.movie.poster_image || '/assets/img/posters/' +
+              $scope.movie.title.replace('/', ' ')  + '.jpg';
+            $scope.movie.poster_image = $scope.movie.poster_image.replace("w185", "w300");
+          }).
+          error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          });
+      }
 
-	  	fetchMovie();
+      fetchMovie();
   }]);
   
 ```
 
-Take a look at the	`$scope.url`:
+Take a look at the  `$scope.url`:
 
 
 ```
 $scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-  				encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
-  				'?api_key=special-key&neo4j=false';
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+          '?api_key=special-key&neo4j=false';
 ```
 
 Here you can see the web user interface grabbing information from the NodeJS API. When a Movie is fetched, this AngularJS machine GETs the Movie-related JSON and uses it to build the Movie item view. 
