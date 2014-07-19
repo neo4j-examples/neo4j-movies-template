@@ -208,14 +208,12 @@ var _matchBacon = function (params, options, callback) {
     name1: params.name1,
     name2: params.name2
   };
-    console.log(cypher_params)
-
+  //untested
   var query = [
-    'MATCH (person1:Person {name:{name1} }), (person2:Person {name:{name2} })',
-    'RETURN person2 AS person'
+  'MATCH p = (p1:Person {name:{name1} })-[*1..10]-(target:person{name:{name2} })',
+  'RETURN filter(x in (extract(n in nodes(p)|n)) where x.name > "") as person ORDER BY length(p) ASC limit 1;'
   ].join('\n');
 
-  console.log(query)
   callback(null, query, cypher_params);
 };
 
