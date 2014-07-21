@@ -9,6 +9,7 @@ var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var Role = require('../models/neo4j/role');
 var Person = require('../models/neo4j/person');
+var Bacon = require('../models/neo4j/bacon');
 var async = require('async');
 var randomName = require('random-name');
 
@@ -52,6 +53,16 @@ var _manyPersons = function (results, callback) {
   });
 
   callback(null, people);
+};
+
+// return many bacon
+var _manyBacons = function (results, callback) {
+  console.log (results)
+  var bacons = _.map(results, function (result) {
+    //return new Bacon(result.bacon); //fill this out where there are more details
+    return results[0];
+  });
+  callback(null, bacons);
 };
 
 var _manyRoles = function (results, callback) {
@@ -208,12 +219,14 @@ var _matchBacon = function (params, options, callback) {
     name1: params.name1,
     name2: params.name2
   };
-  //untested
+  //needs to be optimized
   var query = [
-  'MATCH p = (p1:Person {name:{name1} })-[*1..10]-(target:person{name:{name2} })',
-  'RETURN filter(x in (extract(n in nodes(p)|n)) where x.name > "") as person ORDER BY length(p) ASC limit 1;'
+    'MATCH p = (p1:Person {name:{name1} })-[*1..6]-(target:Person {name:{name2} })',
+    'WITH extract(n in nodes(p)|n.name) AS coll',
+    'WITH filter(thing in coll where length(thing)> 0) AS bacon',
+    'RETURN DISTINCT bacon',
+    'ORDER BY length(bacon);'
   ].join('\n');
-
   callback(null, query, cypher_params);
 };
 
@@ -322,7 +335,7 @@ var login = create;
 var getAll = Cypher(_matchAll, _manyPersons);
 
 // get people in Bacon path, return many persons 
-var getBaconPeople = Cypher(_matchBacon, _manyPersons);
+var getBaconPeople = Cypher(_matchBacon, _manyBacons);
 
 // get all people count
 var getAllCount = Cypher(_getAllCount, _singleCount);
