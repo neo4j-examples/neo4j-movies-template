@@ -1,3 +1,34 @@
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Building a Movie App With Neo4j](#user-content-building-a-movie-app-with-neo4j)
+- [The Web Stack: An Overview](#user-content-the-web-stack-an-overview)
+    - [Database: Neo4j](#user-content-database-neo4j)
+    - [REST API: Node-Neo4j-Swagger-API](#user-content-rest-api-node-neo4j-swagger-api)
+    - [Web Application: AngularJS](#user-content-web-application-angularjs)
+- [The Domain Model](#user-content-the-domain-model)
+    - [Neo4j: Background](#user-content-neo4j-background)
+    - [The Movie Database](#user-content-the-movie-database)
+- [Neo4j: Setting Up the Database Server](#user-content-neo4j-setting-up-the-database-server)
+    - [Running Neo4j](#user-content-running-neo4j)
+    - [Stopping Neo4j](#user-content-stopping-neo4j)
+    - [Learning Cypher](#user-content-learning-cypher)
+    - [Loading Sample Data into Neo4j](#user-content-loading-sample-data-into-neo4j)
+  - [Building the Database with Your Own Data](#user-content-building-the-database-with-your-own-data)
+    - [Getting Ready](#user-content-getting-ready)
+    - [Fast-Forward With Neography](#user-content-fast-forward-with-neography)
+    - [Using LOAD CSV](#user-content-using-load-csv)
+      - [Import your Nodes:](#user-content-import-your-nodes)
+      - [Import your Relationships:](#user-content-import-your-relationships)
+  - [Testing Data Import: This to That](#user-content-testing-data-import-this-to-that)
+- [Node-Neo4j-Swagger API: Querying Database](#user-content-node-neo4j-swagger-api-querying-database)
+    - [An Introduction](#user-content-an-introduction)
+    - [Understanding the Logic Flow: From Routes to Models](#user-content-understanding-the-logic-flow-from-routes-to-models)
+- [AngularJS: Building Dynamic Web Pages](#user-content-angularjs-building-dynamic-web-pages)
+- [References](#user-content-references)
+  - [Neo4j](#user-content-neo4j)
+  - [Swagger](#user-content-swagger)
+  - [AngularJS](#user-content-angularjs)
+
 Building a Movie App With Neo4j
 ======
 
