@@ -29,10 +29,12 @@ end
 
 def ping_source
 	puts @neo_out.execute_query("RETURN 'source, checking in: '")["data"][0][0] + @neo_out.configuration
+  # add message for when there's no connection
 end
 
 def ping_target
 	puts @neo_in.execute_query("RETURN 'target, checking in: '")["data"][0][0] + @neo_in.configuration
+  # add message for when there's no connection
 end
 
 @data = [

@@ -19,3 +19,7 @@ namespace :movies do
     ping_target
   end
 end
+
+task :default do
+  puts "hello, I am a Rakefile"
+end

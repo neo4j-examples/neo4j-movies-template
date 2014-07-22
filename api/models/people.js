@@ -225,7 +225,8 @@ var _matchBacon = function (params, options, callback) {
     'WITH extract(n in nodes(p)|n.name) AS coll',
     'WITH filter(thing in coll where length(thing)> 0) AS bacon',
     'RETURN DISTINCT bacon',
-    'ORDER BY length(bacon);'
+    'ORDER BY length(bacon)',
+    'LIMIT 5;'
   ].join('\n');
   callback(null, query, cypher_params);
 };
