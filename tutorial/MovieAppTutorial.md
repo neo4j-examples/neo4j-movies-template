@@ -112,17 +112,21 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 
 
-### Getting Your CSV Data Files Ready
+### Getting Your Data Files (.csv) Ready 
 
-- Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
-- Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
+- As before, stop Neo4j and delete the existing `graph.db` folder in the `PATH_TO_NEO4J/data` directory
+- When you start Neo4j again, it will detect the absence of the `graph.db` folder and generate a blank one
+- Prepare and organize your own data into CSV files. Refer to the `csv` folder in this tutorial's repository for the files used to build the movie database
 
   - Each node should have a unique ID
-  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
+  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively 
   - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
-  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
-  - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
+  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data 
+  - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header
   
+- Store all your data files in a `csv` folder
+- Once the data files are ready, we will import them into the running Neo4j instance on your machine
+
 
 ### Fast Forward With Neo4j-Shell or Ruby
 
@@ -135,14 +139,14 @@ Don't feel like manually importing your CSVs?
 
 
 #### With Ruby Gem: Neography
-- Navigate to your `csv` directory
+- Navigate to your `csv` folder
 - Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data
 
 If you encounter problems with your current installation of Ruby, try the following:
   - Download fresh versions of Ruby Version Manager (RVM) and Ruby, with `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
   - Check your version of Ruby with `ruby -v`
   - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
-  - Run `rvm gemdir` and ensure the output is `_PATH_/.rvm/gems/ruby-_VERSION_`
+  - Run `rvm gemdir` and ensure the output is `SOME_PATH/.rvm/gems/ruby-VERSION`
   - If all is fine, navigate to your `csv` directory, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data
 
 
