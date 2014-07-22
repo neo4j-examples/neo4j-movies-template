@@ -155,11 +155,12 @@ Finally, test your data import [here](#user-content-testing-data-import-this-to-
 
 ### Option 2: Manual Data Import with LOAD CSV
 
-With data files ready, let's fill up the database. If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
+With data files ready, let's fill up the database. 
+If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
 
-Start Neo4j, and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web browser console. 
+- Start Neo4j, and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web browser console
 
-Make sure you got the correct directory path with the test query below (but replace with your own path for `PATH_TO_CSV`). Since this tutorial assumes you're running Neo4j locally, your `PATH_TO_CSV` should look something like `file:/` + `path from root to csv folder/` + `filename.csv`.
+- Make sure you got the correct directory path with the test query below (but replace with your own path for `PATH_TO_CSV`). Since this tutorial assumes you're running Neo4j locally, your `PATH_TO_CSV` should look something like `file:/` + `path from root to csv folder/` + `filename.csv`.This query uses the _Movie_ data set's `genre_nodes.csv` as an example. The query returns the raw data stored in the said file. Note that this query only reads the .csv file; the command doesn't import any data into the database yet
 
 ```
 LOAD CSV WITH HEADERS
@@ -170,9 +171,7 @@ WITH line LIMIT 4
 RETURN line;
 ```
 
-This query uses the _Movie_ data set's `genre_nodes.csv` as an example. The query returns the raw data stored in the said file. Note that this query only reads the .csv file; the command doesn't import any data into the database yet.
-
-Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data and start importing your data. 
+- Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data and start importing your data
 
 ```
 //Clear the database of any remnants of test data:
@@ -284,7 +283,7 @@ WHERE labels(a) <> [] AND labels(b) <> []
 RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
 LIMIT 10;
 ```
-It returns the schema of this data set, specifically, how different node types are related to one another. You should get a result that looks something like:
+It returns the schema of the loaded data set, specifically, how different node types are related to one another. Taking the _Movie_ data set as an example, you should get a result that looks something like:
 
 ```
 This  To      That
@@ -296,7 +295,7 @@ Person  REVIEWED  Movie
 Movie HAS_GENRE Genre
 ``` 
 
-Congratulations! You have a functional Neo4j database loaded with your own data now! Play around with your data set using Cypher queries on the Neo4j built-in [browser interface](http://localhost:7474/).
+Congratulations! You have a functional Neo4j database loaded with your own data now. You can play around with your data set using Cypher queries on the Neo4j built-in [browser interface](http://localhost:7474/).
 
 
 # Node-Neo4j-Swagger API: Querying Database
