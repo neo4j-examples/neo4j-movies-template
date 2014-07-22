@@ -32,7 +32,6 @@ Content
 
  <!-- *generated with [DocToc](http://doctoc.herokuapp.com/)* -->
 
-
 Building a Movie App With Neo4j
 ======
 
@@ -113,20 +112,37 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 
 
-### Getting Ready
+### Getting Your CSV Data Files Ready
 
 - Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
 - Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
+
   - Each node should have a unique ID
   - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
   - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
   - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
   - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
-
-### Fast-Forward With Neography
-
-Don't feel like dealing with CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
   
+
+### Fast-Forward With Neo4j-Shell or Ruby
+
+Don't feel like manually importing your CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
+
+#### Neo4j-Shell
+
+
+#### Ruby Gem: Neography
+- Navigate to your `csv` directory, and run `gem install neography` then `rake movies:push` to populate your Neo4j database with your .csv data
+- If you encounter problems, try the following:
+  - Download Ruby Version Manager (RVM) and Ruby, with `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
+  - Check your version of Ruby with `ruby -v`
+  - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
+  - Run `rvm gemdir` and ensure the output is `_PATH_/.rvm/gems/ruby-_VERSION_`
+  - If all is fine, navigate to your `csv` directory, run `gem install neography` then `rake movies:push` to populate your Neo4j database with your .csv data
+
+
+
+
 ### Using LOAD CSV
 
 Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
@@ -260,13 +276,13 @@ LIMIT 10;
 It returns the schema of this data set, specifically, how different node types are related to one another. You should get a result that looks something like:
 
 ```
-This	To			That
-Person	ACTED_IN	Movie
-Person	DIRECTED	Movie
-Person	PRODUCED	Movie
-Person	WRITER_OF	Movie
-Person	REVIEWED	Movie
-Movie	HAS_GENRE	Genre
+This  To      That
+Person  ACTED_IN  Movie
+Person  DIRECTED  Movie
+Person  PRODUCED  Movie
+Person  WRITER_OF Movie
+Person  REVIEWED  Movie
+Movie HAS_GENRE Genre
 ``` 
 
 
