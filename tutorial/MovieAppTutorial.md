@@ -126,19 +126,24 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 
 ### Fast-Forward With Neo4j-Shell or Ruby
 
-Don't feel like manually importing your CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
-
-#### Neo4j-Shell
+Don't feel like manually importing your CSVs? 
 
 
-#### Ruby Gem: Neography
-- Navigate to your `csv` directory, and run `gem install neography` then `rake movies:push` to populate your Neo4j database with your .csv data
-- If you encounter problems, try the following:
-  - Download Ruby Version Manager (RVM) and Ruby, with `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
+<!-- Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database.  -->
+
+#### With Neo4j-Shell
+
+
+#### With Ruby Gem: Neography
+- Navigate to your `csv` directory
+- Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data
+
+- If you encounter problems with your current installation of Ruby, try the following:
+  - Download fresh versions of Ruby Version Manager (RVM) and Ruby, with `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
   - Check your version of Ruby with `ruby -v`
   - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
   - Run `rvm gemdir` and ensure the output is `_PATH_/.rvm/gems/ruby-_VERSION_`
-  - If all is fine, navigate to your `csv` directory, run `gem install neography` then `rake movies:push` to populate your Neo4j database with your .csv data
+  - If all is fine, navigate to your `csv` directory, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data
 
 
 
