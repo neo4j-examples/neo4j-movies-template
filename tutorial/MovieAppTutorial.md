@@ -1,4 +1,4 @@
-Table of Content
+Content
 ======
 
 - [Building a Movie App With Neo4j](#user-content-building-a-movie-app-with-neo4j)
