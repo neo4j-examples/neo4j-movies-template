@@ -99,12 +99,12 @@ Cypher is an expressive and efficient declarative query language for the graph d
 
 An empty database is not much fun. Let's load some sample _Movie_ data in and see Neo4j in action:
 
-- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` file/folder
+- If you `ls data` in the Neo4j directory, you'll see a folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` folder with `rm -rf graph.db`
 
-- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movie_ sample data file into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movie_ sample data file into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it with `unzip graph.db.zip`
 - Alternatively, if you don't have the cloned repository, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
 
-- Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
+- Run Neo4j [as before](#user-content-running-neo4j)! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
 
 ## Building the Database with Your Own Data
@@ -115,7 +115,7 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 ### Getting Your Data Files Ready 
 
 - As before, stop Neo4j and delete the existing `graph.db` folder in the `PATH_TO_NEO4J/data` directory
-- When you start Neo4j again, it will detect the absence of the `graph.db` folder and generate a blank one
+- Start Neo4j again; it will detect the absence of the `graph.db` folder and generate a blank one
 - Prepare and organize your own data into .csv files. Refer to the `csv` folder in this tutorial's repository for the files used to build the _Movie_ database
 
   - Each node should have a unique ID
@@ -129,17 +129,16 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 Once the data files are ready, we will import them into the Neo4j database running on your machine. There are two ways to do this, (1) automate the process with Neo4j-shell or Ruby's Gem feature, or (2) import each file manually with the Cypher command `LOAD CSV`.
 
 
-### (1) Fast Forward With Neo4j-Shell or Ruby
+### Option 1: Fast Forward With Neo4j-Shell or Ruby
 
 Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). Ensure that you have a fresh instance of Neo4j running at `localhost:7474`.
 
-<!-- Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database.  -->
 
-#### a. With Neo4j-Shell
+#### 1.1. With Neo4j-Shell
 _INSERT SHELL INSTRUCTS_
 
 
-#### b. With Ruby Gem: Neography
+#### 1.2. With Ruby Gem: Neography
 - Navigate to your `csv` folder
 - Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
 
@@ -151,7 +150,10 @@ If you encounter problems with your current installation of Ruby, try the follow
   - If all is fine, navigate to your `csv` folder, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
 
 
-### (2) Manual Data Import with LOAD CSV
+Test your data import [here](#user-content-testing-data-import-this-to-that)!
+
+
+### Option 2: Manual Data Import with LOAD CSV
 
 Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
 
