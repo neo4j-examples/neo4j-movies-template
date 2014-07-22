@@ -101,7 +101,7 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 
 - If you `ls data` in the Neo4j directory, you'll see a folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` folder with `rm -rf graph.db`
 
-- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movie_ sample data file into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it with `unzip graph.db.zip`
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the sample _Movie_ data file `graph.db.zip` into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it with `unzip graph.db.zip`
 - Alternatively, if you don't have the cloned repository, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
 
 - Run Neo4j [as before](#user-content-running-neo4j)! You should be able to see some nodes at [port 7474](http://localhost:7474/)
@@ -150,18 +150,16 @@ If you encounter problems with your current installation of Ruby, try the follow
   - If all is fine, navigate to your `csv` folder, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
 
 
-Test your data import [here](#user-content-testing-data-import-this-to-that)!
+Finally, test your data import [here](#user-content-testing-data-import-this-to-that)!
 
 
 ### Option 2: Manual Data Import with LOAD CSV
 
-Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
+With data files ready, let's fill up the database. If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
 
-Since this tutorial assumes you're running Neo4j locally, your csv path might look something like `file:/` + `path from root to csv file/` + `filename.csv`.
+Start Neo4j, and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web browser console. 
 
-Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web console. 
-
-Make sure you're pointing at the correct location with a test query (but write your own path in for `PATH_TO_CSV`).  
+Make sure you got the correct directory path with the test query below (but replace with your own path for `PATH_TO_CSV`). Since this tutorial assumes you're running Neo4j locally, your `PATH_TO_CSV` should look something like `file:/` + `path from root to csv folder/` + `filename.csv`.
 
 ```
 LOAD CSV WITH HEADERS
@@ -171,7 +169,10 @@ FIELDTERMINATOR '|'
 WITH line LIMIT 4
 RETURN line;
 ```
-Once you've played around a bit and are sure you know where you're pointing, clear the database of any test data and start importing your data. 
+
+This query uses the _Movie_ data set's `genre_nodes.csv` as an example. The query returns the raw data stored in the said file. Note that this query only reads the .csv file; the command doesn't import any data into the database yet.
+
+Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data and start importing your data. 
 
 ```
 //Clear the database of any remnants of test data:
@@ -181,7 +182,7 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
-#### Import your Nodes:
+#### Import your Nodes
 
 ```
 LOAD CSV WITH HEADERS
@@ -216,7 +217,7 @@ FIELDTERMINATOR '|'
 CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 ```
 
-#### Import your Relationships:
+#### Import your Relationships
 
 ```
 LOAD CSV WITH HEADERS
@@ -295,6 +296,7 @@ Person  REVIEWED  Movie
 Movie HAS_GENRE Genre
 ``` 
 
+Congratulations! You have a functional Neo4j database loaded with your own data now! Play around with your data set using Cypher queries on the Neo4j built-in [browser interface](http://localhost:7474/).
 
 
 # Node-Neo4j-Swagger API: Querying Database
