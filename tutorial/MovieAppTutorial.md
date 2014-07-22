@@ -171,7 +171,7 @@ WITH line LIMIT 4
 RETURN line;
 ```
 
-- Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data and start importing your data
+- Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data
 
 ```
 //Clear the database of any remnants of test data:
@@ -180,6 +180,8 @@ WITH n LIMIT 10000
 OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
+
+- And start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary.
 
 #### Import your Nodes
 
@@ -271,6 +273,8 @@ FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
 MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
+
+And you are done importing the data files!
 
 
 ## Testing Data Import: _This to That_
