@@ -124,7 +124,7 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
   - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
   
 
-### Fast-Forward With Neo4j-Shell or Ruby
+### Fast Forward With Neo4j-Shell or Ruby
 
 Don't feel like manually importing your CSVs? 
 
@@ -138,7 +138,7 @@ Don't feel like manually importing your CSVs?
 - Navigate to your `csv` directory
 - Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data
 
-- If you encounter problems with your current installation of Ruby, try the following:
+If you encounter problems with your current installation of Ruby, try the following:
   - Download fresh versions of Ruby Version Manager (RVM) and Ruby, with `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
   - Check your version of Ruby with `ruby -v`
   - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
