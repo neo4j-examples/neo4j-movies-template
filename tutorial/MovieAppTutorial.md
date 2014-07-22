@@ -1,4 +1,5 @@
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+Table of Content
+======
 
 - [Building a Movie App With Neo4j](#user-content-building-a-movie-app-with-neo4j)
 - [The Web Stack: An Overview](#user-content-the-web-stack-an-overview)
