@@ -15,11 +15,9 @@ Content
     - [Learning Cypher](#user-content-learning-cypher)
     - [Loading Sample Data into Neo4j](#user-content-loading-sample-data-into-neo4j)
   - [Building the Database with Your Own Data](#user-content-building-the-database-with-your-own-data)
-    - [Getting Ready](#user-content-getting-ready)
-    - [Fast-Forward With Neography](#user-content-fast-forward-with-neography)
-    - [Using LOAD CSV](#user-content-using-load-csv)
-      - [Import your Nodes:](#user-content-import-your-nodes)
-      - [Import your Relationships:](#user-content-import-your-relationships)
+    - [Getting Your Data Files Ready](#user-content-getting-your-data-files-ready)
+    - [Option 1: Fast Forward With Neo4j-Shell or Ruby](#user-content-option-1-fast-forward-with-neo4j-shell-or-ruby)
+    - [Option 2: Manual Data Import with LOAD CSV](#user-content-option-2-manual-data-import-with-load-csv)
   - [Testing Data Import: This to That](#user-content-testing-data-import-this-to-that)
 - [Node-Neo4j-Swagger API: Querying Database](#user-content-node-neo4j-swagger-api-querying-database)
     - [An Introduction](#user-content-an-introduction)
@@ -143,7 +141,7 @@ _INSERT SHELL INSTRUCTS_
 - Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
 
 If you encounter problems with your current installation of Ruby, try the following:
-  - Download fresh versions of [Ruby Version Manager (RVM)](https://rvm.io/) and Ruby, with `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
+  - Download fresh versions of [Ruby Version Manager (RVM)](https://rvm.io/) and Ruby, with the command `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
   - Check your version of Ruby with `ruby -v`
   - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
   - Run `rvm gemdir` and ensure the output is `SOME_PATH/.rvm/gems/ruby-VERSION`
@@ -160,7 +158,7 @@ If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.n
 
 - Start Neo4j, and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web browser console
 
-- Make sure you got the correct directory path with the test query below (but replace with your own path for `PATH_TO_CSV`). Since this tutorial assumes you're running Neo4j locally, your `PATH_TO_CSV` should look something like `file:/` + `path from root to csv folder/` + `filename.csv`.This query uses the _Movie_ data set's `genre_nodes.csv` as an example. The query returns the raw data stored in the said file. Note that this query only reads the .csv file; the command doesn't import any data into the database yet
+- Make sure you got the correct directory path with the test query below (but replace with your own path for `PATH_TO_CSV`). Since this tutorial assumes you're running Neo4j locally, your `PATH_TO_CSV` should look something like `file:/` + `path from root to csv folder/` + `filename.csv`. This sample query uses the _Movie_ data set's `genre_nodes.csv` as an example. The test query returns the raw data stored in the said file. Note that this query only reads the .csv file; it doesn't import any data into the database yet:
 
 ```
 LOAD CSV WITH HEADERS
@@ -171,7 +169,7 @@ WITH line LIMIT 4
 RETURN line;
 ```
 
-- Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data
+- Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data:
 
 ```
 //Clear the database of any remnants of test data:
@@ -181,7 +179,7 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
-- And start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary.
+- And start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
 
 #### Import your Nodes
 
@@ -290,13 +288,13 @@ LIMIT 10;
 It returns the schema of the loaded data set, specifically, how different node types are related to one another. Taking the _Movie_ data set as an example, you should get a result that looks something like:
 
 ```
-This  To      That
+This    To      That
 Person  ACTED_IN  Movie
 Person  DIRECTED  Movie
 Person  PRODUCED  Movie
 Person  WRITER_OF Movie
 Person  REVIEWED  Movie
-Movie HAS_GENRE Genre
+Movie   HAS_GENRE Genre
 ``` 
 
 Congratulations! You have a functional Neo4j database loaded with your own data now. You can play around with your data set using Cypher queries on the Neo4j built-in [browser interface](http://localhost:7474/).
