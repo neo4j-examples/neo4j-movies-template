@@ -257,6 +257,42 @@ exports.addPerson = {
   }
 };
 
+exports.getBaconPeople = {
+  'spec': {
+    "description" : "List all people",
+    "path" : "/people/bacon/",
+    "notes" : "Returns all Bacon paths from person 1 to person 2",
+    "summary" : "Find all Bacon paths",
+    "method": "GET",
+    "params" : [
+      param.query("name1", "Name of the origin user", "string"),
+      param.query("name2", "Name of the target user", "string")
+    ],
+    "responseClass" : "List[Person]",
+    "errorResponses" : [swe.notFound('people')],
+    "nickname" : "getBaconPeople"
+  },
+  'action': function (req,res) {
+    var name1 = req.query.name1;
+    var name2 = req.query.name2;
+
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+    var start = new Date();
+
+    var params = {
+      name1: name1,
+      name2: name2
+    };
+
+      People.getBaconPeople(params, options, function (err, response) {
+        if (err || !response.results) throw swe.notFound('people');
+        writeResponse(res, response, start);
+      });
+  }
+};
+
 
 exports.addRandomPeople = {
   'spec': {

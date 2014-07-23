@@ -9,6 +9,7 @@ var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var Role = require('../models/neo4j/role');
 var Person = require('../models/neo4j/person');
+var Bacon = require('../models/neo4j/bacon');
 var async = require('async');
 var randomName = require('random-name');
 
@@ -45,6 +46,8 @@ var _singlePerson = function (results, callback) {
 
 // return many people
 var _manyPersons = function (results, callback) {
+
+  console.log (results)
   var people = _.map(results, function (result) {
     return new Person(result.person);
   });
@@ -201,6 +204,24 @@ var _updateName = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
+var _matchBacon = function (params, options, callback) {
+  var cypher_params = {
+    name1: params.name1,
+    name2: params.name2
+  };
+  //needs to be optimized
+  var query = [
+    'MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )',
+    'WITH extract(n in nodes(p)|n) AS coll',
+    'WITH filter(thing in coll where length(thing.name)> 0) AS bacon',
+    'UNWIND(bacon) AS person',
+    'RETURN distinct person'
+  ].join('\n');
+  callback(null, query, cypher_params);
+};
+
+
+
 // creates the person with cypher
 var _create = function (params, options, callback) {
   var cypher_params = {
@@ -303,6 +324,9 @@ var login = create;
 // get all people
 var getAll = Cypher(_matchAll, _manyPersons);
 
+// get people in Bacon path, return many persons 
+var getBaconPeople = Cypher(_matchBacon, _manyPersons);
+
 // get all people count
 var getAllCount = Cypher(_getAllCount, _singleCount);
 
@@ -337,5 +361,6 @@ module.exports = {
   getByName: getByName,
   getDirectorByMovie: getDirectorByMovie,
   getCoActorsByPerson: getCoActorsByPerson,
-  getRolesByMovie: getRolesByMovie
+  getRolesByMovie: getRolesByMovie,
+  getBaconPeople: getBaconPeople
 };

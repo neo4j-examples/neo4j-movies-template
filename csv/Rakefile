@@ -1,0 +1,25 @@
+require File.expand_path File.dirname(__FILE__) + '/CSVmaker.rb'
+
+namespace :movies do
+  task :pull do
+    ping_source
+    pull
+  end
+
+  task :push do
+    ping_target
+    push
+  end
+
+  task :ping_source do
+    ping_source
+  end
+
+  task :ping_target do
+    ping_target
+  end
+end
+
+task :default do
+  puts "hello, I am a Rakefile"
+end

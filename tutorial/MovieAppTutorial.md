@@ -196,6 +196,7 @@ DELETE n,r;
 
 - ... and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
 
+
 #### Import your Nodes
 
 ```
