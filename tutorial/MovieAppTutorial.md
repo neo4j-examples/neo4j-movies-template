@@ -1,3 +1,35 @@
+Content
+======
+
+- [Building a Movie App With Neo4j](#user-content-building-a-movie-app-with-neo4j)
+- [The Web Stack: An Overview](#user-content-the-web-stack-an-overview)
+    - [Database: Neo4j](#user-content-database-neo4j)
+    - [REST API: Node-Neo4j-Swagger-API](#user-content-rest-api-node-neo4j-swagger-api)
+    - [Web Application: AngularJS](#user-content-web-application-angularjs)
+- [The Domain Model](#user-content-the-domain-model)
+    - [Neo4j: Background](#user-content-neo4j-background)
+    - [The Movie Database](#user-content-the-movie-database)
+- [Neo4j: Setting Up the Database Server](#user-content-neo4j-setting-up-the-database-server)
+    - [Running Neo4j](#user-content-running-neo4j)
+    - [Stopping Neo4j](#user-content-stopping-neo4j)
+    - [Learning Cypher](#user-content-learning-cypher)
+    - [Loading Sample Data into Neo4j](#user-content-loading-sample-data-into-neo4j)
+  - [Building the Database with Your Own Data](#user-content-building-the-database-with-your-own-data)
+    - [Getting Your Data Files Ready](#user-content-getting-your-data-files-ready)
+    - [Option 1: Fast Forward With Neo4j-Shell or Ruby](#user-content-option-1-fast-forward-with-neo4j-shell-or-ruby)
+    - [Option 2: Manual Data Import with LOAD CSV](#user-content-option-2-manual-data-import-with-load-csv)
+  - [Testing Data Import: This to That](#user-content-testing-data-import-this-to-that)
+- [Node-Neo4j-Swagger API: Querying Database](#user-content-node-neo4j-swagger-api-querying-database)
+    - [An Introduction](#user-content-an-introduction)
+    - [Understanding the Logic Flow: From Routes to Models](#user-content-understanding-the-logic-flow-from-routes-to-models)
+- [AngularJS: Building Dynamic Web Pages](#user-content-angularjs-building-dynamic-web-pages)
+- [References](#user-content-references)
+  - [Neo4j](#user-content-neo4j)
+  - [Swagger](#user-content-swagger)
+  - [AngularJS](#user-content-angularjs)
+
+ <!-- *generated with [DocToc](http://doctoc.herokuapp.com/)* -->
+
 Building a Movie App With Neo4j
 ======
 
@@ -65,12 +97,12 @@ Cypher is an expressive and efficient declarative query language for the graph d
 
 An empty database is not much fun. Let's load some sample _Movie_ data in and see Neo4j in action:
 
-- If you `ls data` in the Neo4j directory, you'll see a file/folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` file/folder
+- If you `ls data` in the Neo4j directory, you'll see a folder called `graph.db`. It contains stored, persistent data in the database. Delete the existing `graph.db` folder with `rm -rf graph.db`
 
-- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the zipped _Movie_ sample data file into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it
+- On a new Terminal window, navigate to the source code folder for this web app (if you already cloned it onto your desktop from [GitHub](https://github.com/kbastani/neo4j-movies-template)). Copy the sample _Movie_ data file `graph.db.zip` into your local Neo4j database with `cp database/graph.db.zip PATH_TO_NEO4J_DATABASE_FOLDER/data`, and unzip it with `unzip graph.db.zip`
 - Alternatively, if you don't have the cloned repository, download the said file [here](https://github.com/kbastani/neo4j-movies-template/tree/master/database), and unzip it into the `PATH_TO_NEO4J_DATABASE_FOLDER/data` folder
 
-- Run Neo4j as before! You should be able to see some nodes at [port 7474](http://localhost:7474/)
+- Run Neo4j [as before](#user-content-running-neo4j)! You should be able to see some nodes at [port 7474](http://localhost:7474/)
 
 
 ## Building the Database with Your Own Data
@@ -78,30 +110,53 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
 
 
-### Getting Ready
+### Getting Your Data Files Ready 
 
-- Stop Neo4j and move the existing `graph.db` file out of the `data` folder in your instance of Neo4j. When you restart Neo4j, it will detect the absence of this file and generate a blank one. 
-- Prepare and organize your data into CSV files. Take a look at the `csv` folder in this repository for the files used to build the movie database. 
-
+- As before, stop Neo4j and delete the existing `graph.db` folder in the `PATH_TO_NEO4J/data` directory
+- Start Neo4j again; it will detect the absence of the `graph.db` folder and generate a blank one
+- Prepare and organize your own data into .csv files. Refer to the `csv` folder in this tutorial's repository for the files used to build the _Movie_ database
   - Each node should have a unique ID
-  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively. 
+  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively 
   - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
-  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data. 
-  - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header. 
+  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data 
+  - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header
+  
+- Store all your data files in a `csv` folder
 
-### Fast-Forward With Neography
+Once the data files are ready, we will import them into the Neo4j database running on your machine. There are two ways to do this, (1) automate the process with Neo4j-shell or Ruby's Gem feature, or (2) import each file manually with the Cypher command `LOAD CSV`.
 
-Don't feel like dealing with CSVs? Assuming you've completed the "Getting Ready" steps, have a fresh Neo4j running at `localhost:7474`, and have `ruby` on your machine, navigate to your `csv` directory and run `gem install neography` then `rake movies:push`. This will use `LOAD CSV` to populate your database. 
+### Option 1: Fast Forward With Neo4j-Shell or Ruby
 
-### Using LOAD CSV
+Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). Ensure that you have a fresh instance of Neo4j running at `localhost:7474`.
 
-Data ready, let's fill up the database. Although there are a few methods to get medium amounts of data into a Neo4j database, in this tutorial we'll be using `LOAD CSV`. If you're rusty on Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
 
-Since this tutorial assumes you're running Neo4j locally, your csv path might look something like `file:/` + `path from root to csv file/` + `filename.csv`.
+#### 1.1. With Neo4j-Shell
+_INSERT SHELL INSTRUCTS_
 
-Start up Neo4j and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web console. 
 
-Make sure you're pointing at the correct location with a test query (but write your own path in for `PATH_TO_CSV`).  
+#### 1.2. With Ruby Gem: Neography
+- Navigate to your `csv` folder
+- Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
+
+If you encounter problems with your current installation of Ruby, try the following:
+  - Download fresh versions of [Ruby Version Manager (RVM)](https://rvm.io/) and Ruby, with the command `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
+  - Check your version of Ruby with `ruby -v`
+  - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
+  - Run `rvm gemdir` and ensure the output is `SOME_PATH/.rvm/gems/ruby-VERSION`
+  - If all is fine, navigate to your `csv` folder, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
+
+
+Finally, test your data import [here](#user-content-testing-data-import-this-to-that)!
+
+
+### Option 2: Manual Data Import with LOAD CSV
+
+With data files ready, let's fill up the database. 
+If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
+
+- Start Neo4j, and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web browser console
+
+- Make sure you got the correct directory path with the test query below (but replace with your own path for `PATH_TO_CSV`). Since this tutorial assumes you're running Neo4j locally, your `PATH_TO_CSV` should look something like `file:/` + `path from root to csv folder/` + `filename.csv`. This sample query uses the _Movie_ data set's `genre_nodes.csv` as an example. The test query returns the raw data stored in the said file. Note that this query only reads the .csv file; it doesn't import any data into the database yet:
 
 ```
 LOAD CSV WITH HEADERS
@@ -111,7 +166,8 @@ FIELDTERMINATOR '|'
 WITH line LIMIT 4
 RETURN line;
 ```
-Once you've played around a bit and are sure you know where you're pointing, clear the database of any test data and start importing your data. 
+
+- Once you've played around a bit and are certain you know how to point to the various .csv files, clear the database of any test data:
 
 ```
 //Clear the database of any remnants of test data:
@@ -121,7 +177,9 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
-#### Import your Nodes:
+- ...and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
+
+#### Import your Nodes
 
 ```
 LOAD CSV WITH HEADERS
@@ -156,7 +214,7 @@ FIELDTERMINATOR '|'
 CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 ```
 
-#### Import your Relationships:
+#### Import your Relationships
 
 ```
 LOAD CSV WITH HEADERS
@@ -212,6 +270,8 @@ MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)
 MERGE (m)-[:HAS_KEYWORD]->(k);
 ```
 
+And you are done importing the data files!
+
 
 ## Testing Data Import: _This to That_
 
@@ -223,18 +283,19 @@ WHERE labels(a) <> [] AND labels(b) <> []
 RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
 LIMIT 10;
 ```
-It returns the schema of this data set, specifically, how different node types are related to one another. You should get a result that looks something like:
+It returns the schema of the loaded data set, specifically, how different node types are related to one another. Taking the _Movie_ data set as an example, you should get a result that looks something like:
 
 ```
-This	To			That
-Person	ACTED_IN	Movie
-Person	DIRECTED	Movie
-Person	PRODUCED	Movie
-Person	WRITER_OF	Movie
-Person	REVIEWED	Movie
-Movie	HAS_GENRE	Genre
+This    To      That
+Person  ACTED_IN  Movie
+Person  DIRECTED  Movie
+Person  PRODUCED  Movie
+Person  WRITER_OF Movie
+Person  REVIEWED  Movie
+Movie   HAS_GENRE Genre
 ``` 
 
+Congratulations! You have a functional Neo4j database loaded with your own data now. You can play around with your data set using Cypher queries on the Neo4j built-in [browser interface](http://localhost:7474/).
 
 
 # Node-Neo4j-Swagger API: Querying Database
