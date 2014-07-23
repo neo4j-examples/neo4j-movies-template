@@ -145,21 +145,22 @@ DELETE n,r;
 - If you haven't done so already, [install homebrew](http://brew.sh/) (sorry Windows users)
 - Once done, run `brew install coreutils` on your Terminal
 - Navigate back to the top level of your Neo4j database directory, and make sure it's running using `./bin/neo4j status`
-- Take note of the path to the Neo4j directory (run the command `pwd` on your Terminal)
+- Take note of the path to the Neo4j directory (run the command `pwd` on your Terminal to see the path)
 - Go to `neo4j-movies-template\csv`, open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory (remove the `#` in front of the line to ensure it's not commented out)
 - From `neo4j-movies-template\csv` directory, run `sh make_cyp.sh` to start importing
 
 
 #### 1.2. With Ruby Gem: Neography
-- Navigate to your `csv` folder
-- Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
+- Navigate to `neo4j-movies-template\csv` folder
+- Run `gem install neography`, then `rake movies:push` to populate your Neo4j database with the .csv data files
 
 If you encounter problems with your current installation of Ruby, try the following:
   - Download fresh versions of [Ruby Version Manager (RVM)](https://rvm.io/) and Ruby, with the command `\curl -sSL https://get.rvm.io | bash -s stable --ruby` in a directory of choice
+  - Refresh all your Terminal windows with `source /PATH_TO_RVM_DOWNLOAD/.rvm/scripts/rvm` to use RVM
   - Check your version of Ruby with `ruby -v`
   - Set your RVM to use that version of Ruby with `rvm use 2.1.1` (replace _2.1.1_ with your version)
   - Run `rvm gemdir` and ensure the output is `SOME_PATH/.rvm/gems/ruby-VERSION`
-  - If all is fine, navigate to your `csv` folder, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with your .csv data files
+  - If all is fine, navigate to `neo4j-movies-template\csv` folder, run `gem install neography`, then `rake movies:push` to populate your Neo4j database with the .csv data files
 
 
 Finally, test your data import [here](#user-content-testing-data-import-this-to-that)!
