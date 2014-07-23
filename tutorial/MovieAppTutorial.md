@@ -304,7 +304,7 @@ Congratulations! You have a functional Neo4j database loaded with your own data 
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
-### Understanding the Logic Flow: From Routes to Models
+### Understanding the Flow: From Routes to Models
 
 Let's take a look at how thoughts are organized in the Swagger part of this application, which lives in the `api` folder:
 ![routes](routes.png)
@@ -469,6 +469,136 @@ var _getTest = function (params, options, callback) {
 };
 
 ```
+
+### Adding the Bacon Path
+
+This section demonstrates how to extend the Person object by one endpoint with receives two Persons and returns an ordered list of Persons connecting the first person to the second person. 
+
+#### The Query
+
+Before anything can happen, we need to know what we'll be asking the database. In the Neo4j browser, try the following query, filling in actor names for `name1` and `name2`:
+
+```
+MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )
+WITH extract(n in nodes(p)|n) AS coll
+WITH filter(thing in coll where length(thing.name)> 0) AS bacon
+UNWIND(bacon) AS person
+RETURN person
+```
+
+You should get several (or just one) node as the result. Note that we're returning items called 'person'. This will be important later.
+
+#### The Model
+
+This query extends the Person model--it takes two Persons as input and outputs one or more Persons. 
+
+Let's see how `getBaconPeople` is implemented. 
+
+First, (or last, if you prefer), scroll down to the bottom of `api/models/people.js` and note that the function `getBaconPeople` is one of the module exports. 
+
+Scrolling up, let's take a look at `getBaconPeople`:
+
+```
+// get people in Bacon path, return many persons 
+var getBaconPeople = Cypher(_matchBacon, _manyPersons);
+
+```
+
+The `Cypher` function takes both `_matchBacon`, the query function, and `_manyPersons`, the result function, does some magic, and sends the result somewhere. 
+
+Let's take a look `_matchBacon` and `_manyPersons`:
+
+```
+var _matchBacon = function (params, options, callback) {
+  var cypher_params = {
+    name1: params.name1,
+    name2: params.name2
+  };
+  var query = [
+    'MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )',
+    'WITH extract(n in nodes(p)|n) AS coll',
+    'WITH filter(thing in coll where length(thing.name)> 0) AS bacon',
+    'UNWIND(bacon) AS person',
+    'RETURN person'
+  ].join('\n');
+  callback(null, query, cypher_params);
+};
+```
+
+Here's our query again! Note how the Cypher params are passed. This will be on the test later.
+
+```
+// return many people
+var _manyPersons = function (results, callback) {
+
+  console.log (results)
+  var people = _.map(results, function (result) {
+    return new Person(result.person);
+  });
+
+  callback(null, people);
+};
+```
+
+Wizardry! This function allows us to return many people. Note how the return statement builds a new Person object (see `api\models\neo4j\person.js` for implementation) out of `results.person`. If you'd written `RETURN abacus` in your Cypher query you would have to update this line to `results.abacus`. 
+
+#### The Route
+
+Head on over to `api\routes\people.js` and gaze upon the following code:
+
+```
+exports.getBaconPeople = {
+  'spec': {
+    "description" : "List all people",
+    "path" : "/people/bacon/",
+    "notes" : "Returns all Bacon paths from person 1 to person 2",
+    "summary" : "Find all Bacon paths",
+    "method": "GET",
+    "params" : [
+      param.query("name1", "Name of the origin user", "string"),
+      param.query("name2", "Name of the target user", "string")
+    ],
+    "responseClass" : "List[Person]",
+    "errorResponses" : [swe.notFound('people')],
+    "nickname" : "getBaconPeople"
+  },
+  'action': function (req,res) {
+    var name1 = req.query.name1;
+    var name2 = req.query.name2;
+
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+    var start = new Date();
+
+    var params = {
+      name1: name1,
+      name2: name2
+    };
+
+      People.getBaconPeople(params, options, function (err, response) {
+        if (err || !response.results) throw swe.notFound('people');
+        writeResponse(res, response, start);
+      });
+  }
+};
+```
+
+This is how a route is born. Note that because the app receives parameters via a query (as opposed to a path), "params" uses `param.query`. 
+
+Note how these parameters are passed to variables using `req.query`. Note also that you can set the name of the Cypher parameters you'll be using in the models file when you create `var params`. 
+
+#### Adding the Endpoint to app.js
+
+Take a look at `api\app.js`. Under `// Add models and methods to swagger`, you'll find:
+
+```
+swagger.addModels(models)
+... other endpoints here ...
+.addGet(routes.people.getBaconPeople)
+```
+
+...and that's it! The getBaconPeople endpoint exists. 
 
 
 # AngularJS: Building Dynamic Web Pages

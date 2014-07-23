@@ -55,16 +55,6 @@ var _manyPersons = function (results, callback) {
   callback(null, people);
 };
 
-// return many bacon
-var _manyBacons = function (results, callback) {
-  console.log (results)
-  var bacons = _.map(results, function (result) {
-    //return new Bacon(result.bacon); //fill this out where there are more details
-    return results[0];
-  });
-  callback(null, bacons);
-};
-
 var _manyRoles = function (results, callback) {
   var roles = _.map(results, function (result) {
     return new Role(result);
@@ -221,12 +211,11 @@ var _matchBacon = function (params, options, callback) {
   };
   //needs to be optimized
   var query = [
-    'MATCH p = (p1:Person {name:{name1} })-[*1..6]-(target:Person {name:{name2} })',
-    'WITH extract(n in nodes(p)|n.name) AS coll',
-    'WITH filter(thing in coll where length(thing)> 0) AS bacon',
-    'RETURN DISTINCT bacon',
-    'ORDER BY length(bacon)',
-    'LIMIT 5;'
+    'MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )',
+    'WITH extract(n in nodes(p)|n) AS coll',
+    'WITH filter(thing in coll where length(thing.name)> 0) AS bacon',
+    'UNWIND(bacon) AS person',
+    'RETURN distinct person'
   ].join('\n');
   callback(null, query, cypher_params);
 };
@@ -336,7 +325,7 @@ var login = create;
 var getAll = Cypher(_matchAll, _manyPersons);
 
 // get people in Bacon path, return many persons 
-var getBaconPeople = Cypher(_matchBacon, _manyBacons);
+var getBaconPeople = Cypher(_matchBacon, _manyPersons);
 
 // get all people count
 var getAllCount = Cypher(_getAllCount, _singleCount);
