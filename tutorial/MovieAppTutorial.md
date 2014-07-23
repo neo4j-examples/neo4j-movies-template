@@ -83,7 +83,7 @@ To dynamically access the database, start an instance of the server on your loca
 
 ### Stopping Neo4j
 
-The Neo4j database server runs in the background and should be stopped after each use:
+You might run into some trouble if the database is shutdown improperly. To shut down Neo4j:
 
 - On your Terminal, navigate to the Neo4j directory
 - If you previously ran Neo4j, stop it with `./bin/neo4j stop`
@@ -115,7 +115,6 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 - As before, stop Neo4j and delete the existing `graph.db` folder in the `PATH_TO_NEO4J/data` directory
 - Start Neo4j again; it will detect the absence of the `graph.db` folder and generate a blank one
 - Prepare and organize your own data into .csv files. Refer to the `csv` folder in this tutorial's repository for the files used to build the _Movie_ database
-
   - Each node should have a unique ID
   - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively 
   - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
@@ -126,14 +125,29 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 
 Once the data files are ready, we will import them into the Neo4j database running on your machine. There are two ways to do this, (1) automate the process with Neo4j-shell or Ruby's Gem feature, or (2) import each file manually with the Cypher command `LOAD CSV`.
 
-
 ### Option 1: Fast Forward With Neo4j-Shell or Ruby
 
 Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). Ensure that you have a fresh instance of Neo4j running at `localhost:7474`.
 
 
 #### 1.1. With Neo4j-Shell
-_INSERT SHELL INSTRUCTS_
+
+- After looking around on the local Neo4j browser, clear your database using:
+
+```
+//Clear the database of any remnants of test data:
+MATCH (n)
+WITH n LIMIT 10000
+OPTIONAL MATCH (n)-[r]->()
+DELETE n,r;
+```
+
+- If you haven't done so already, [install homebrew](http://brew.sh/) (sorry Windows users)
+- Once done, run `brew install coreutils` on your Terminal
+- Navigate back to the top level of your Neo4j database directory, and make sure it's running using `./bin/neo4j status`
+- Take note of the path to the Neo4j directory
+- Go to `neo4j-movies-template\csv`, open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory (remove the `#` in front of the line to ensure it's not commented out)
+- From `neo4j-movies-template\csv` directory, run `sh make_cyp.sh` to start importing
 
 
 #### 1.2. With Ruby Gem: Neography
@@ -179,7 +193,7 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
-- And start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
+- ... and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
 
 #### Import your Nodes
 
@@ -306,7 +320,7 @@ Congratulations! You have a functional Neo4j database loaded with your own data 
 
 The Node-Neo4j-Swagger API was written to make it as easy as possible to create an API using Node.js and Neo4j that can be consumed by some other app. Swagger provides interactive documentation so that it is easy to interact with the API. Node-Neo4j-Swagger merges the Swagger with Neo4j queries and visualizations so developers can see how Neo4j and the API results relate to each other.
 
-### Understanding the Logic Flow: From Routes to Models
+### Understanding the Flow: From Routes to Models
 
 Let's take a look at how thoughts are organized in the Swagger part of this application, which lives in the `api` folder:
 ![routes](routes.png)
@@ -471,6 +485,136 @@ var _getTest = function (params, options, callback) {
 };
 
 ```
+
+### Adding the Bacon Path
+
+This section demonstrates how to extend the Person object by one endpoint with receives two Persons and returns an ordered list of Persons connecting the first person to the second person. 
+
+#### The Query
+
+Before anything can happen, we need to know what we'll be asking the database. In the Neo4j browser, try the following query, filling in actor names for `name1` and `name2`:
+
+```
+MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )
+WITH extract(n in nodes(p)|n) AS coll
+WITH filter(thing in coll where length(thing.name)> 0) AS bacon
+UNWIND(bacon) AS person
+RETURN person
+```
+
+You should get several (or just one) node as the result. Note that we're returning items called 'person'. This will be important later.
+
+#### The Model
+
+This query extends the Person model--it takes two Persons as input and outputs one or more Persons. 
+
+Let's see how `getBaconPeople` is implemented. 
+
+First, (or last, if you prefer), scroll down to the bottom of `api/models/people.js` and note that the function `getBaconPeople` is one of the module exports. 
+
+Scrolling up, let's take a look at `getBaconPeople`:
+
+```
+// get people in Bacon path, return many persons 
+var getBaconPeople = Cypher(_matchBacon, _manyPersons);
+
+```
+
+The `Cypher` function takes both `_matchBacon`, the query function, and `_manyPersons`, the result function, does some magic, and sends the result somewhere. 
+
+Let's take a look `_matchBacon` and `_manyPersons`:
+
+```
+var _matchBacon = function (params, options, callback) {
+  var cypher_params = {
+    name1: params.name1,
+    name2: params.name2
+  };
+  var query = [
+    'MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )',
+    'WITH extract(n in nodes(p)|n) AS coll',
+    'WITH filter(thing in coll where length(thing.name)> 0) AS bacon',
+    'UNWIND(bacon) AS person',
+    'RETURN person'
+  ].join('\n');
+  callback(null, query, cypher_params);
+};
+```
+
+Here's our query again! Note how the Cypher params are passed. This will be on the test later.
+
+```
+// return many people
+var _manyPersons = function (results, callback) {
+
+  console.log (results)
+  var people = _.map(results, function (result) {
+    return new Person(result.person);
+  });
+
+  callback(null, people);
+};
+```
+
+Wizardry! This function allows us to return many people. Note how the return statement builds a new Person object (see `api\models\neo4j\person.js` for implementation) out of `results.person`. If you'd written `RETURN abacus` in your Cypher query you would have to update this line to `results.abacus`. 
+
+#### The Route
+
+Head on over to `api\routes\people.js` and gaze upon the following code:
+
+```
+exports.getBaconPeople = {
+  'spec': {
+    "description" : "List all people",
+    "path" : "/people/bacon/",
+    "notes" : "Returns all Bacon paths from person 1 to person 2",
+    "summary" : "Find all Bacon paths",
+    "method": "GET",
+    "params" : [
+      param.query("name1", "Name of the origin user", "string"),
+      param.query("name2", "Name of the target user", "string")
+    ],
+    "responseClass" : "List[Person]",
+    "errorResponses" : [swe.notFound('people')],
+    "nickname" : "getBaconPeople"
+  },
+  'action': function (req,res) {
+    var name1 = req.query.name1;
+    var name2 = req.query.name2;
+
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+    var start = new Date();
+
+    var params = {
+      name1: name1,
+      name2: name2
+    };
+
+      People.getBaconPeople(params, options, function (err, response) {
+        if (err || !response.results) throw swe.notFound('people');
+        writeResponse(res, response, start);
+      });
+  }
+};
+```
+
+This is how a route is born. Note that because the app receives parameters via a query (as opposed to a path), "params" uses `param.query`. 
+
+Note how these parameters are passed to variables using `req.query`. Note also that you can set the name of the Cypher parameters you'll be using in the models file when you create `var params`. 
+
+#### Adding the Endpoint to app.js
+
+Take a look at `api\app.js`. Under `// Add models and methods to swagger`, you'll find:
+
+```
+swagger.addModels(models)
+... other endpoints here ...
+.addGet(routes.people.getBaconPeople)
+```
+
+...and that's it! The getBaconPeople endpoint exists. 
 
 
 # AngularJS: Building Dynamic Web Pages
