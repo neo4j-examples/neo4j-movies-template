@@ -83,7 +83,7 @@ To dynamically access the database, start an instance of the server on your loca
 
 ### Stopping Neo4j
 
-The Neo4j database server runs in the background and should be stopped after each use:
+You might run into some trouble if the database is shutdown improperly. To shut down Neo4j:
 
 - On your Terminal, navigate to the Neo4j directory
 - If you previously ran Neo4j, stop it with `./bin/neo4j stop`
@@ -131,7 +131,23 @@ Don't feel like manually importing your CSVs? Try automating the data import pro
 
 
 #### 1.1. With Neo4j-Shell
-_INSERT SHELL INSTRUCTS_
+
+- After looking around on the local Neo4j browser, clear your database using
+
+```
+//Clear the database of any remnants of test data:
+MATCH (n)
+WITH n LIMIT 10000
+OPTIONAL MATCH (n)-[r]->()
+DELETE n,r;
+```
+
+- If you haven't done so already, install `homebrew` (sorry Windows users)
+- `brew install coreutils`
+- Navigate back to your the top level of your Neo4j database directory and make sure it's running using `.bin/neo4j status`. 
+- Take note of the path to the Neo4j directory
+- Go to `neo4j-movies-template\csv` open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory
+- From `neo4j-movies-template\csv`, run `make_cyp.sh` to start importing
 
 
 #### 1.2. With Ruby Gem: Neography
