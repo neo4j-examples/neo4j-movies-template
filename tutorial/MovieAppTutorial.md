@@ -127,12 +127,7 @@ Once the data files are ready, we will import them into the Neo4j database runni
 
 ### Option 1: Fast Forward With Neo4j-Shell or Ruby
 
-Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). Ensure that you have a fresh instance of Neo4j running at `localhost:7474`.
-
-
-#### 1.1. With Neo4j-Shell
-
-- After looking around on the local Neo4j browser, clear your database using:
+Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). Ensure that you have a fresh instance of Neo4j running at `localhost:7474`. Clear your database using this Cypher query on your Neo4j browser interface:
 
 ```
 //Clear the database of any remnants of test data:
@@ -142,10 +137,13 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
+
+#### 1.1. With Neo4j-Shell
+
 - If you haven't done so already, [install homebrew](http://brew.sh/) (sorry Windows users)
 - Once done, run `brew install coreutils` on your Terminal
 - Navigate back to the top level of your Neo4j database directory, and make sure it's running using `./bin/neo4j status`
-- Take note of the path to the Neo4j directory
+- Take note of the path to the Neo4j directory (run the command `pwd` on your Terminal)
 - Go to `neo4j-movies-template\csv`, open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory (remove the `#` in front of the line to ensure it's not commented out)
 - From `neo4j-movies-template\csv` directory, run `sh make_cyp.sh` to start importing
 
