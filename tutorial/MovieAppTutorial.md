@@ -125,64 +125,14 @@ Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` fi
 
 Once the data files are ready, we will import them into the Neo4j database running on your machine. There are two ways to do this, (1) automate the process with Neo4j-shell or Ruby's Gem feature, or (2) import each file manually with the Cypher command `LOAD CSV`.
 
-### Option 1: Fast Forward With Neo4j-Shell or Ruby
-
-<<<<<<< HEAD
-Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). 
-
-Ensure that you have a fresh instance of Neo4j running at `localhost:7474`. Clear your database using this Cypher query on your Neo4j browser interface:
-
-```
-//Clear the database of any remnants of test data:
-MATCH (n)
-WITH n LIMIT 10000
-OPTIONAL MATCH (n)-[r]->()
-DELETE n,r;
-```
-
-
 #### 1.1. With Neo4j-Shell
 
-<<<<<<< HEAD
-- After looking around on the local Neo4j browser, clear your database using
-=======
-Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine).
-
-Ensure that you have a fresh instance of Neo4j running at `localhost:7474`. Clear your database using this Cypher query on your Neo4j browser interface:
->>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
-
-```
-//Clear the database of any remnants of test data:
-MATCH (n)
-WITH n LIMIT 10000
-OPTIONAL MATCH (n)-[r]->()
-DELETE n,r;
-```
-
-<<<<<<< HEAD
-- If you haven't done so already, install `homebrew` (sorry Windows users)
-- `brew install coreutils`
-- Navigate back to your the top level of your Neo4j database directory and make sure it's running using `.bin/neo4j status`. 
-- Take note of the path to the Neo4j directory
-- Go to `neo4j-movies-template\csv` open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory
-- From `neo4j-movies-template\csv`, run `make_cyp.sh` to start importing
-=======
-=======
-
-#### 1.1. With Neo4j-Shell
-
->>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
 - If you haven't done so already, [install homebrew](http://brew.sh/) (sorry Windows users)
 - Once done, run `brew install coreutils` on your Terminal
 - Navigate back to the top level of your Neo4j database directory, and make sure it's running using `./bin/neo4j status`
 - Take note of the path to the Neo4j directory (run the command `pwd` on your Terminal to see the path)
 - Go to `neo4j-movies-template\csv`, open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory (remove the `#` in front of the line to ensure it's not commented out)
 - From `neo4j-movies-template\csv` directory, run `sh make_cyp.sh` to start importing
-<<<<<<< HEAD
->>>>>>> 7885cfd7d3e012dc0ce8ffa11151d8c4195f6e15
-=======
->>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
-
 
 #### 1.2. With Ruby Gem: Neography
 - Navigate to `neo4j-movies-template\csv` folder
@@ -227,17 +177,7 @@ WITH n LIMIT 10000
 OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-- ...and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
-=======
 - ... and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
->>>>>>> 7885cfd7d3e012dc0ce8ffa11151d8c4195f6e15
-=======
-- ... and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
-
->>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
 
 #### Import your Nodes
 
@@ -587,6 +527,8 @@ var _matchBacon = function (params, options, callback) {
 
 Here's our query again! Note how the Cypher params are passed. This will be on the test later.
 
+[Read more about why to use params](http://coffeedoc.info/github/thingdom/node-neo4j/master/classes/GraphDatabase.html#query-instance)
+
 ```
 // return many people
 var _manyPersons = function (results, callback) {
@@ -725,5 +667,9 @@ You can see these items populate `web\dist\item.html` through `<body ng-controll
 ## Swagger
 
 - [The Swagger Spec](https://github.com/wordnik/swagger-spec)
+
+## NodeJS and Node-Neo4j
+
+- [Node-Neo4j API Documentation](http://coffeedoc.info/github/thingdom/node-neo4j/master/)
 
 ## AngularJS
