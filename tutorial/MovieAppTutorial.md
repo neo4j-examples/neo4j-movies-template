@@ -127,6 +127,7 @@ Once the data files are ready, we will import them into the Neo4j database runni
 
 ### Option 1: Fast Forward With Neo4j-Shell or Ruby
 
+<<<<<<< HEAD
 Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine). 
 
 Ensure that you have a fresh instance of Neo4j running at `localhost:7474`. Clear your database using this Cypher query on your Neo4j browser interface:
@@ -144,6 +145,11 @@ DELETE n,r;
 
 <<<<<<< HEAD
 - After looking around on the local Neo4j browser, clear your database using
+=======
+Don't feel like manually importing your CSVs? Try automating the data import process with Neo4j-shell, or Ruby (if you have `ruby` installed on your machine).
+
+Ensure that you have a fresh instance of Neo4j running at `localhost:7474`. Clear your database using this Cypher query on your Neo4j browser interface:
+>>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
 
 ```
 //Clear the database of any remnants of test data:
@@ -153,6 +159,7 @@ OPTIONAL MATCH (n)-[r]->()
 DELETE n,r;
 ```
 
+<<<<<<< HEAD
 - If you haven't done so already, install `homebrew` (sorry Windows users)
 - `brew install coreutils`
 - Navigate back to your the top level of your Neo4j database directory and make sure it's running using `.bin/neo4j status`. 
@@ -160,13 +167,21 @@ DELETE n,r;
 - Go to `neo4j-movies-template\csv` open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory
 - From `neo4j-movies-template\csv`, run `make_cyp.sh` to start importing
 =======
+=======
+
+#### 1.1. With Neo4j-Shell
+
+>>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
 - If you haven't done so already, [install homebrew](http://brew.sh/) (sorry Windows users)
 - Once done, run `brew install coreutils` on your Terminal
 - Navigate back to the top level of your Neo4j database directory, and make sure it's running using `./bin/neo4j status`
 - Take note of the path to the Neo4j directory (run the command `pwd` on your Terminal to see the path)
 - Go to `neo4j-movies-template\csv`, open the `make_cyp.sh` file, and update `NEO_DB` with the path to your Neo4j directory (remove the `#` in front of the line to ensure it's not commented out)
 - From `neo4j-movies-template\csv` directory, run `sh make_cyp.sh` to start importing
+<<<<<<< HEAD
 >>>>>>> 7885cfd7d3e012dc0ce8ffa11151d8c4195f6e15
+=======
+>>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
 
 
 #### 1.2. With Ruby Gem: Neography
@@ -214,10 +229,15 @@ DELETE n,r;
 ```
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - ...and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
 =======
 - ... and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
 >>>>>>> 7885cfd7d3e012dc0ce8ffa11151d8c4195f6e15
+=======
+- ... and start importing your data files. The example `LOAD CSV` Cypher commands below (for both nodes and relationships) are customized to the _Movie_ data set. Tweak them according to your own data schema where necessary:
+
+>>>>>>> 714d930d81549d4c949cbc9cc055f527c49e43af
 
 #### Import your Nodes
 
