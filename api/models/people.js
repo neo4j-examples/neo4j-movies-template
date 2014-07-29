@@ -9,7 +9,7 @@ var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var Role = require('../models/neo4j/role');
 var Person = require('../models/neo4j/person');
-var Bacon = require('../models/neo4j/bacon');
+//var Bacon = require('../models/neo4j/bacon');
 var async = require('async');
 var randomName = require('random-name');
 
