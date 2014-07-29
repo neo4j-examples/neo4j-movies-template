@@ -73,7 +73,7 @@ end
   {
     path:"#{PATH_TO_CSV}/nodes/person_nodes.csv",
     query_in: "MATCH (n:`Person`)
-    RETURN DISTINCT id(n) AS id, n.name AS name, n.born AS born
+    RETURN DISTINCT id(n) AS id, n.name AS name, n.born AS born, n.poster_image AS poster_image
     ORDER BY id ASC;",
     query_out:"LOAD CSV WITH HEADERS
       FROM '#{PATH_FROM_CSV}/nodes/person_nodes.csv'
