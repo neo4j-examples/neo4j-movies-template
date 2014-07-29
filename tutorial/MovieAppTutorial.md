@@ -35,7 +35,7 @@ Building a Movie App With Neo4j
 
 This tutorial walks through the creation of a complete (full stack) web application, [Neo4j Movies](http://neo4jmovies.herokuapp.com/#/movies), where each step of the stack is explained along the way. It is a Neo4j-Swagger-AngularJS version of [Cineasts.net](https://github.com/spring-projects/spring-data-neo4j/tree/master/spring-data-neo4j-examples/cineasts), a social movie database where users can connect with friends, rate movies, share scores, and generate recommendations for new friends and movies.
 
-The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), while resources and references are available at the end of the document. 
+The complete source code for the app is available on [GitHub](https://github.com/kbastani/neo4j-movies-template), while resources and references are available at the end of the document.
 
 # The Web Stack: An Overview
 
@@ -46,7 +46,7 @@ Written in Java since 2010, [Neo4j](http://neo4j.org/) is a scalable, a fully tr
 
 ### REST API: Node-Neo4j-Swagger-API
 
-This application uses a Swagger-compliant API written in [Node.js](http://nodejs.org/), based off the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).  
+This application uses a Swagger-compliant API written in [Node.js](http://nodejs.org/), based off the [node-neo4j-swagger-api](https://github.com/tinj/node-neo4j-swagger-api) written by [flipside](https://github.com/flipside).
 
 ### Web Application: AngularJS
 
@@ -60,7 +60,7 @@ The Neo4j _property graph_ data model consists of nodes and relationships, both 
 
 ![graph data model](graph-data-model.png)
 
-### The Movie Database 
+### The Movie Database
 
 The data model in this tutorial includes nodes with three different labels (each with their own properties), and six different types of relationships (one of which has its own property). The underlying structure of the database is visualized in the image below:
 
@@ -89,9 +89,9 @@ You might run into some trouble if the database is shutdown improperly. To shut 
 - If you previously ran Neo4j, stop it with `./bin/neo4j stop`
 - To make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
 
-### Learning Cypher 
+### Learning Cypher
 
-Cypher is an expressive and efficient declarative query language for the graph database, Neo4j (think SQL to relational databases). Although simple Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) page for a basic introduction to the language. 
+Cypher is an expressive and efficient declarative query language for the graph database, Neo4j (think SQL to relational databases). Although simple Cypher is relatively easy to pick up by osmosis, take a look at the [Learn Cypher](http://www.neo4j.org/learn/cypher) page for a basic introduction to the language.
 
 ### Loading Sample Data into Neo4j
 
@@ -107,20 +107,20 @@ An empty database is not much fun. Let's load some sample _Movie_ data in and se
 
 ## Building the Database with Your Own Data
 
-Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here. 
+Although this tutorial's repository comes with a pre-built _Movie_ `graph.db` file, you'll want to learn how to create a `graph.db` file with your own data set, that is customized to your web application. This section will demonstrate how to import your own data into your local Neo4j instance. Although there are [multiple ways](http://www.neo4j.org/develop/import) to create a `graph.db` from scratch, we will focus on using the Cypher command `LOAD CSV` here.
 
 
-### Getting Your Data Files Ready 
+### Getting Your Data Files Ready
 
 - As before, stop Neo4j and delete the existing `graph.db` folder in the `PATH_TO_NEO4J/data` directory
 - Start Neo4j again; it will detect the absence of the `graph.db` folder and generate a blank one
 - Prepare and organize your own data into .csv files. Refer to the `csv` folder in this tutorial's repository for the files used to build the _Movie_ database
   - Each node should have a unique ID
-  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively 
+  - Each node type should have its own file. In this example, there are three node types, Genre, Person and Movie, and their data are in `genre_nodes.csv`, `person_nodes.csv` and `movie_nodes.csv`, respectively
   - Each relationship type should have its own file. In this example, there are seven relationship types, each represented in their own .csv file
-  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data 
+  - Delimiters should not appear in the raw data. Unlike the comma or any other commonly-used punctuation mark, the pipe `|` is a decent choice for delimiter as it is unlikely to appear in the raw data, and a quick search reveals it does not appear in the data
   - Headers should be unique within files. As `LOAD CSV` (in this example) uses headers, make sure that each column in a file has a unique header
-  
+
 - Store all your data files in a `csv` folder
 
 Once the data files are ready, we will import them into the Neo4j database running on your machine. There are two ways to do this, (1) automate the process with Neo4j-shell or Ruby's Gem feature, or (2) import each file manually with the Cypher command `LOAD CSV`.
@@ -152,8 +152,8 @@ Finally, test your data import [here](#user-content-testing-data-import-this-to-
 
 ### Option 2: Manual Data Import with LOAD CSV
 
-With data files ready, let's fill up the database. 
-If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start. 
+With data files ready, let's fill up the database.
+If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.neo4j.org/?github-whatSocks%2FGG_Movies%2F%2FmoviesGG.adoc) to see `LOAD CSV` in action before you start.
 
 - Start Neo4j, and head over to `http://localhost:7474/browser/`, or start the [Neo4j shell](http://docs.neo4j.org/chunked/stable/shell-starting.html). Note that although the shell requires semicolons, they are optional in the pretty web browser console
 
@@ -161,9 +161,9 @@ If you're unfamiliar with Cypher, take a look at [this Graph Gist](http://gist.n
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
-AS line 
-FIELDTERMINATOR '|' 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv"
+AS line
+FIELDTERMINATOR '|'
 WITH line LIMIT 4
 RETURN line;
 ```
@@ -183,8 +183,8 @@ DELETE n,r;
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/genre_nodes.csv"
+AS line
 FIELDTERMINATOR '|'
 WITH line
 CREATE (g:Genre {id:toInt(line.id), name:line.name});
@@ -192,24 +192,24 @@ CREATE (g:Genre {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/person_nodes.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/person_nodes.csv"
+AS line
 FIELDTERMINATOR '|'
 CREATE (p:Person {id:toInt(line.id), name:line.name, poster_image:line.poster_image, born:toInt(line.born)});
 ```
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/movie_nodes.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/movie_nodes.csv"
+AS line
 FIELDTERMINATOR '|'
 CREATE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, born:line.born, tagline:line.tagline, summary:line.summary, released:toInt(line.released), duration:toInt(line.duration), rated:line.rated});
 ```
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/keyword_nodes.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/nodes/keyword_nodes.csv"
+AS line
 FIELDTERMINATOR '|'
 CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 ```
@@ -218,8 +218,8 @@ CREATE (m:Keyword {id:toInt(line.id), name:line.name});
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/acted_in_rels.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/acted_in_rels.csv"
+AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:ACTED_IN {role:line.roles}]->(m);
@@ -227,8 +227,8 @@ MERGE (p)-[:ACTED_IN {role:line.roles}]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/directed_rels.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/directed_rels.csv"
+AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:DIRECTED]->(m);
@@ -236,8 +236,8 @@ MERGE (p)-[:DIRECTED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_genre_rels.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_genre_rels.csv"
+AS line
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (g:Genre{id:toInt(line.genre_id)})
 MERGE (m)-[:HAS_GENRE]->(g);
@@ -245,8 +245,8 @@ MERGE (m)-[:HAS_GENRE]->(g);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/produced_rels.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/produced_rels.csv"
+AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:PRODUCED]->(m);
@@ -254,8 +254,8 @@ MERGE (p)-[:PRODUCED]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/writer_of_rels.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/writer_of_rels.csv"
+AS line
 FIELDTERMINATOR '|'
 MATCH (p:Person {id:toInt(line.person_id)}), (m:Movie {id:toInt(line.movie_id)})
 MERGE (p)-[:WRITER_OF]->(m);
@@ -263,8 +263,8 @@ MERGE (p)-[:WRITER_OF]->(m);
 
 ```
 LOAD CSV WITH HEADERS
-FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_keyword_rels.csv" 
-AS line 
+FROM "file:/PATH_TO_CSV/neo4j-movies-template/csv/rels/has_keyword_rels.csv"
+AS line
 FIELDTERMINATOR '|'
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
 MERGE (m)-[:HAS_KEYWORD]->(k);
@@ -293,7 +293,7 @@ Person  PRODUCED  Movie
 Person  WRITER_OF Movie
 Person  REVIEWED  Movie
 Movie   HAS_GENRE Genre
-``` 
+```
 
 Congratulations! You have a functional Neo4j database loaded with your own data now. You can play around with your data set using Cypher queries on the Neo4j built-in [browser interface](http://localhost:7474/).
 
@@ -326,13 +326,13 @@ Let's take a look at the `api/routes/genres.js`:
 
 var Genres = require('../models/genres');
 
-// ...  important stuff commented out here 
+// ...  important stuff commented out here
 
 /*
  *  Util Functions
  */
 
-// ...  more important stuff commented out here 
+// ...  more important stuff commented out here
 
 
 /*
@@ -366,7 +366,7 @@ exports.list = {
 };
 ```
 
-We can assume from this code snipped that the Swagger API has at least one endpoint of flavor `GET` that presumably returns 'all' the genres in the database. 
+We can assume from this code snipped that the Swagger API has at least one endpoint of flavor `GET` that presumably returns 'all' the genres in the database.
 
 More evidence is found in `app.js`, where we see the `list` method in action:
 
@@ -385,14 +385,14 @@ But how does the app know what data to send? Who fills this endpoint with delici
 
 var Genre = require('../models/neo4j/genre');
 
-// ...  important stuff commented out here 
+// ...  important stuff commented out here
 
 /**
  *  Result Functions
  *  to be combined with queries using _.partial()
  */
 
-// ...  important result functions commented out here 
+// ...  important result functions commented out here
 
 // return many genres
 var _manyGenres = function (results, callback) {
@@ -408,7 +408,7 @@ var _manyGenres = function (results, callback) {
  *  to be combined with result functions using _.partial()
  */
 
-// ... other query functions here 
+// ... other query functions here
 
 var _matchBy = function (keys, params, options, callback) {
   var cypher_params = _.pick(params, keys);
@@ -434,16 +434,16 @@ module.exports = {
 };
 ```
 
-In short, `getAll` is built out of the `_matchAll` and `_manyGenres` partials. `_matchAll`, a query function, calls `_matchBy`, who presents a Cypher query to the server. `_manyGenres`, a result function, organizes the data. `getAll` is packaged into a module and exported for easy consumption. 
+In short, `getAll` is built out of the `_matchAll` and `_manyGenres` partials. `_matchAll`, a query function, calls `_matchBy`, who presents a Cypher query to the server. `_manyGenres`, a result function, organizes the data. `getAll` is packaged into a module and exported for easy consumption.
 
-Take note that this query can literally only export Genre nodes. If you want to export something else, you'll have to edit or write a new result function (currently, `manyGenres`). 
+Take note that this query can literally only export Genre nodes. If you want to export something else, you'll have to edit or write a new result function (currently, `manyGenres`).
 
 Try using something like this, assuming you've wrapped your associated query in something called `breakdown`:
 
 ```
 // return multiple Test Items
 var _manyBreakdown = function (results, callback) {
-  console.log(results[0]) //use this to tweak 
+  console.log(results[0]) //use this to tweak
   if (results.length) {
     var output = _.map(results, function (result) {
       return results[0].breakdown
@@ -453,7 +453,7 @@ var _manyBreakdown = function (results, callback) {
     callback(null, null);
   }
 };
-``` 
+```
 
 Test Cypher query:
 
@@ -472,7 +472,7 @@ var _getTest = function (params, options, callback) {
 
 ### Adding the Bacon Path
 
-This section demonstrates how to extend the Person object by one endpoint with receives two Persons and returns an ordered list of Persons connecting the first person to the second person. 
+This section demonstrates how to extend the Person object by one endpoint with receives two Persons and returns an ordered list of Persons connecting the first person to the second person.
 
 #### The Query
 
@@ -490,21 +490,21 @@ You should get several (or just one) node as the result. Note that we're returni
 
 #### The Model
 
-This query extends the Person model--it takes two Persons as input and outputs one or more Persons. 
+This query extends the `Person` model--it takes two `Person`s as input and outputs one or more `Person`s.
 
-Let's see how `getBaconPeople` is implemented. 
+Let's see how `getBaconPeople` is implemented.
 
-First, (or last, if you prefer), scroll down to the bottom of `api/models/people.js` and note that the function `getBaconPeople` is one of the module exports. 
+First, (or last, if you prefer), scroll down to the bottom of `api/models/people.js` and note that the function `getBaconPeople` is one of the module exports.
 
 Scrolling up, let's take a look at `getBaconPeople`:
 
 ```
-// get people in Bacon path, return many persons 
+// get people in Bacon path, return many persons
 var getBaconPeople = Cypher(_matchBacon, _manyPersons);
 
 ```
 
-The `Cypher` function takes both `_matchBacon`, the query function, and `_manyPersons`, the result function, does some magic, and sends the result somewhere. 
+The `Cypher` function takes both `_matchBacon`, the query function, and `_manyPersons`, the result function, does some magic, and sends the result somewhere.
 
 Let's take a look `_matchBacon` and `_manyPersons`:
 
@@ -542,7 +542,7 @@ var _manyPersons = function (results, callback) {
 };
 ```
 
-Wizardry! This function allows us to return many people. Note how the return statement builds a new Person object (see `api\models\neo4j\person.js` for implementation) out of `results.person`. If you'd written `RETURN abacus` in your Cypher query you would have to update this line to `results.abacus`. 
+Wizardry! This function allows us to return many people. Note how the return statement builds a new Person object (see `api\models\neo4j\person.js` for implementation) out of `results.person`. If you'd written `RETURN abacus` in your Cypher query you would have to update this line to `results.abacus`.
 
 #### The Route
 
@@ -586,9 +586,9 @@ exports.getBaconPeople = {
 };
 ```
 
-This is how a route is born. Note that because the app receives parameters via a query (as opposed to a path), "params" uses `param.query`. 
+This is how a route is born. Note that because the app receives parameters via a query (as opposed to a path), "params" uses `param.query`.
 
-Note how these parameters are passed to variables using `req.query`. Note also that you can set the name of the Cypher parameters you'll be using in the models file when you create `var params`. 
+Note how these parameters are passed to variables using `req.query`. Note also that you can set the name of the Cypher parameters you'll be using in the models file when you create `var params`.
 
 #### Adding the Endpoint to app.js
 
@@ -600,25 +600,25 @@ swagger.addModels(models)
 .addGet(routes.people.getBaconPeople)
 ```
 
-...and that's it! The getBaconPeople endpoint exists. 
+...and that's it! The getBaconPeople endpoint exists.
 
 
 # AngularJS: Building Dynamic Web Pages
 
-Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database? 
+Now that the database is ready and endpoints set up, you'll probably want a nice front-end to display your data. Because what is a website other than a human-friendly way to explore a database?
 
-Without going too deep into AngularJS design patterns, let's take a look at the construction of the Movie item, or, basically, that stuff you see when you click on a movie poster. 
+Without going too deep into AngularJS design patterns, let's take a look at the construction of the Movie item, or, basically, that stuff you see when you click on a movie poster.
 
 ```
 // this is in web/dist/assets/js/controller.js
 
 contentApp.controller('MovieItemCtrl', ['$scope', '$routeParams', '$http', '$templateCache',
   function($scope, $routeParams, $http, $templateCache) {
-      console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+      console.log('http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' +
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) +
           '?api_key=special-key&neo4j=false');
-      $scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+      $scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' +
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) +
           '?api_key=special-key&neo4j=false';
       var fetchMovie = function()
       {
@@ -637,19 +637,19 @@ contentApp.controller('MovieItemCtrl', ['$scope', '$routeParams', '$http', '$tem
 
       fetchMovie();
   }]);
-  
+
 ```
 
 Take a look at the  `$scope.url`:
 
 
 ```
-$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' + 
-          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) + 
+$scope.url = 'http://movieapi-neo4j.herokuapp.com/api/v0/movies/title/' +
+          encodeURIComponent(decodeURI(decodeURI($routeParams.movieId))) +
           '?api_key=special-key&neo4j=false';
 ```
 
-Here you can see the web user interface grabbing information from the NodeJS API. When a Movie is fetched, this AngularJS machine GETs the Movie-related JSON and uses it to build the Movie item view. 
+Here you can see the web user interface grabbing information from the NodeJS API. When a Movie is fetched, this AngularJS machine GETs the Movie-related JSON and uses it to build the Movie item view.
 
 You can see these items populate `web\dist\item.html` through `<body ng-controller="MovieItemCtrl">`.
 

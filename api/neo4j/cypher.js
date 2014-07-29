@@ -10,7 +10,6 @@ var neo4j = require('neo4j'),
 
 function formatResponse (options, finalResults, query, cypher_params, results, err) {
   if (err) console.log(err);
-  console.log(cypher_params);
 
   // if options.neo4j == true, add cypher query, params, results, and err to response
   if (options && options.neo4j) {

@@ -265,8 +265,8 @@ exports.getBaconPeople = {
     "summary" : "Find all Bacon paths",
     "method": "GET",
     "params" : [
-      param.query("name1", "Name of the origin user", "string"),
-      param.query("name2", "Name of the target user", "string")
+      param.query("name1", "Name of the origin user", "string",true, true),
+      param.query("name2", "Name of the target user", "string",true, true)
     ],
     "responseClass" : "List[Person]",
     "errorResponses" : [swe.notFound('people')],
