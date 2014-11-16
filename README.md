@@ -1,10 +1,4 @@
-============================
-Neo4j Movie Website Template
-============================
-
 This repository is a movie content browser powered by Neo4j. All movie content is consumed from a Neo4j REST API endpoint built using Neo4j Swagger.
-
-<a href="http://neo4jmovies.herokuapp.com">![Neo4j Movies Template](http://i.imgur.com/lL2M3Z0.png)</a>
 
 ##Tools:
 
@@ -116,4 +110,4 @@ Make sure whaveter database you're pointing at (whether a local one on port 7474
 
 Again run `node web/app.js` in the `neo4j-movies-template` directory, and `.\bin\neo4j start` from your Neo4j directory, if it isn’t already running. 
 
-Verify that *The Matrix* is indeed rated *awesome*, and have fun. 
+Verify that *The Matrix* is indeed rated *awesome*, and have fun.
