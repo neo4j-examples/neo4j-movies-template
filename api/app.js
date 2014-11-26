@@ -1,42 +1,37 @@
 /**
  * Module dependencies.
  */
+var express         = require('express')
+  , url             = require('url')
+  , routes          = require('./routes')
+  , fs              = require('fs')
+  , nconf           = require('./config')
+  , swagger         = require('swagger-node-express')
+  , method_override = require('method-override');
 
-
-var express     = require('express')
-  , url         = require("url")
-  , swagger     = require("swagger-node-express")
-  , routes      = require('./routes')
-  , PORT        = process.env.PORT || 3000
-  , API_STRING  = '/api/v0'
-  , BASE_URL    = 'http://localhost:3000' //THIS IS VERY IMPORTANT
-  //process.env.BASE_URL || process.env.BASE_CALLBACK_URL || "http://localhost:"+PORT
-  , app         = express()
+var app         = express()
   , subpath     = express();
 
-app.use(API_STRING, subpath);
+app.use(nconf.get('api_path'), subpath);
 
 // configure /api/v0 subpath for api versioning
-subpath.configure(function () {
-  // just using json for the api
-  subpath.use(express.json());
-  subpath.use(express.methodOverride());  //method deprecated, use method-override module directly 
-});
+subpath.use(express.json()); // just using json for the api
+subpath.use(express.methodOverride());
 
-app.configure(function () {
-  // all environments
-  app.set('port', PORT);
-  app.use(express.favicon());
+// all environments
+app.set('port', nconf.get('PORT'));
+app.use(express.favicon());
+
+// just using json for the api
+app.use(express.json());
+app.use(express.methodOverride());
+app.use(app.router);
+
+// development only
+if ('development' == nconf.get('NODE_ENV')) {
   app.use(express.logger('dev'));
-  // just using json for the api
-  app.use(express.json());
-  app.use(express.methodOverride()); //method deprecated, use method-override module directly 
-  app.use(app.router);
-  // development only
-  if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
-  }
-});
+  app.use(express.errorHandler());
+}
 
 
 // Set the main handler in swagger to the express subpath
@@ -53,11 +48,10 @@ swagger.addValidator(
     if ("POST" == httpMethod || "DELETE" == httpMethod || "PUT" == httpMethod) {
       var apiKey = req.headers["api_key"];
       if (!apiKey) {
-        apiKey = url.parse(req.url,true).query["api_key"]; }
-      if ("special-key" == apiKey) {
-        return true;
+        apiKey = url.parse(req.url,true).query["api_key"];
       }
-      return false;
+
+      return "special-key" == apiKey;
     }
     return true;
   }
@@ -85,8 +79,8 @@ swagger.addModels(models)
 
 
 // Configures the app's base path and api version.
-console.log(BASE_URL+API_STRING);
-swagger.configure(BASE_URL+API_STRING, "0.0.10");
+console.log(nconf.get('base_url') + nconf.get('api_path'));
+swagger.configure(nconf.get('base_url') + nconf.get('api_path'), "0.0.10");
 
 
 // Routes
