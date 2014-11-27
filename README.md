@@ -70,27 +70,26 @@ MATCH (n:Movie) WHERE n.`title` = 'The Matrix' SET n.rated = 'awesome' RETURN n
 ```
 
 ### Swagger
-Open to the `api/neo4j/cypher.js` file. You’ll see:
+Open to the `api/neo4j/config.js` file. You’ll see:
 
 ```
-var neo4j = require('neo4j'),
-    db = new neo4j.GraphDatabase('http://162.243.116.40/'),
-    //db = new neo4j.GraphDatabase('http://neo4jmovies_backup:s85HZuuCPlaS6T6y7H8f@neo4jmoviesbackup.sb01.stations.graphenedb.com:24789/'),
-    //db = new neo4j.GraphDatabase('http://localhost:7474/'),
-    _ = require('underscore')
-;
-```
+nconf.defaults({
+    'neo4j': 'remote',
+    'neo4j-local': 'http://localhost:7474',
+    'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
 
+...
+```
 Replace the above with:
 
 ```
-var neo4j = require('neo4j'),
-    db = new neo4j.GraphDatabase('http://localhost:7474/'),
-    _ = require('underscore')
-;
-```
+nconf.defaults({
+    'neo4j': 'local',
+    'neo4j-local': 'http://localhost:7474',
+    'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
 
-In the `api/app.js` file, change `BASE_URL` to `http://localhost:3000`
+...
+```
 
 From your parent directory, run `node api/app.js` to get Swagger started.
 
@@ -98,14 +97,6 @@ Head on over to `http://localhost:3000/docs/`, GET The Matrix [you can do a sear
 
 ### The Frontend
 
-Assuming you've set up the local backend correctly, the frontent is still pointed to a remote API. 
-
-Head on over to `web/dist/assets/js/app.js` and in the section below, point `PATH_TO_API` to your `http://localhost:3000/docs/`. 
-```
-/* App Module */
-var PATH_TO_API = 'http://movieapi-neo4j.herokuapp.com/api/v0/';
-//var PATH_TO_API = 'http://localhost:3000/docs/'
-```
 Make sure whaveter database you're pointing at (whether a local one on port 7474 or a remote database) are running, and you've started your Swagger API with `node api/app.js`. 
 
 Again run `node web/app.js` in the `neo4j-movies-template` directory, and `.\bin\neo4j start` from your Neo4j directory, if it isn’t already running. 
