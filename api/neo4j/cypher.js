@@ -1,12 +1,12 @@
 // neo4j cypher helper module
-
-
 var neo4j = require('neo4j'),
-    //db = new neo4j.GraphDatabase('http://162.243.116.40:7474/'),
-    //db = new neo4j.GraphDatabase('http://neo4jmovies_backup:s85HZuuCPlaS6T6y7H8f@neo4jmoviesbackup.sb01.stations.graphenedb.com:24789/'),
-    db = new neo4j.GraphDatabase('http://localhost:7474/'),
-    _ = require('underscore')
-;
+    nconf = require('../config'),
+    _ = require('underscore');
+
+var db = new neo4j.GraphDatabase(nconf.get('neo4j-local'));
+if(nconf.get('neo4j') == 'remote'){
+  db = new neo4j.GraphDatabase(nconf.get('neo4j-remote'));
+}
 
 function formatResponse (options, finalResults, query, cypher_params, results, err) {
   if (err) console.log(err);
