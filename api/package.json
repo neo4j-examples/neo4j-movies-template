@@ -32,6 +32,7 @@
     "express": "3.x",
     "hat": ">=0.0.3",
     "jade": ">=0.26.3",
+    "method-override": "^2.3.5",
     "mocha": ">= 1.6.0",
     "moment": ">=2.4.0",
     "nconf": "^0.6.9",

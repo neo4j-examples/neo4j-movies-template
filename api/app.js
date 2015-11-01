@@ -31,6 +31,13 @@ app.use(app.router);
 if ('development' == nconf.get('NODE_ENV')) {
   app.use(express.logger('dev'));
   app.use(express.errorHandler());
+
+  //enable CORS
+  app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 }
 
 
@@ -64,7 +71,7 @@ var models = require("./models/swagger_models");
 swagger.addModels(models)
 .addGet(routes.genres.list)
 .addGet(routes.movies.list)
-//.addGet(routes.movies.movieCount)
+.addGet(routes.movies.movieCount)
 .addGet(routes.movies.findById)
 .addGet(routes.movies.findByTitle)
 .addGet(routes.movies.findMoviesByDateRange)

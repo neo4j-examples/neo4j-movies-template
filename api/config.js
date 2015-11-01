@@ -4,7 +4,7 @@ var nconf = require('nconf');
 
 nconf.defaults({
     'neo4j': 'local',
-    'neo4j-local': 'http://localhost:7474',
+    'neo4j-local': 'http://localhost:7474', // http://<user:password>@localhost:7474
     'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
     'base_url': 'http://localhost:3000',
     'api_path': '/api/v0'

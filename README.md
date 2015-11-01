@@ -28,7 +28,7 @@ If you’ve never used node, this is a good first step as it verifies you have t
 * Navigate to the `api` and `web` folders and install dependencies running  `npm install` in each.
 * Navigate to the `web` folder and run `node app.js`
 * Take a look at `http://localhost:5000/`
-* If you see some awesome movies there, success! :D
+* If you see some awesome movies there, success! :D (If not, don't worry, we'll set up our local server in the next steps)
 
 ## Setting up Neo4j
 
@@ -53,23 +53,25 @@ Right now your Neo4j Database does not contain the Movie data.  Let’s fix that
 * Unzip it into the `data` folder
 * Run Neo4j! You should be able to see some nodes at `http://localhost:7474/`
 
-### Setting up Swagger
-
-You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server. 
-
-[Learn more about Swagger.](http://neo4j-swagger.tinj.com/)
-
-### Putting it all together
-
-First, let's make a change to our local database so we know which database we're looking at. 
+### Modify some data
+Now let's make a change to our local database so we know which database we're looking at when we test the app.
 
 Run the following query:
- 
+
 ```
 MATCH (n:Movie) WHERE n.`title` = 'The Matrix' SET n.rated = 'awesome' RETURN n
 ```
 
-### Swagger
+## Swagger API
+
+### Setting up Swagger
+
+You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server.
+
+[Learn more about Swagger.](http://neo4j-swagger.tinj.com/)
+
+### Local configuration
+
 Open to the `api/neo4j/config.js` file. You’ll see:
 
 ```
@@ -77,25 +79,27 @@ nconf.defaults({
     'neo4j': 'remote',
     'neo4j-local': 'http://localhost:7474',
     'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
-
 ...
 ```
+
 Replace the above with:
 
 ```
 nconf.defaults({
     'neo4j': 'local',
-    'neo4j-local': 'http://localhost:7474',
+    'neo4j-local': 'http://<user>:<password>@localhost:7474',
     'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
-
 ...
 ```
+
+Replace `<user>` and `<password>` with the username and password you configured for Neo4j.
 
 From your parent directory, run `node api/app.js` to get Swagger started.
 
 Head on over to `http://localhost:3000/docs/`, GET The Matrix [you can do a search by title, for instance](http://localhost:3000/docs/#!/movies/getMovieByTitle_get_3), and verify that this movie is now rated `awesome`.
 
-### The Frontend
+## The Frontend
+In `/web/dist/assets/js/app.js` is the `PATH_TO_API` variable. Make sure this is set to `http://localhost:3000/api/v0/` when running locally.
 
 Make sure whaveter database you're pointing at (whether a local one on port 7474 or a remote database) are running, and you've started your Swagger API with `node api/app.js`. 
 
