@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    h1 Users
+
+    if users.length
+        p Here are the current users:
+        ul.users
+            for user in users
+                li.user
+                    a(href='/users/#{user.id}') #{user.name}
+    else
+        p There are no users currently.
+
+    form(action='', method='POST')
+        p Create a new user:
+        input(type='text', name='name', placeholder='Name', required)
+        input(type='submit', value='Create')
