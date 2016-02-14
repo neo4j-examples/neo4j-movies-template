@@ -64,7 +64,6 @@ var models = require("./models/swagger_models");
 swagger.addModels(models)
 .addGet(routes.genres.list)
 .addGet(routes.movies.list)
-//.addGet(routes.movies.movieCount)
 .addGet(routes.movies.findById)
 .addGet(routes.movies.findByTitle)
 .addGet(routes.movies.findMoviesByDateRange)
@@ -74,14 +73,11 @@ swagger.addModels(models)
 .addGet(routes.people.list)
 .addGet(routes.people.findPersonByDirectedMovie)
 .addGet(routes.people.findActorsByCoActor)
-.addGet(routes.people.findRolesByMovie)
 .addGet(routes.people.findByName);
-
 
 // Configures the app's base path and api version.
 console.log(nconf.get('base_url') + nconf.get('api_path'));
 swagger.configure(nconf.get('base_url') + nconf.get('api_path'), "0.0.10");
-
 
 // Routes
 

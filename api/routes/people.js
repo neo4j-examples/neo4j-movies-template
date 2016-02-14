@@ -30,7 +30,6 @@ function parseBool (req, key) {
   return 'true' == url.parse(req.url,true).query[key];
 }
 
-
 /*
  * API Specs and Functions
  */
@@ -61,7 +60,6 @@ exports.list = {
       });
   }
 };
-
 
 exports.listgenres = {
   'spec': {
@@ -130,7 +128,7 @@ exports.findPersonByDirectedMovie = {
 exports.findActorsByCoActor = {
   'spec': {
     "description" : "Find co-actors of person",
-    "path" : "/people/coactors/person/{name}",
+    "path" : "/people/coactors/{name}",
     "notes" : "Returns all people that acted in a movie with a person",
     "summary" : "Find all people that acted in a movie with a person",
     "method": "GET",
@@ -161,99 +159,6 @@ exports.findActorsByCoActor = {
 
 
     People.getCoActorsByPerson(params, options, callback);
-  }
-};
-
-exports.findRolesByMovie = {
-  'spec': {
-    "description" : "Find people with a role in a movie",
-    "path" : "/people/roles/movie/{title}",
-    "notes" : "Returns all people and their role in a movie",
-    "summary" : "Find all people and their role in a movie",
-    "method": "GET",
-    "params" : [
-      param.path("title", "Title of the movie", "string")
-    ],
-    "responseClass" : "List[Role]",
-    "errorResponses" : [swe.notFound('roles')],
-    "nickname" : "getRolesByMovie"
-  },
-  'action': function (req, res) {
-    var title = req.params.title;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-
-    if (!title) throw swe.invalid('title');
-
-    var params = {
-      title: title
-    };
-
-    var callback = function (err, response) {
-      if (err) throw swe.notFound('role');
-      writeResponse(res, response, start);
-    };
-
-
-    People.getRolesByMovie(params, options, callback);
-  }
-};
-
-exports.personCount = {
-  'spec': {
-    "description" : "Person count",
-    "path" : "/people/count",
-    "notes" : "Person count",
-    "summary" : "Person count",
-    "method": "GET",
-    "params" : [],
-    "responseClass" : "Count",
-    "errorResponses" : [swe.notFound('people')],
-    "nickname" : "personCount"
-  },
-  'action': function (req, res) {
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-    People.getAllCount(null, options, function (err, response) {
-      // if (err || !response.results) throw swe.notFound('people');
-      writeResponse(res, response, start);
-    });
-  }
-};
-
-exports.addPerson = {
-  'spec': {
-    "path" : "/people",
-    "notes" : "adds a person to the graph",
-    "summary" : "Add a new person to the graph",
-    "method": "POST",
-    "responseClass" : "List[Person]",
-    "params" : [
-      param.query("name", "Person name, seperate multiple names by commas", "string", true, true)
-    ],
-    "errorResponses" : [swe.invalid('input')],
-    "nickname" : "addPerson"
-  },
-  'action': function(req, res) {
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-    var names = _.invoke(parseUrl(req, 'name').split(','), 'trim');
-    if (!names.length){
-      throw swe.invalid('name');
-    } else {
-      People.createMany({
-        names: names
-      }, options, function (err, response) {
-        if (err || !response.results) throw swe.invalid('input');
-        writeResponse(res, response, start);
-      });
-    }
   }
 };
 
@@ -293,63 +198,31 @@ exports.getBaconPeople = {
   }
 };
 
-
-exports.addRandomPeople = {
-  'spec': {
-    "path" : "/people/random/{n}",
-    "notes" : "adds many random people to the graph",
-    "summary" : "Add many random new people to the graph",
-    "method": "POST",
-    "responseClass" : "List[Person]",
-    "params" : [
-      param.path("n", "Number of random people to be created", "integer", null, 1)
-    ],
-    "errorResponses" : [swe.invalid('input')],
-    "nickname" : "addRandomPeople"
-  },
-  'action': function(req, res) {
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-    var n = parseInt(req.params.n, 10);
-    if (!n){
-      throw swe.invalid('input');
-    } else {
-      People.createRandom({n:n}, options, function (err, response) {
-        if (err || !response.results) throw swe.invalid('input');
-        writeResponse(res, response, start);
-      });
-    }
-  }
-};
-
-
 exports.findByName = {
   'spec': {
     "description" : "find a person",
-    "path" : "/people/name/{name}",
-    "notes" : "Returns a person based on name",
-    "summary" : "Find person by name",
+    "path" : "/people/{id}",
+    "notes" : "Returns a person based on id",
+    "summary" : "Find person by id",
     "method": "GET",
     "params" : [
-      param.path("name", "Name of person that needs to be fetched", "string")
+      param.path("id", "id of person that needs to be fetched", "integer")
     ],
     "responseClass" : "Person",
-    "errorResponses" : [swe.invalid('name'), swe.notFound('person')],
-    "nickname" : "getPersonByName"
+    "errorResponses" : [swe.invalid('id'), swe.notFound('person')],
+    "nickname" : "getPersonById"
   },
   'action': function (req,res) {
-    var name = req.params.name;
+    var id = req.params.id;
     var options = {
       neo4j: parseBool(req, 'neo4j')
     };
     var start = new Date();
 
-    if (!name) throw swe.invalid('name');
+    if (!id) throw swe.invalid('id');
 
     var params = {
-      name: name
+      id: id
     };
 
     var callback = function (err, response) {
@@ -357,6 +230,6 @@ exports.findByName = {
       writeResponse(res, response, start);
     };
 
-    People.getByName(params, options, callback);
+    People.getById(params, options, callback);
   }
 };
