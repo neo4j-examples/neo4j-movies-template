@@ -1,0 +1,11 @@
+{
+  "name": "neo4j-app-movies-ui",
+  "version": "0.0.0",
+  "description": "Neo4j movies",
+  "main": "",
+  "dependencies": {
+  },
+  "author": "SilverLogic",
+  "license": "BSD",
+  "readmeFilename": "README.md"
+}
