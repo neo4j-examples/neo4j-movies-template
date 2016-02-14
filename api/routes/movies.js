@@ -157,35 +157,36 @@ exports.findByTitle = {
 exports.findByGenre = {
   'spec': {
     "description" : "Find a movie",
-    "path" : "/movies/genre/{name}",
-    "notes" : "Returns movies based on genre",
-    "summary" : "Find movie by genre",
+    "path" : "/movies/genre/{id}",
+    "notes" : "Returns movies based on genre id",
+    "summary" : "Find movie by genre id",
     "method": "GET",
     "params" : [
-      param.path("name", "The name of the genre", "string")
+      param.path("id", "The id of the genre", "integer")
     ],
     "responseClass" : "Movie",
-    "errorResponses" : [swe.invalid('name'), swe.notFound('movie')],
+    "errorResponses" : [swe.invalid('id'), swe.notFound('movies')],
     "nickname" : "getMoviesByGenre"
   },
   'action': function (req,res) {
-    var name = req.params.name;
+    var id = req.params.id;
     var options = {
       neo4j: parseBool(req, 'neo4j')
     };
     var start = new Date();
 
-    if (!name) throw swe.invalid('name');
+    if (!id) throw swe.invalid('id');
 
     var params = {
-      name: name
+      id: id
     };
 
-    Movies.getByGenre(params, options, function (err, response) {
-        if (err) throw swe.notFound('movies');
-        writeResponse(res, response, start);
-      });
+    var callback = function (err, response) {
+      if (err) throw swe.notFound('movie');
+      writeResponse(res, response, start);
+    };
 
+    Movies.getByGenre(params, options, callback);
   }
 };
 

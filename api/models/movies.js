@@ -3,14 +3,12 @@
  *  these are mostly written in a functional style
  */
 
-
 var _ = require('underscore');
 var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var Movie = require('../models/neo4j/movie');
 var async = require('async');
 var randomName = require('random-name');
-
 
 /*
  *  Utility Functions
@@ -23,7 +21,6 @@ function _randomName () {
 function _randomNames (n) {
   return _.times(n, _randomName);
 }
-
 
 /**
  *  Result Functions
@@ -178,12 +175,12 @@ var _getMovieByTitle = function (params, options, callback) {
 
 var _matchByGenre = function (params, options, callback) {
   var cypher_params = {
-    name: params.name
+    n: parseInt(params.id || 1)
   };
 
   var query = [
     'MATCH (movie:Movie)-[:HAS_GENRE]->(genre)',
-    'WHERE genre.name = {name}',
+    'WHERE genre.id = {n}',
     'RETURN movie'
   ].join('\n');
 
@@ -204,12 +201,9 @@ var _getByActor = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-
 var _matchByUUID = Cypher(_matchById, ['id']);
 var _matchByTitle = Cypher(_getMovieByTitle, _singleMovieWithGenres);
-
 var _matchAll = _.partial(_matchBy, []);
-
 
 // gets n random movies
 var _getRandom = function (params, options, callback) {
@@ -300,7 +294,6 @@ var _deleteAll = function (params, options, callback) {
 
 
 // exposed functions
-
 
 // get a single movie by id
 var getById = Cypher(_matchById, _singleMovie);
