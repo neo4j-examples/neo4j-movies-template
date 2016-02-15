@@ -42,7 +42,6 @@ exports.list = {
     "summary" : "Find all people",
     "method": "GET",
     "params" : [
-      // param.query("friends", "Include friends", "boolean", false, false, "LIST[true, false]", "true")
     ],
     "responseClass" : "List[Person]",
     "errorResponses" : [swe.notFound('people')],
@@ -74,7 +73,6 @@ exports.listgenres = {
     "nickname" : "getGenre"
   },
   'action': function (req, res) {
-    // var friends = parseBool(req, 'friends');
     var options = {
       neo4j: parseBool(req, 'neo4j')
     };
@@ -87,76 +85,37 @@ exports.listgenres = {
   }
 };
 
-exports.findPersonByDirectedMovie = {
-  'spec': {
-    "description" : "Find a director",
-    "path" : "/people/director/movie/{title}",
-    "notes" : "Returns a person who directed a movie",
-    "summary" : "Find person who directed a movie by title",
-    "method": "GET",
-    "params" : [
-      param.path("title", "Title of the movie that the person directed", "string")
-    ],
-    "responseClass" : "Person",
-    "errorResponses" : [swe.invalid('title'), swe.notFound('person')],
-    "nickname" : "getPersonByDirectedMovie"
-  },
-  'action': function (req,res) {
-    var title = req.params.title;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-
-    if (!title) throw swe.invalid('title');
-
-    var params = {
-      title: title
-    };
-
-    var callback = function (err, response) {
-      if (err) throw swe.notFound('person');
-      writeResponse(res, response, start);
-    };
-
-
-    People.getDirectorByMovie(params, options, callback);
-
-  }
-};
-
 exports.findActorsByCoActor = {
   'spec': {
     "description" : "Find co-actors of person",
-    "path" : "/people/coactors/{name}",
+    "path" : "/people/coactors/{id}",
     "notes" : "Returns all people that acted in a movie with a person",
     "summary" : "Find all people that acted in a movie with a person",
     "method": "GET",
     "params" : [
-      param.path("name", "Name of the person with co-actors", "string")
+      param.path("id", "id of the person with co-actors", "integer")
     ],
     "responseClass" : "List[Person]",
     "errorResponses" : [swe.notFound('people')],
     "nickname" : "getCoActorsOfPerson"
   },
   'action': function (req, res) {
-    var name = req.params.name;
+    var id = req.params.id;
     var options = {
       neo4j: parseBool(req, 'neo4j')
     };
     var start = new Date();
 
-    if (!name) throw swe.invalid('name');
+    if (!id) throw swe.invalid('id');
 
     var params = {
-      name: name
+      id: id
     };
 
     var callback = function (err, response) {
       if (err) throw swe.notFound('person');
       writeResponse(res, response, start);
     };
-
 
     People.getCoActorsByPerson(params, options, callback);
   }
@@ -198,7 +157,7 @@ exports.getBaconPeople = {
   }
 };
 
-exports.findByName = {
+exports.findById = {
   'spec': {
     "description" : "find a person",
     "path" : "/people/{id}",

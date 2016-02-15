@@ -62,32 +62,18 @@ var _matchBy = function (keys, params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _getDirectorByMovie = function (params, options, callback) {
-  var cypher_params = {
-    title: params.title
-  };
-
-  var query = [
-    'MATCH (movie:Movie {title: {title}})',
-    'MATCH (person)-[:DIRECTED]->(movie)', 
-    'RETURN DISTINCT person'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
 var _getCoActorsByPerson = function (params, options, callback) {
   var cypher_params = {
-    name: params.name
+    id: parseInt(params.id)
   };
 
   var query = [
-    'MATCH (actor:Person {name: {name}})',
+    'MATCH (actor:Person {id:{id}})',
     'MATCH (actor)-[:ACTED_IN]->(m)',
     'WITH m, actor',
     'MATCH (m)<-[:ACTED_IN]-(person:Person)',
     'WHERE actor <> person', 
-    'RETURN person'
+    'RETURN DISTINCT person',
   ].join('\n');
 
   callback(null, query, cypher_params);
@@ -160,9 +146,6 @@ var getById = Cypher(_matchByUUID, _singlePerson);
 
 // get a single person by name
 var getByName = Cypher(_getViewByName, _singlePerson);
-
-// Get a director of a movie
-var getDirectorByMovie = Cypher(_getDirectorByMovie, _singlePerson);
 
 // Get a coacters of a person
 var getCoActorsByPerson = Cypher(_getCoActorsByPerson, _manyPersons);

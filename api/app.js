@@ -71,9 +71,10 @@ swagger.addModels(models)
 .addGet(routes.movies.findByGenre)
 .addGet(routes.people.getBaconPeople)
 .addGet(routes.people.list)
-.addGet(routes.people.findPersonByDirectedMovie)
+.addGet(routes.movies.findMoviesByWriter)
+.addGet(routes.movies.findMoviesbyDirector)
 .addGet(routes.people.findActorsByCoActor)
-.addGet(routes.people.findByName);
+.addGet(routes.people.findById);
 
 // Configures the app's base path and api version.
 console.log(nconf.get('base_url') + nconf.get('api_path'));
