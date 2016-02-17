@@ -3,7 +3,6 @@
  */
 
 var _ = require('underscore');
-var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var Person = require('../models/neo4j/person');
 var async = require('async');
@@ -23,6 +22,20 @@ var _singlePerson = function (results, callback) {
   } else {
     callback(null, null);
   }
+};
+
+var _singlePersonWithDetails = function (results, callback) {
+    if (results.length)
+    {
+      var thisPerson = new Person(results[0].person);
+      thisPerson.directed = results[0].directed;
+      thisPerson.produced = results[0].produced;
+      thisPerson.wrote = results[0].wrote;
+      thisPerson.actedIn = results[0].actedIn;
+      callback(null, thisPerson);
+    } else {
+      callback(null, null);
+    }
 };
 
 // return many people
@@ -62,7 +75,30 @@ var _matchBy = function (keys, params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _getCoActorsByPerson = function (params, options, callback) {
+var _matchById = function (params, options, callback) {
+  console.log(params)
+  var cypher_params = {
+    n: parseInt(params.id)
+  };
+
+  var query = [
+    'MATCH (person:Person {id:{n}})',
+    'OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)',
+    'OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)',
+    'OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)',
+    'OPTIONAL MATCH (person)<-[r:ACTED_IN]->(a:Movie)',
+    'RETURN DISTINCT person,',
+    'collect(DISTINCT{ name:d.title, id:d.id }) AS directed,',
+    'collect(DISTINCT{ name:p.title, id:p.id }) AS produced,',
+    'collect(DISTINCT{ name:w.title, id:w.id }) AS wrote,',
+    'collect(DISTINCT{ name:a.title, id:a.id, poster_image:a.poster_image, role:r.role}) AS actedIn'
+  ].join('\n');
+
+  callback(null, query, cypher_params);
+};
+
+
+var _getFiveMostRelated = function (params, options, callback) {
   var cypher_params = {
     id: parseInt(params.id)
   };
@@ -71,9 +107,11 @@ var _getCoActorsByPerson = function (params, options, callback) {
     'MATCH (actor:Person {id:{id}})',
     'MATCH (actor)-[:ACTED_IN]->(m)',
     'WITH m, actor',
-    'MATCH (m)<-[:ACTED_IN]-(person:Person)',
+    'MATCH (m)<-[r]-(person:Person)',
     'WHERE actor <> person', 
-    'RETURN DISTINCT person',
+    'RETURN DISTINCT person, count(r)',
+    'ORDER BY count(r) DESC',
+    'LIMIT 5'
   ].join('\n');
 
   callback(null, query, cypher_params);
@@ -96,7 +134,6 @@ var _getViewByName = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _matchByUUID = _.partial(_matchBy, parseInt(['id']));
 var _matchAll = _.partial(_matchBy, []);
 
 var _getAllCount = function (params, options, callback) {
@@ -142,13 +179,13 @@ var _matchBacon = function (params, options, callback) {
 };
 
 // get a single person by id
-var getById = Cypher(_matchByUUID, _singlePerson);
+var getById = Cypher(_matchById, _singlePersonWithDetails);
 
 // get a single person by name
 var getByName = Cypher(_getViewByName, _singlePerson);
 
-// Get a coacters of a person
-var getCoActorsByPerson = Cypher(_getCoActorsByPerson, _manyPersons);
+// Get the top five most related persons for a person
+var getFiveMostRelated = Cypher(_getFiveMostRelated, _manyPersons);
 
 // get all people
 var getAll = Cypher(_matchAll, _manyPersons);
@@ -163,6 +200,6 @@ var getAllCount = Cypher(_getAllCount, _singleCount);
 module.exports = {
   getAll: getAll,
   getById: getById,
-  getCoActorsByPerson: getCoActorsByPerson,
+  getFiveMostRelated: getFiveMostRelated,
   getBaconPeople: getBaconPeople
 };
