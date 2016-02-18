@@ -32,6 +32,7 @@ var _singlePersonWithDetails = function (results, callback) {
       thisPerson.produced = results[0].produced;
       thisPerson.wrote = results[0].wrote;
       thisPerson.actedIn = results[0].actedIn;
+      thisPerson.related = results[0].related;
       callback(null, thisPerson);
     } else {
       callback(null, null);
@@ -104,14 +105,15 @@ var _getFiveMostRelated = function (params, options, callback) {
   };
 
   var query = [
-    'MATCH (actor:Person {id:{id}})',
-    'MATCH (actor)-[:ACTED_IN]->(m)',
-    'WITH m, actor',
-    'MATCH (m)<-[r]-(person:Person)',
-    'WHERE actor <> person', 
-    'RETURN DISTINCT person, count(r)',
-    'ORDER BY count(r) DESC',
-    'LIMIT 5'
+    'MATCH (person:Person {id:{id}})',
+    'MATCH (person)-[]->(m)',
+    'WITH m, person',
+    'MATCH (m)<-[r]-(related:Person)',
+    'WHERE related <> person', 
+    'WITH DISTINCT related AS related, person AS person, count(r) AS relatedness',
+    'ORDER BY relatedness DESC',
+    'LIMIT 5',
+    'RETURN person, collect({id:related.id, poster_image:related.poster_image, name:related.name}) AS related',
   ].join('\n');
 
   callback(null, query, cypher_params);
@@ -185,7 +187,7 @@ var getById = Cypher(_matchById, _singlePersonWithDetails);
 var getByName = Cypher(_getViewByName, _singlePerson);
 
 // Get the top five most related persons for a person
-var getFiveMostRelated = Cypher(_getFiveMostRelated, _manyPersons);
+var getFiveMostRelated = Cypher(_getFiveMostRelated, _singlePersonWithDetails);
 
 // get all people
 var getAll = Cypher(_matchAll, _manyPersons);
