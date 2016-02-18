@@ -85,19 +85,19 @@ exports.listgenres = {
   }
 };
 
-exports.findActorsByCoActor = {
+exports.findFiveMostRelated = {
   'spec': {
-    "description" : "Find co-actors of person",
-    "path" : "/people/coactors/{id}",
-    "notes" : "Returns all people that acted in a movie with a person",
-    "summary" : "Find all people that acted in a movie with a person",
+    "description" : "Find the five most related people to a person",
+    "path" : "/people/related/{id}",
+    "notes" : "Returns the five most related people to a person",
+    "summary" : "Returns the five most related people to a person",
     "method": "GET",
     "params" : [
-      param.path("id", "id of the person with co-actors", "integer")
+      param.path("id", "id of the person", "integer")
     ],
     "responseClass" : "List[Person]",
     "errorResponses" : [swe.notFound('people')],
-    "nickname" : "getCoActorsOfPerson"
+    "nickname" : "getFiveMostRelated"
   },
   'action': function (req, res) {
     var id = req.params.id;
@@ -117,7 +117,7 @@ exports.findActorsByCoActor = {
       writeResponse(res, response, start);
     };
 
-    People.getCoActorsByPerson(params, options, callback);
+    People.getFiveMostRelated(params, options, callback);
   }
 };
 
