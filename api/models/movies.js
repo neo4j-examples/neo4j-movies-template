@@ -36,12 +36,13 @@ var _singleMovie = function (results, callback) {
   }
 };
 
-var _singleMovieWithGenres = function (results, callback) {
+var _singleMovieWithDetails = function (results, callback) {
     if (results.length)
     {
       var thisMovie = new Movie(results[0].movie);
       thisMovie.genres = results[0].genres;
       thisMovie.directors = results[0].directors;
+      thisMovie.producers = results[0].producers;
       thisMovie.writers = results[0].writers;
       thisMovie.actors = results[0].actors;
       thisMovie.related = results[0].related;
@@ -102,14 +103,25 @@ var _matchBy = function (keys, params, options, callback) {
 };
 
 var _matchById = function (params, options, callback) {
+  console.log(params)
   var cypher_params = {
     n: parseInt(params.id)
   };
 
   var query = [
-    'MATCH (movie:Movie)',
-    'WHERE id(movie) = {n}',
-    'RETURN movie'
+    'MATCH (movie:Movie {id:{n}})',
+    'OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)',
+    'OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)',
+    'OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)',
+    'OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)',
+    'OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)',
+    'OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)',
+    'RETURN DISTINCT movie,',
+    'collect(DISTINCT { name:keyword.name, id:keyword.id }) AS keywords, ',
+    'collect(DISTINCT{ name:d.name, id:d.id }) AS directors,',
+    'collect(DISTINCT{ name:p.name, id:p.id }) AS producers,',
+    'collect(DISTINCT{ name:w.name, id:w.id }) AS writers,',
+    'collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors'
   ].join('\n');
 
   callback(null, query, cypher_params);
@@ -240,14 +252,14 @@ var _byProducer = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _matchByUUID = Cypher(_matchById, parseInt(['id']));
-var _matchByTitle = Cypher(_getMovieByTitle, _singleMovieWithGenres);
+// var _matchByUUID = Cypher(_matchById, parseInt(['id']));
+var _matchByTitle = Cypher(_getMovieByTitle, _singleMovieWithDetails);
 var _matchAll = _.partial(_matchBy, []);
 
 // exposed functions
 
 // get a single movie by id
-var getById = Cypher(_matchById, _singleMovie);
+var getById = Cypher(_matchById, _singleMovieWithDetails);
 
 // Get by date range
 var getByDateRange = Cypher(_getByDateRange, _manyMovies);
@@ -256,7 +268,7 @@ var getByDateRange = Cypher(_getByDateRange, _manyMovies);
 var getByActor = Cypher(_getByActor, _manyMovies);
 
 // get a single movie by name
-var getByTitle = Cypher(_getMovieByTitle, _singleMovieWithGenres);
+var getByTitle = Cypher(_getMovieByTitle, _singleMovieWithDetails);
 
 // get a movie by genre
 var getByGenre = Cypher(_matchByGenre, _manyMovies);
