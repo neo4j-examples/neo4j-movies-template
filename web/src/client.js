@@ -11,8 +11,7 @@ import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import { Provider } from 'react-redux';
 import { syncHistory } from 'react-router-redux';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
-
+import { browserHistory } from 'react-router';
 
 // Export React so the dev tools can find it
 if (window === window.top) {
@@ -23,8 +22,8 @@ if (window === window.top) {
 const reduxLogger = createLogger();
 
 // set up redux-simple-router (react-router state being part of redux sotre's state)
-const history = createBrowserHistory();
-const reduxRouterMiddleware = syncHistory(history);
+//const history = createBrowserHistory();
+const reduxRouterMiddleware = syncHistory(browserHistory);
 
 // create a store with middlewares
 //const createStoreWithMiddleware = applyMiddleware(
@@ -36,6 +35,6 @@ const reduxRouterMiddleware = syncHistory(history);
 //const store = createStoreWithMiddleware(/*reducers*/);
 
 ReactDOM.render(
-  <Routes browserHistory={history}/>,
+  <Routes browserHistory={browserHistory}/>,
   document.getElementById('app')
 );
