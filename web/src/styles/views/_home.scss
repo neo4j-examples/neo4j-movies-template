@@ -1,0 +1,24 @@
+.nt-home {
+  &-featured {
+    ul {
+      list-style: none;
+      li {
+        display: inline-block;
+        width: 30%;
+        padding: 1rem;
+
+      }
+    }
+  }
+
+  &-by-genre {
+    ul {
+      list-style: none;
+      li {
+        display: inline-block;
+        width: auto;
+        padding: .5rem;
+      }
+    }
+  }
+}

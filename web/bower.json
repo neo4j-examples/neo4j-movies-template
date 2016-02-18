@@ -17,8 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "foundation": "~5.5.3"
+    "foundation": "~5.5.3",
+    "slick-carousel": "^1.5.9"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

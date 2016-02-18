@@ -5,19 +5,41 @@ import { Router, Route, Link } from 'react-router';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 
-export default class Home extends React.Component {
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import {getGenres} from '../redux/actions/MovieActions'
+
+export default class App extends React.Component {
   constructor() {
     super();
   }
+
+  //componentWillMount() {
+  //  this.props.getGenres();
+  //}
 
   render() {
     return (
       <div className="nt-app">
         <Header />
-        {this.props.children}
-        <Footer />
+        <div className="nt-app-page">
+          {this.props.children}
+        </div>
+        {/*<Footer />*/}
       </div>
     );
   }
 }
-Home.displayName = 'Home';
+App.displayName = 'App';
+
+//function mapStateToProps(state) {
+//  return {
+//    genres: state.genres.genres
+//  }
+//}
+//
+//function mapDispatchToProps(dispatch) {
+//  return bindActionCreators({getGenres}, dispatch)
+//}
+
+//export default connect(mapStateToProps, mapDispatchToProps)(App);
