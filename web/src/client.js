@@ -9,7 +9,7 @@ import Routes from './routes/Routes.jsx';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from './redux/reducers';
 import createApiMiddleware from './redux/middleware/callAPIMiddleware';
-import {API_FAILURE} from './redux/actions/ApiActionTypes'
+import {API_FAILURE} from './redux/actions/ApiActionTypes';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import { Provider } from 'react-redux';

@@ -3,7 +3,7 @@ function createApiMiddleware(options) {
 
   const {defaultFailureType } = options;
   if(defaultFailureType && typeof defaultFailureType !== 'string') {
-    throw new Error('Expected a string for defaultFailureType.')
+    throw new Error('Expected a string for defaultFailureType.');
   }
 
   return function ({ dispatch, getState }) {
@@ -17,22 +17,22 @@ function createApiMiddleware(options) {
 
       if (!types) {
         // Normal action: pass it on
-        return next(action)
+        return next(action);
       }
 
       if (
         !Array.isArray(types) ||
         types.length < 2 || types.length > 3  || !types.every(type => typeof type === 'string')
       ) {
-        throw new Error('Expected an array of two or three string types.')
+        throw new Error('Expected an array of two or three string types.');
       }
 
       if (typeof callAPI !== 'function') {
-        throw new Error('Expected fetch to be a function.')
+        throw new Error('Expected fetch to be a function.');
       }
 
       if (!shouldCallAPI(getState())) {
-        return
+        return;
       }
 
       const [ requestType, successType, failureType ] = types;
@@ -61,9 +61,9 @@ function createApiMiddleware(options) {
             }));
           }
         }
-      )
-    }
-  }
+      );
+    };
+  };
 }
 
 module.exports = createApiMiddleware;

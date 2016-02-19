@@ -7,8 +7,8 @@ import Footer from '../components/Footer.jsx';
 import Breadcrumbs from '../components/Breadcrumbs.jsx';
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'
-import {getGenres} from '../redux/actions/MovieActions'
+import { bindActionCreators } from 'redux';
+import {getGenres} from '../redux/actions/MovieActions';
 
 class App extends React.Component {
   constructor() {
@@ -23,7 +23,7 @@ class App extends React.Component {
         <Header />
         <Breadcrumbs routes={routes} params={params} movie={movie}/>
         <div className="nt-app-page">
-          {this.props.children}
+          {this.props.children};
         </div>
         {/*<Footer />*/}
       </div>

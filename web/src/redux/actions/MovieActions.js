@@ -5,7 +5,7 @@ import {callApi, apiFailure} from './ApiActions';
 export function clearMovie() {
   return {
     type: Types.MOVIE_DETAIL_CLEAR
-  }
+  };
 }
 
 export function getGenres() {

@@ -1,7 +1,6 @@
 import React from 'react';
 import Loading from '../components/Loading.jsx';
-
-import * as MovieActions from '../redux/actions/MovieActions'
+import * as MovieActions from '../redux/actions/MovieActions';
 import { bindActionCreators } from 'redux';
 
 import { connect } from 'react-redux';
@@ -49,12 +48,12 @@ function mapStateToProps(state) {
   return {
     movie: state.movies.detail,
     isFetching: state.movies.isFetching
-  }
-}
+  };
+};
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(MovieActions, dispatch)
-}
+  return bindActionCreators(MovieActions, dispatch);
+};
 
 // Wrap the component to inject dispatch and state into it
 export default connect(mapStateToProps, mapDispatchToProps)(Movie);

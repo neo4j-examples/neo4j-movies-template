@@ -16,7 +16,7 @@ export default class MoviesApi {
     return MoviesApi.getGenres()
       .then(genres => {
         var movieGenres = _.filter(genres, g => {
-          return genreNames.indexOf(g.name) > -1
+          return genreNames.indexOf(g.name) > -1;
         });
 
         return Promise.all(
@@ -31,7 +31,7 @@ export default class MoviesApi {
             });
 
             return result;
-          })
+          });
       });
   }
 
