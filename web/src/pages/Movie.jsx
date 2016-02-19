@@ -24,13 +24,20 @@ class Movie extends React.Component {
 
     return (
       <div className="nt-movie">
-        {isFetching ? <Loading/> : null}
-        {movie ?
-          <h2>{movie.title}</h2>
-          :
-          null
-        }
-
+        <div className="row">
+          <div className="large-12 columns">
+            {isFetching ? <Loading/> : null}
+            {movie ?
+              <div>
+                <h2>{movie.title}</h2>
+                <img src={movie.posterImage} />
+                <p><strong>Tagline:</strong>{movie.tagline}</p>
+              </div>
+              :
+              null
+            }
+          </div>
+        </div>
       </div>
     );
   }

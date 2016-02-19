@@ -4,24 +4,24 @@ import { Router, Route, Link } from 'react-router';
 
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+import Breadcrumbs from '../components/Breadcrumbs.jsx';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {getGenres} from '../redux/actions/MovieActions';
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor() {
     super();
   }
 
-  //componentWillMount() {
-  //  this.props.getGenres();
-  //}
-
   render() {
+    var {routes, movie, params} = this.props;
+
     return (
       <div className="nt-app">
         <Header />
+        <Breadcrumbs routes={routes} params={params} movie={movie}/>
         <div className="nt-app-page">
           {this.props.children};
         </div>
@@ -32,14 +32,10 @@ export default class App extends React.Component {
 }
 App.displayName = 'App';
 
-//function mapStateToProps(state) {
-//  return {
-//    genres: state.genres.genres
-//  }
-//}
-//
-//function mapDispatchToProps(dispatch) {
-//  return bindActionCreators({getGenres}, dispatch)
-//}
+function mapStateToProps(state) {
+  return {
+    movie: state.movies.detail
+  }
+}
 
-//export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

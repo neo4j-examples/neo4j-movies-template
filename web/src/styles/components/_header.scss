@@ -15,13 +15,13 @@
 
     li {
       display: inline-block;
-      padding: .5rem;
+      padding: .5rem 0 .5rem .5rem;
 
       &::before {
         color: #AAAAAA;
         content: "";
         border-right: 1px solid darkgray;
-        margin: 0 .5rem;
+        margin: 0 1rem;
         position: relative;
         top: 1px;
       }

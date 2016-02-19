@@ -1,28 +1,20 @@
 import React from 'react';
-import Slider from 'react-slick';
+var Carousel = require('nuka-carousel');
 
-export default class MoviesSlider extends React.Component {
-  constructor() {
-    super();
-  }
-
+const MoviesSlider = React.createClass({
+  mixins: [Carousel.ControllerMixin],
   render() {
-    var settings = {
-      dots: true,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 1,
-      slidesToScroll: 1
-    };
     return (
-      <Slider {...settings}>
-        <div><h3>1</h3></div>
-        <div><h3>2</h3></div>
-        <div><h3>3</h3></div>
-        <div><h3>4</h3></div>
-        <div><h3>5</h3></div>
-        <div><h3>6</h3></div>
-      </Slider>
-    );
+      <Carousel slidesToShow={6} cellAlign="center">
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide1"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide2"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide3"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide4"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide5"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide6"/>
+      </Carousel>
+    )
   }
-}
+});
+
+module.exports = MoviesSlider;
