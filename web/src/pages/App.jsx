@@ -6,8 +6,8 @@ import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'
-import {getGenres} from '../redux/actions/MovieActions'
+import { bindActionCreators } from 'redux';
+import {getGenres} from '../redux/actions/MovieActions';
 
 export default class App extends React.Component {
   constructor() {
@@ -23,7 +23,7 @@ export default class App extends React.Component {
       <div className="nt-app">
         <Header />
         <div className="nt-app-page">
-          {this.props.children}
+          {this.props.children};
         </div>
         {/*<Footer />*/}
       </div>
