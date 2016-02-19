@@ -29,7 +29,6 @@ class Home extends React.Component {
             {movies.isFetching ? <Loading/> : null}
             {this.renderFeatured()}
           </div>
-
           <div className="large-12 columns">
             {this.renderByGenre('Action')}
             {this.renderByGenre('Drama')}
