@@ -9,9 +9,8 @@ export default class Home extends React.Component {
 
   render() {
     return (
-      <div className="nt-movies">
+      <div className="nt-home">
         <h2>Homepage!</h2>
-        {this.props.children}
       </div>
     );
   }

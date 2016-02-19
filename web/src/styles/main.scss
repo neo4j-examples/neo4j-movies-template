@@ -1,3 +1,9 @@
-h1 {
-  color: red;
-}
+@import '_variables.scss';
+@import '../../bower_components/foundation/scss/normalize';
+@import '../../bower_components/foundation/scss/foundation';
+
+@import "views/home";
+@import "views/movie";
+@import "views/person";
+@import "components/header";
+@import "components/footer";
