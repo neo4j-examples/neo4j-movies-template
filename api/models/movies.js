@@ -121,7 +121,7 @@ var _matchById = function (params, options, callback) {
     'OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)',
     'OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)',
     'OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)',
-    'WITH DISTINCT movie, keyword, d, p, w, a, r, related, count(related) AS countRelated',
+    'WITH DISTINCT movie, genre, keyword, d, p, w, a, r, related, count(related) AS countRelated',
     'ORDER BY countRelated DESC',
     'RETURN DISTINCT movie,',
     'collect(DISTINCT{ name:keyword.name, id:keyword.id }) AS keywords, ',
@@ -129,7 +129,8 @@ var _matchById = function (params, options, callback) {
     'collect(DISTINCT{ name:p.name, id:p.id, poster_image:a.poster_image}) AS producers,',
     'collect(DISTINCT{ name:w.name, id:w.id, poster_image:a.poster_image}) AS writers,',
     'collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,',
-    'collect(DISTINCT{ title:related.title, id:related.id, poster_image:related.poster_image}) AS related',
+    'collect(DISTINCT{ title:related.title, id:related.id, poster_image:related.poster_image}) AS related,',
+    'collect(DISTINCT{ name:genre.name, id:genre.id}) AS genres',
   ].join('\n');
 
   callback(null, query, cypher_params);

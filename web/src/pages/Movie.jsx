@@ -76,6 +76,7 @@ class Movie extends React.Component {
                     </p>
                     <p className="nt-box-row">
                       <strong>Genres: </strong>
+                      <span>{this.renderGenre(movie.genres)}</span>
                     </p>
                     <p className="nt-box-row">
                       <strong>Directed By: </strong>
@@ -177,6 +178,14 @@ class Movie extends React.Component {
       </span>
     })
   }
+  renderGenre(genres) {
+    return genres.map((g, i) => {
+      return <span key={g.id}>
+        {g.name}
+        {i < genres.length - 1 ? <span>, </span> : null}
+      </span>
+    })
+  } 
 }
 Movie.displayName = 'Movie';
 
