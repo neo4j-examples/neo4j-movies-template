@@ -29,11 +29,14 @@ function _randomNames (n) {
 
 // return a single movie
 var _singleMovie = function (results, callback) {
-  if (results.length) {
-    callback(null, new Movie(results[0].movie));
-  } else {
-    callback(null, null);
-  }
+if (results.length)
+    {
+      var thisMovie = new Movie(results[0].movie);
+      thisMovie.related = results[0].related;
+      callback(null, thisMovie);
+    } else {
+      callback(null, null);
+    }
 };
 
 var _singleMovieWithDetails = function (results, callback) {
@@ -110,18 +113,23 @@ var _matchById = function (params, options, callback) {
 
   var query = [
     'MATCH (movie:Movie {id:{n}})',
+    'MATCH (movie)<-[r:ACTED_IN]-(a:Person) // movies must have actors',
+    'MATCH (related:Movie)<--(a:Person) // movies must have related movies',
+    'WHERE related <> movie',
     'OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)',
     'OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)',
     'OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)',
     'OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)',
     'OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)',
-    'OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)',
+    'WITH DISTINCT movie, keyword, d, p, w, a, r, related, count(related) AS countRelated',
+    'ORDER BY countRelated DESC',
     'RETURN DISTINCT movie,',
-    'collect(DISTINCT { name:keyword.name, id:keyword.id }) AS keywords, ',
-    'collect(DISTINCT{ name:d.name, id:d.id }) AS directors,',
-    'collect(DISTINCT{ name:p.name, id:p.id }) AS producers,',
-    'collect(DISTINCT{ name:w.name, id:w.id }) AS writers,',
-    'collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors'
+    'collect(DISTINCT{ name:keyword.name, id:keyword.id }) AS keywords, ',
+    'collect(DISTINCT{ name:d.name, id:d.id, poster_image:a.poster_image}) AS directors,',
+    'collect(DISTINCT{ name:p.name, id:p.id, poster_image:a.poster_image}) AS producers,',
+    'collect(DISTINCT{ name:w.name, id:w.id, poster_image:a.poster_image}) AS writers,',
+    'collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,',
+    'collect(DISTINCT{ title:related.title, id:related.id, poster_image:related.poster_image}) AS related',
   ].join('\n');
 
   callback(null, query, cypher_params);
