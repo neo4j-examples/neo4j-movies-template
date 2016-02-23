@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Loading from '../components/Loading.jsx';
+import Carousel from '../components/Carousel.jsx';
 import { Link } from 'react-router';
 import * as MovieActions from '../redux/actions/MovieActions';
 import { bindActionCreators } from 'redux';
@@ -16,6 +17,15 @@ class Movie extends React.Component {
   componentWillMount() {
     var {id} = this.props.params;
     this.props.getMovie(id);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.params.id != this.props.params.id) {
+      this.props.clearMovie();
+
+      var {id} = nextProps.params;
+      this.props.getMovie(id);
+    }
   }
 
   componentWillUnmount() {
@@ -93,6 +103,7 @@ class Movie extends React.Component {
                   <div className="nt-box-title">
                     Related
                   </div>
+                  {this.renderRelatedMovies(movie.related)}
                 </div>
               </div>
             </div>
@@ -112,22 +123,50 @@ class Movie extends React.Component {
   }
 
   renderCast(actors) {
+    if(_.isEmpty(actors)) {
+      return null;
+    }
+
     return (
-      <ul>
+      <Carousel>
         {
           actors.map(a => {
             return (
-              <li key={a.id} className="nt-movie-actor">
+              <div>
                 <Link to={`/person/${a.id}`}>
                   <img src={a.posterImage}/>
                 </Link>
-                <div className="nt-movie-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
-                <div className="nt-movie-actor-role">{a.role}</div>
-              </li>
+                <div className="nt-carousel-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
+                <div className="nt-carousel-actor-role">{a.role}</div>
+              </div>
             )
           })
         }
-      </ul>);
+      </Carousel>);
+  }
+
+  renderRelatedMovies(movies) {
+    if(_.isEmpty(movies)) {
+      return null;
+    }
+
+    return (
+      <Carousel>
+        {
+          movies.map(m => {
+            return (
+              <div>
+                <Link to={`/movie/${m.id}`}>
+                  <img src={m.posterImage}/>
+                </Link>
+                <div className="nt-carousel-movie-title">
+                  <Link to={`/movie/${m.id}`}>{m.title}</Link>
+                </div>
+              </div>
+            )
+          })
+        }
+      </Carousel>);
   }
 
   renderPeople(people) {

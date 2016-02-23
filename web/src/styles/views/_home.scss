@@ -1,7 +1,7 @@
 .nt-home {
 
   &-header {
-    text-align: left;
+    text-align: center;
   }
 
   .nt-box {
@@ -11,11 +11,11 @@
   &-featured {
     ul {
       list-style: none;
-      li {
-        display: inline-block;
-        width: 30%;
-        padding: 1rem;
+      display: flex;
+      justify-content: space-around;
 
+      li {
+        padding: 1rem;
       }
     }
   }

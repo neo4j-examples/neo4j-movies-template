@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Link } from 'react-router';
 import Loading from '../components/Loading.jsx';
+import Carousel from '../components/Carousel.jsx';
 
 import * as MovieActions from '../redux/actions/MovieActions'
 import { bindActionCreators } from 'redux';
@@ -73,17 +74,20 @@ class Home extends React.Component {
           <div className="nt-box-title">
             {name}
           </div>
-          <ul>
+          <Carousel>
             { moviesByGenre.map(m => {
               return (
-                <li>
+                <div>
                   <Link to={`/movie/${m.id}`}>
                     <img src={m.posterImage}/>
                   </Link>
-                </li>
+                  <div className="nt-carousel-movie-title">
+                    <Link to={`/movie/${m.id}`}>{m.title}</Link>
+                  </div>
+                </div>
               )
             })}
-          </ul>
+          </Carousel>
         </div>
       </div>);
   }

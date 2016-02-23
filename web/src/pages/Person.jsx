@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Loading from '../components/Loading.jsx';
+import Carousel from '../components/Carousel.jsx';
 import { Link } from 'react-router';
 import * as PersonActions from '../redux/actions/PersonActions';
 import { bindActionCreators } from 'redux';
@@ -15,6 +16,14 @@ export default class Person extends React.Component {
     var {id} = this.props.params;
     this.props.getPerson(id);
     this.props.getRelated(id);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.params.id != this.props.params.id) {
+      var {id} = nextProps.params;
+      this.props.getPerson(id);
+      this.props.getRelated(id);
+    }
   }
 
   componentWillUnmount() {
@@ -53,7 +62,7 @@ export default class Person extends React.Component {
 
                   <div className="nt-box">
                     <div className="nt-box-title">
-                      Related
+                      Related People
                     </div>
                     <div className="nt-box-row">
                       {isFetching ? <Loading/> : null}
@@ -76,21 +85,22 @@ export default class Person extends React.Component {
 
   renderRelatedPeople(actors) {
     return (
-      <ul>
+      <Carousel>
         {
           actors.map(a => {
             return (
-              <li key={a.id} className="nt-person-people">
+              <div>
                 <Link to={`/person/${a.id}`}>
                   <img src={a.posterImage}/>
                 </Link>
-                <div className="nt-person-people-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
-                <div className="nt-person-people-role">{a.role}</div>
-              </li>
+                <div className="nt-carousel-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
+                <div className="nt-carousel-actor-role">{a.role}</div>
+              </div>
             )
           })
         }
-      </ul>);
+        </Carousel>
+    );
   }
 
   renderRelatedMovies(sectionTitle, movies) {
@@ -109,24 +119,24 @@ export default class Person extends React.Component {
             <div className="nt-box-title">
               {sectionTitle}
             </div>
-            <ul>
+            <Carousel>
               {
                 movies.map(m => {
                   return (
-                    <li key={m.id} className="nt-person-movies-movie">
+                    <div>
                       <Link to={`/movie/${m.id}`}>
                         <img src={m.posterImage}/>
                       </Link>
-                      <div className="nt-person-movies-movie-title"><Link to={`/movie/${m.id}`}>{m.name}</Link></div>
+                      <div className="nt-carousel-movie-title"><Link to={`/movie/${m.id}`}>{m.name}</Link></div>
                       {m.role ?
-                        <div className="nt-person-movies-movie-role">{m.role}</div>
+                        <div className="nt-carousel-movie-role">{m.role}</div>
                         : null
                       }
-                    </li>
+                    </div>
                   )
                 })
               }
-            </ul>
+            </Carousel>
           </div>
         </div>
       </div>
