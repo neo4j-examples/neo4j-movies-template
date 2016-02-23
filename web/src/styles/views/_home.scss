@@ -1,5 +1,13 @@
 .nt-home {
 
+  &-header {
+    text-align: left;
+  }
+
+  .nt-box {
+    margin-bottom: 1rem;
+  }
+
   &-featured {
     ul {
       list-style: none;

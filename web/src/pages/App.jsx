@@ -16,14 +16,17 @@ class App extends React.Component {
   }
 
   render() {
-    var {routes, movie, params} = this.props;
+    var {routes, movie, person, params} = this.props;
 
     return (
       <div className="nt-app">
         <Header />
-        <Breadcrumbs routes={routes} params={params} movie={movie}/>
+        <Breadcrumbs routes={routes}
+                     params={params}
+                     movie={movie}
+                     person={person}/>
         <div className="nt-app-page">
-          {this.props.children};
+          {this.props.children}
         </div>
         {/*<Footer />*/}
       </div>
@@ -34,7 +37,8 @@ App.displayName = 'App';
 
 function mapStateToProps(state) {
   return {
-    movie: state.movies.detail
+    movie: state.movies.detail,
+    person: state.person.detail
   }
 }
 
