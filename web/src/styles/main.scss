@@ -5,6 +5,7 @@
 @import "components/header";
 @import "components/header";
 @import "components/loading";
+@import "components/carousel";
 
 @import "views/home";
 @import "views/movie";
@@ -12,4 +13,31 @@
 
 .nt-app {
   background-image: url("/neo4j_background3.gif");
+}
+
+.nt-box {
+  border: 1px solid lightgrey;
+  border-radius: .5rem;
+  padding: .2rem;
+  background: #FFFFFF;
+
+  &-title {
+    padding: .5rem;
+    color: saddlebrown;
+    font-size: 1.2rem;
+  }
+
+  &-row {
+    padding: .5rem;
+    margin: 0;
+  }
+}
+
+ul {
+  list-style: none;
+  li {
+    display: inline-block;
+    width: auto;
+    padding: .5rem;
+  }
 }

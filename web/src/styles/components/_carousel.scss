@@ -1,0 +1,77 @@
+.nt-carousel {
+  position: relative;
+
+  &-list {
+    position: relative;
+    margin: 0;
+  }
+
+  &-arrow {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  &-left {
+    position: absolute;
+    left: 0;
+    top: 40%;
+    display: inline-block;
+    padding: 1rem;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  &-right {
+    position: absolute;
+    right: 0;
+    top: 40%;
+    display: inline-block;
+    padding: 1rem;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.nt-carousel-movie {
+
+  &-title {
+    font-size: .8rem;
+    height: 1.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-role {
+    font-style: italic;
+    font-size: .8rem;
+    height: 1.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+
+.nt-carousel-actor {
+  &-name {
+    font-size: 0.8rem;
+    height: 1.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &-role {
+    font-style: italic;
+    font-size: 0.8rem;
+    height: 1.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+
+
+
