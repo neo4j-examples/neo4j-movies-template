@@ -89,9 +89,9 @@ var _matchById = function (params, options, callback) {
     'OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)',
     'OPTIONAL MATCH (person)<-[r:ACTED_IN]->(a:Movie)',
     'RETURN DISTINCT person,',
-    'collect(DISTINCT{ name:d.title, id:d.id }) AS directed,',
-    'collect(DISTINCT{ name:p.title, id:p.id }) AS produced,',
-    'collect(DISTINCT{ name:w.title, id:w.id }) AS wrote,',
+    'collect(DISTINCT{ name:d.title, id:d.id, poster_image:d.poster_image }) AS directed,',
+    'collect(DISTINCT{ name:p.title, id:p.id, poster_image:p.poster_image }) AS produced,',
+    'collect(DISTINCT{ name:w.title, id:w.id, poster_image:w.poster_image }) AS wrote,',
     'collect(DISTINCT{ name:a.title, id:a.id, poster_image:a.poster_image, role:r.role}) AS actedIn'
   ].join('\n');
 
@@ -112,7 +112,7 @@ var _getFiveMostRelated = function (params, options, callback) {
     'WHERE related <> person', 
     'WITH DISTINCT related AS related, person AS person, count(r) AS relatedness',
     'ORDER BY relatedness DESC',
-    'LIMIT 5',
+    'LIMIT 25',
     'RETURN person, collect({id:related.id, poster_image:related.poster_image, name:related.name}) AS related',
   ].join('\n');
 
