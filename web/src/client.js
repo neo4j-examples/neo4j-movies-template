@@ -13,7 +13,6 @@ import {API_FAILURE} from './redux/actions/ApiActionTypes';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import { Provider } from 'react-redux';
-import { syncHistory } from 'react-router-redux';
 import { browserHistory } from 'react-router';
 
 // Export React so the dev tools can find it
@@ -25,13 +24,8 @@ if (window === window.top) {
 const reduxLogger = createLogger();
 const callApiMiddleware = createApiMiddleware({defaultFailureType: API_FAILURE});
 
-// set up redux-simple-router (react-router state being part of redux sotre's state)
-//const history = createBrowserHistory();
-const reduxRouterMiddleware = syncHistory(browserHistory);
-
 // create a store with middlewares
 const createStoreWithMiddleware = applyMiddleware(
-  reduxRouterMiddleware,
   thunkMiddleware,
   callApiMiddleware,
   reduxLogger

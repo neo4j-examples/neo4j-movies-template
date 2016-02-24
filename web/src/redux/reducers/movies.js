@@ -54,10 +54,10 @@ export default function movies(state = initialState, action) {
         detail: null
       };
     default:
-      return state
+      return state;
   }
 }
 
 function getIsFetching(state, isFetching) {
-  return (state.isFetchingByGenre || state.isFetchingFeatured || isFetching)
+  return (state.isFetchingByGenre || state.isFetchingFeatured || isFetching);
 }

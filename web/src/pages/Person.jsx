@@ -89,14 +89,14 @@ export default class Person extends React.Component {
         {
           actors.map(a => {
             return (
-              <div>
+              <div key={a.id}>
                 <Link to={`/person/${a.id}`}>
                   <img src={a.posterImage}/>
                 </Link>
                 <div className="nt-carousel-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
                 <div className="nt-carousel-actor-role">{a.role}</div>
               </div>
-            )
+            );
           })
         }
         </Carousel>
@@ -105,7 +105,7 @@ export default class Person extends React.Component {
 
   renderRelatedMovies(sectionTitle, movies) {
     var shown = _.filter(movies, m => {
-      return !!m.name
+      return !!m.name;
     });
 
     if (_.isEmpty(shown)) {
@@ -123,7 +123,7 @@ export default class Person extends React.Component {
               {
                 movies.map(m => {
                   return (
-                    <div>
+                    <div key={m.id}>
                       <Link to={`/movie/${m.id}`}>
                         <img src={m.posterImage}/>
                       </Link>
@@ -133,14 +133,14 @@ export default class Person extends React.Component {
                         : null
                       }
                     </div>
-                  )
+                  );
                 })
               }
             </Carousel>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 Person.displayName = 'Person';

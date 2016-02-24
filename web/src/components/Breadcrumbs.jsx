@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import { Link } from 'react-router';
 
 export default class Breadcrumbs extends React.Component {
@@ -24,3 +24,9 @@ export default class Breadcrumbs extends React.Component {
 }
 
 Breadcrumbs.displayName = 'Breadcrumbs';
+Breadcrumbs.propTypes = {
+  routes: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired,
+  movie: PropTypes.object,
+  person: PropTypes.object
+};

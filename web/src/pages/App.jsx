@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Link } from 'react-router';
 
@@ -34,12 +34,19 @@ class App extends React.Component {
   }
 }
 App.displayName = 'App';
+App.propTypes = {
+  routes: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired,
+  children: PropTypes.object,
+  movie: PropTypes.object,
+  person: PropTypes.object
+};
 
 function mapStateToProps(state) {
   return {
     movie: state.movies.detail,
     person: state.person.detail
-  }
+  };
 }
 
 export default connect(mapStateToProps)(App);

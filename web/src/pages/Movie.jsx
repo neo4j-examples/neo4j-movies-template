@@ -20,7 +20,7 @@ class Movie extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.params.id != this.props.params.id) {
+    if (nextProps.params.id != this.props.params.id) {
       this.props.clearMovie();
 
       var {id} = nextProps.params;
@@ -118,13 +118,13 @@ class Movie extends React.Component {
 
   getKeywordsText(movie) {
     _.filter(movie.keywords, k => {
-        return !!k.name
+        return !!k.name;
       })
       .join(', ');
   }
 
   renderCast(actors) {
-    if(_.isEmpty(actors)) {
+    if (_.isEmpty(actors)) {
       return null;
     }
 
@@ -133,21 +133,21 @@ class Movie extends React.Component {
         {
           actors.map(a => {
             return (
-              <div>
+              <div key={a.id}>
                 <Link to={`/person/${a.id}`}>
                   <img src={a.posterImage}/>
                 </Link>
                 <div className="nt-carousel-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
                 <div className="nt-carousel-actor-role">{a.role}</div>
               </div>
-            )
+            );
           })
         }
       </Carousel>);
   }
 
   renderRelatedMovies(movies) {
-    if(_.isEmpty(movies)) {
+    if (_.isEmpty(movies)) {
       return null;
     }
 
@@ -156,7 +156,7 @@ class Movie extends React.Component {
         {
           movies.map(m => {
             return (
-              <div>
+              <div key={m.id}>
                 <Link to={`/movie/${m.id}`}>
                   <img src={m.posterImage}/>
                 </Link>
@@ -164,7 +164,7 @@ class Movie extends React.Component {
                   <Link to={`/movie/${m.id}`}>{m.title}</Link>
                 </div>
               </div>
-            )
+            );
           })
         }
       </Carousel>);
@@ -172,11 +172,12 @@ class Movie extends React.Component {
 
   renderPeople(people) {
     return people.map((p, i) => {
-      return <span key={p.id}>
+      return (
+        <span key={p.id}>
         <Link to={`/person/${p.id}`}>{p.name}</Link>
-        {i < people.length - 1 ? <span>, </span> : null}
-      </span>
-    })
+          {i < people.length - 1 ? <span>, </span> : null}
+      </span>);
+    });
   }
   renderGenre(genres) {
     return genres.map((g, i) => {
