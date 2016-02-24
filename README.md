@@ -14,4 +14,5 @@ Start the app with:
 
 * `cd web`
 * `npm install` (if `package.json` changed)
+* copy `config/settings.example.js` to `settings.js`
 * `gulp` (starts the app on http://localhost:4000/)

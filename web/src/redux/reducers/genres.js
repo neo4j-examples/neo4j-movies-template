@@ -1,4 +1,4 @@
-import { MOVIE_GENRES_GET_REQUEST, MOVIE_GENRES_GET_SUCCESS } from '../actions/MovieActionTypes'
+import { MOVIE_GENRES_GET_REQUEST, MOVIE_GENRES_GET_SUCCESS } from '../actions/MovieActionTypes';
 
 const initialState = {
   isFetching: false,
@@ -19,6 +19,6 @@ export default function genres(state = initialState, action) {
         items: action.response
       };
     default:
-      return state
+      return state;
   }
 }

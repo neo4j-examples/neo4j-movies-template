@@ -210,7 +210,7 @@ gulp.task('styles', function () {
 
     .pipe(RELEASE ? $.autoprefixer({browsers: AUTOPREFIXER_BROWSERS}) : gutil.noop())
     .pipe(RELEASE ? $.csscomb() : gutil.noop())
-    .pipe(RELEASE ? $.minifyCss() : gutil.noop())
+    .pipe(RELEASE ? $.cleanCSS() : gutil.noop())
 
     .pipe(sourceMaps.write('.'))
     .pipe(gulp.dest(paths.cssOutputDir))

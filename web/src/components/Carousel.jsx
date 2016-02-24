@@ -15,7 +15,7 @@ export default class Carousel extends React.Component {
 
   componentDidMount() {
     if (matchMedia) {
-      var mq = window.matchMedia("(max-width: 600px)");
+      var mq = window.matchMedia('(max-width: 600px)');
       mq.addListener(this.onWidthChange);
       this.onWidthChange(mq);
     }
@@ -52,7 +52,7 @@ export default class Carousel extends React.Component {
               return (
                 <li key={i} className="nt-carousel-item" style={style}>
                   {c}
-                </li>)
+                </li>);
             })
           }
         </ul>

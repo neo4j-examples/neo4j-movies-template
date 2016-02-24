@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import Loading from '../components/Loading.jsx';
 import Carousel from '../components/Carousel.jsx';
 
-import * as MovieActions from '../redux/actions/MovieActions'
+import * as MovieActions from '../redux/actions/MovieActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -48,16 +48,16 @@ class Home extends React.Component {
         <ul>
           { _.compact(movies.featured).map(f => {
             return (
-              <li>
+              <li key={f.id}>
                 <Link to={`/movie/${f.id}`}>
                   <img src={f.posterImage}/>
                 </Link>
               </li>
-            )
+            );
           })}
         </ul>
       </div>
-    )
+    );
   }
 
   renderByGenre(name) {
@@ -77,7 +77,7 @@ class Home extends React.Component {
           <Carousel>
             { moviesByGenre.map(m => {
               return (
-                <div>
+                <div key={m.id}>
                   <Link to={`/movie/${m.id}`}>
                     <img src={m.posterImage}/>
                   </Link>
@@ -85,7 +85,7 @@ class Home extends React.Component {
                     <Link to={`/movie/${m.id}`}>{m.title}</Link>
                   </div>
                 </div>
-              )
+              );
             })}
           </Carousel>
         </div>
@@ -98,11 +98,11 @@ function mapStateToProps(state) {
   return {
     genres: state.genres.items,
     movies: state.movies
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(MovieActions, dispatch)
+  return bindActionCreators(MovieActions, dispatch);
 }
 
 // Wrap the component to inject dispatch and state into it
