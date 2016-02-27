@@ -106,7 +106,6 @@ var _matchBy = function (keys, params, options, callback) {
 };
 
 var _matchById = function (params, options, callback) {
-  console.log(params)
   var cypher_params = {
     n: parseInt(params.id)
   };

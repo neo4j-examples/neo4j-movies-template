@@ -15,7 +15,7 @@ LOAD CSV WITH HEADERS
 FROM 'https://docs.google.com/a/tsl.io/spreadsheets/d/1C5mAsHZD3fLb5XNDE0BKkbwE9dGJ0vsGC8rdeECRcJ0/export?format=csv&id=1C5mAsHZD3fLb5XNDE0BKkbwE9dGJ0vsGC8rdeECRcJ0&gid=524694289' 
 AS line 
 FIELDTERMINATOR ','
-MERGE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, tagline:line.tagline, summary:"i'm a summary placeholder", released:toInt(1000), duration:toInt(line.duration), rated:line.rated});
+MERGE (m:Movie {id:toInt(line.id), title:line.title, poster_image:line.poster_image, tagline:line.tagline, summary:line.summary, released:toInt(1000), duration:toInt(line.duration), rated:line.rated});
 
 LOAD CSV WITH HEADERS
 FROM 'https://docs.google.com/spreadsheets/u/0/d/1C5mAsHZD3fLb5XNDE0BKkbwE9dGJ0vsGC8rdeECRcJ0/export?format=csv&id=1C5mAsHZD3fLb5XNDE0BKkbwE9dGJ0vsGC8rdeECRcJ0&gid=90579437' 
@@ -61,6 +61,6 @@ MERGE (p)-[:WRITER_OF]->(m);
 LOAD CSV WITH HEADERS
 FROM 'https://docs.google.com/spreadsheets/u/0/d/1C5mAsHZD3fLb5XNDE0BKkbwE9dGJ0vsGC8rdeECRcJ0/export?format=csv&id=1C5mAsHZD3fLb5XNDE0BKkbwE9dGJ0vsGC8rdeECRcJ0&gid=361087746' 
 AS line 
-FIELDTERMINATOR '|'
+FIELDTERMINATOR ','
 MATCH (m:Movie {id:toInt(line.movie_id)}), (k:Keyword {id:toInt(line.keyword_id)})
 MERGE (m)-[:HAS_KEYWORD]->(k);
