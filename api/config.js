@@ -3,8 +3,8 @@
 var nconf = require('nconf');
 
 nconf.defaults({
-    'neo4j': 'local',
-    'neo4j-local': 'http://162.243.100.222:7474',
+    'neo4j': 'remote',
+    'neo4j-local': 'http://localhost:7474',
     'neo4j-remote': 'http://162.243.100.222:7474',
     'base_url': 'http://localhost:3000',
     'api_path': '/api/v0'

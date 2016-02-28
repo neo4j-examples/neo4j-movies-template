@@ -86,12 +86,10 @@ var _singleCount = function (results, callback) {
   }
 };
 
-
 /**
  *  Query Functions
  *  to be combined with result functions using _.partial()
  */
-
 
 var _matchBy = function (keys, params, options, callback) {
   var cypher_params = _.pick(params, keys);
@@ -105,6 +103,7 @@ var _matchBy = function (keys, params, options, callback) {
   callback(null, query, cypher_params);
 };
 
+// returns data needed to build the movie detail page
 var _matchById = function (params, options, callback) {
   var cypher_params = {
     n: parseInt(params.id)
@@ -135,7 +134,6 @@ var _matchById = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-
 var _getByDateRange = function (params, options, callback) {
   var cypher_params = {
     start: parseInt(params.start || 0),
@@ -158,37 +156,8 @@ var _getMoviesWithGenres = function (params, options, callback) {
     'WITH movie',
     'OPTIONAL MATCH (genre)<-[:HAS_GENRE]-(movie)',
     'WITH movie, genre', 
-    'RETURN movie, collect(genre.name) as genres',
+    'RETURN movie, collect(genre.name) AS genres',
     'ORDER BY movie.released DESC'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
-// not sure what this is, but it seems important, don't delete it
-var _getMovieByTitle = function (params, options, callback) {
-  var cypher_params = {
-    title: params.title
-  };
-  var query = [
-    'MATCH (movie:Movie {title: {title} })<-[:ACTED_IN]-(actor)',
-    'WITH movie, actor, length((actor)-[:ACTED_IN]->()) as actormoviesweight',
-    'ORDER BY actormoviesweight DESC',
-    'WITH movie, collect({name: actor.name, poster_image: actor.poster_image, weight: actormoviesweight}) as actors', 
-    'MATCH (movie)-[:HAS_GENRE]->(genre)',
-    'WITH movie, actors, collect(genre.name) as genres',
-    'MATCH (director)-[:DIRECTED]->(movie)',
-    'WITH movie, actors, genres, collect(director.name) as directors',
-    'MATCH (writer)-[:WRITER_OF]->(movie)',
-    'WITH movie, actors, genres, directors, collect(writer.name) as writers',
-    'MATCH (movie)-[:HAS_KEYWORD]->(keyword)<-[:HAS_KEYWORD]-(movies:Movie)',
-    'WITH DISTINCT movies as related, count(DISTINCT keyword.name) as keywords, movie, genres, directors, actors, writers',
-    'ORDER BY keywords DESC',
-    'WITH collect(DISTINCT { related: { title: related.title, poster_image: related.poster_image }, weight: keywords }) as related, movie, actors, genres, directors, writers',
-    'MATCH (movie)-[:HAS_KEYWORD]->(keyword)',
-    'WITH keyword, related, movie, actors, genres, directors, writers',
-    'LIMIT 10',
-    'RETURN collect(keyword.name) as keywords, related, movie, actors, genres, directors, writers'
   ].join('\n');
 
   callback(null, query, cypher_params);
@@ -260,8 +229,6 @@ var _byProducer = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-// var _matchByUUID = Cypher(_matchById, parseInt(['id']));
-var _matchByTitle = Cypher(_getMovieByTitle, _singleMovieWithDetails);
 var _matchAll = _.partial(_matchBy, []);
 
 // exposed functions
@@ -274,9 +241,6 @@ var getByDateRange = Cypher(_getByDateRange, _manyMovies);
 
 // Get by date range
 var getByActor = Cypher(_getByActor, _manyMovies);
-
-// get a single movie by name
-var getByTitle = Cypher(_getMovieByTitle, _singleMovieWithDetails);
 
 // get a movie by genre
 var getByGenre = Cypher(_matchByGenre, _manyMovies);
@@ -300,7 +264,6 @@ var getMoviesByProducer = Cypher(_byProducer, _manyMovies);
 module.exports = {
   getAll: getManyMoviesWithGenres,
   getById: getById,
-  getByTitle: getByTitle,
   getByDateRange: getByDateRange,
   getByActor: getByActor,
   getByGenre: getByGenre,

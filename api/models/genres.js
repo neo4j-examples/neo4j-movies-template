@@ -3,7 +3,6 @@
  *  these are mostly written in a functional style
  */
 
-
 var _ = require('underscore');
 var uuid = require('hat'); // generates uuids
 var Genre = require('../models/neo4j/genre');
@@ -213,7 +212,6 @@ var deleteGenre = Cypher(_delete);
 
 // delete a genre by id
 var deleteAllGenres = Cypher(_deleteAll);
-
 
 // export exposed functions
 
