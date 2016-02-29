@@ -7,7 +7,6 @@ var _ = require('underscore');
 var uuid = require('hat'); // generates uuids
 var Genre = require('../models/neo4j/genre');
 var Cypher = require('../neo4j/cypher');
-var async = require('async');
 var randomName = require('random-name');
 
 /*
