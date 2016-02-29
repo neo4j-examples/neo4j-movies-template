@@ -46,7 +46,6 @@ exports.list = {
     "nickname" : "getGenre"
   },
   "action": function (req, res) {
-    // var friends = parseBool(req, 'friends');
     var options = {
       neo4j: parseBool(req, "neo4j")
     };

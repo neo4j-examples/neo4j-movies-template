@@ -30,15 +30,27 @@ module.exports = {
       "id":{
         "type":"integer"
       },
-      "title":{
-        "type":"string"
-      },
       "released":{
         "type":"integer"
       },
+      "summary":{
+        "type":"string"
+      },
+      "duration":{
+        "type":"integer"
+      },
+      "poster_image":{
+        "type":"string"
+      },
+      "title":{
+        "type":"string"
+      },
       "tagline":{
         "type":"string"
-      }
+      },
+      "genres":{
+        "type":"array"
+      },
     }
   },
   "Genre":{
@@ -59,6 +71,12 @@ module.exports = {
         "type":"integer"  
       },
       "name":{
+        "type":"string"
+      },
+      "born":{
+        "type":"integer"
+      },
+      "poster_image":{
         "type":"string"
       }
     }

@@ -6,7 +6,6 @@ var url = require("url");
 var swe = sw.errors;
 var _ = require('underscore');
 
-
 /*
  *  Util Functions
  */
@@ -112,7 +111,6 @@ exports.findById = {
       if (err) throw swe.notFound('movie');
       writeResponse(res, response, start);
     };
-
 
     Movies.getById(params, options, callback);
 
@@ -269,13 +267,13 @@ exports.findMoviesbyDirector = {
 
 exports.findMoviesByActor = {
   'spec': {
-    "description" : "Find movies acted in by some actor person",
+    "description" : "Find movies acted in by some person",
     "path" : "/movies/acted_in_by/{id}",
     "notes" : "Returns movies that a person acted in",
     "summary" : "Find movies by actor",
     "method": "GET",
     "params" : [
-      param.path("id", "id of the actor who acted in the movies movies", "integer")
+      param.path("id", "id of the actor who acted in the movies", "integer")
     ],
     "responseClass" : "Movie",
     "errorResponses" : [swe.invalid('id'), swe.notFound('movie')],
@@ -307,7 +305,7 @@ exports.findMoviesByWriter = {
   'spec': {
     "description" : "Find movies written by some person",
     "path" : "/movies/written_by/{id}",
-    "notes" : "Returns movies that a person wrote in",
+    "notes" : "Returns movies that a person wrote",
     "summary" : "Find movies by writer",
     "method": "GET",
     "params" : [
