@@ -53,5 +53,6 @@ Start the app with:
 
 * `cd web`
 * `npm install` (if `package.json` changed)
+* `bower install` to install the styles
 * copy `config/settings.example.js` to `settings.js`
 * `gulp` (starts the app on http://localhost:4000/)
