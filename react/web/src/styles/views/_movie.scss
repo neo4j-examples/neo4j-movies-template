@@ -1,0 +1,20 @@
+.nt-movie {
+
+  .nt-box {
+    margin-bottom: 1rem;
+  }
+
+  &-title {
+    text-align: center;
+  }
+  &-poster {
+    width: 100%;
+  }
+
+  &-aside {
+    .nt-box {
+      margin-top: 1rem;
+    }
+  }
+}
+

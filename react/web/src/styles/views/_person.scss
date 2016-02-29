@@ -1,0 +1,20 @@
+.nt-person {
+  .nt-box {
+    margin-bottom: 1rem;
+  }
+
+  &-poster {
+    width: 100%;
+  }
+
+  &-header {
+    text-align: center;
+  }
+
+  &-movies {
+
+    &-movie-role {
+      font-style: italic;
+    }
+  }
+}
