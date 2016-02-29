@@ -3,6 +3,8 @@ web/build
 web/bower_components
 web/node_modules
 
+api/node_modules
+
 ### Vim template
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
