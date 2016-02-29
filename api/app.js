@@ -7,7 +7,10 @@ var express         = require('express')
   , fs              = require('fs')
   , nconf           = require('./config')
   , swagger         = require('swagger-node-express')
-  , method_override = require('method-override');
+  , methodOverride = require('method-override')
+  , errorHandler = require('errorhandler')
+  , logger = require('morgan')
+  , bodyParser = require('body-parser');
 
 var app         = express()
   , subpath     = express();
@@ -15,24 +18,21 @@ var app         = express()
 app.use(nconf.get('api_path'), subpath);
 
 // configure /api/v0 subpath for api versioning
-subpath.use(express.json()); // just using json for the api
-subpath.use(express.methodOverride());
+subpath.use(bodyParser.json()); // just using json for the api
+subpath.use(methodOverride());
 
 // all environments
 app.set('port', nconf.get('PORT'));
-app.use(express.favicon());
 
 // just using json for the api
-app.use(express.json());
-app.use(express.methodOverride());
-app.use(app.router);
+app.use(bodyParser.json());
+app.use(methodOverride());
 
 // development only
 if ('development' == nconf.get('NODE_ENV')) {
-  app.use(express.logger('dev'));
-  app.use(express.errorHandler());
+  app.use(logger('dev'));
+  app.use(errorHandler());
 }
-
 
 // Set the main handler in swagger to the express subpath
 swagger.setAppHandler(subpath);
