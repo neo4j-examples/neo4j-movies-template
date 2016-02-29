@@ -5,7 +5,6 @@
 var _ = require('underscore');
 var Cypher = require('../neo4j/cypher');
 var Person = require('../models/neo4j/person');
-var async = require('async');
 
 /**
  *  Result Functions
