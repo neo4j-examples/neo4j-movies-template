@@ -1,6 +1,6 @@
 # README
 
-This web app originally written by kbastani and theflipside. The API is built with Express 3 and the frontend is witten with React. 
+This web app originally written by kbastani and theflipside. The API is built with Express 4 and the frontend is witten with React. 
 Feel encouraged to fork and update this repo! 
 
 ## The Model
