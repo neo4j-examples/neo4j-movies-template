@@ -89,8 +89,8 @@ exports.findFiveMostRelated = {
   'spec': {
     "description" : "Find the five most related people to a person",
     "path" : "/people/related/{id}",
-    "notes" : "Returns the five most related people to a person",
-    "summary" : "Returns the five most related people to a person",
+    "notes" : "Returns the 25 most related people to a person",
+    "summary" : "Returns the 25 most related people to a person",
     "method": "GET",
     "params" : [
       param.path("id", "id of the person", "integer")
