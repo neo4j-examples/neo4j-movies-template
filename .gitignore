@@ -6,6 +6,8 @@ web/node_modules
 api/node_modules
 api/config/settings.json
 
+database/*
+
 ### Vim template
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]

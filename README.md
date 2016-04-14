@@ -26,7 +26,7 @@ Feel encouraged to fork and update this repo!
 
 * Download Neo4j: http://neo4j.com/download/
 * Verify that it worked by running the Neo4j browser: http://localhost:7474/browser/
-* Assumning you are in the root directory, run the following import script to create a new database:
+* Assuming you are in the root directory, run the following import script to create a new database:
 
 ```
 neo4j-import --into database/ --nodes:Person csv/person_node.csv --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
