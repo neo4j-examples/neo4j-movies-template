@@ -1,0 +1,33 @@
+.nt-app-header {
+  background: lightgrey;
+  padding: .5rem 1rem;
+
+  &-logo {
+    max-width: 5rem;
+    display: inline-block;
+  }
+
+  &-links {
+    list-style: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: inline-block;
+      padding: .5rem 0 .5rem .5rem;
+
+      &::before {
+        color: #AAAAAA;
+        content: "";
+        border-right: 1px solid darkgray;
+        margin: 0 1rem;
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
+
+  &-link {
+  }
+}

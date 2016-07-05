@@ -1,104 +1,58 @@
-This repository is a movie content browser powered by Neo4j. All movie content is consumed from a Neo4j REST API endpoint built using Neo4j Swagger.
+# README
 
-##Tools:
+This web app originally written by kbastani and theflipside. The API is built with Express 4 and the frontend is witten with React. 
+Feel encouraged to fork and update this repo! 
 
-* Neo4j: [http://www.neo4j.org/download/](http://www.neo4j.org/download/)
-* Swagger: [http://neo4j-swagger.tinj.com/](http://neo4j-swagger.tinj.com/)
-* Node.js: [http://nodejs.org/](http://nodejs.org/)
-* Bootstrap: [http://getbootstrap.com/](http://getbootstrap.com/)
-* Angular.js: [http://angularjs.org/](http://angularjs.org/)
+## The Model
 
-## Architecture
+### Nodes
 
-* Front-end web-based dashboard in Node.js and Bootstrap
-* REST API via Neo4j Swagger in Node.js
-* Data import services in Node.js
-* Data storage in a Neo4j graph database
+* Movie
+* Person
+* Genre
+* Keyword
 
-## Getting Started
+### Relationships
 
-If you haven’t done so already, download or clone this repository and navigate to it using your Terminal (if on a Mac) or command line.
+* `(:Person)-[:ACTED_IN {role:"some role"}]->(:Movie)`
+* `(:Person)-[:DIRECTED]->(:Movie)`
+* `(:Person)-[:WRITER_OF]->(:Movie)`
+* `(:Person)-[:PRODUCED]->(:Movie)`
+* `(:MOVIE)-[:HAS_GENRE]->(:Genre)`
 
-## Setting up Node.js
+## The Data
 
-If you’ve never used node, this is a good first step as it verifies you have the correct libraries for running the web application. 
+### Setting up the database
 
-* From the terminal, go to the `web` directory of the project and run `npm install`, after `node_modules` are installed, run `node app`. The movies website will be started at `http://localhost:5000`
-* Install Node.js either via homebrew using `brew install node` or directly from [http://nodejs.org/](http://nodejs.org/)
-* Navigate to the `api` and `web` folders and install dependencies running  `npm install` in each.
-* Navigate to the `web` folder and run `node app.js`
-* Take a look at `http://localhost:5000/`
-* If you see some awesome movies there, success! :D
-
-## Setting up Neo4j
-
-### Installation
-So Node.js is set up and you can see the boilerplate Movies application running on `http://localhost:5000/`, great. Now we want to set up an instance of Neo4j locally so we can look at and modify the data. 
-
-* Download Neo4j [here](http://www.neo4j.org/download)
-* Extract Neo4j to a convenient location and rename the folder to something less cumbersome, like ‘Neo4j’, if you want
-* Navigate to the extracted folder and run `./bin/neo4j start` 
-* If all goes well, you should see the Neo4j web application running at `http://localhost:7474/`
-
-### Adding the Movie data
-
-Right now your Neo4j Database does not contain the Movie data.  Let’s fix that. 
-
-* Navigate to your Neo4j directory
-* If you have Neo4j running, stop it with `./bin/neo4j stop` in the Neo4j directory
-* If you want to make sure you killed it good, check by running `launchctl list | grep neo` and `launchctl remove` any processes that might be listed
-* If you `ls data`, you’ll see a file called `graph.db`.
-* Delete the existing `graph.db`.
-* Grab the zipped movies graph database file from the `databases` folder in the web app
-* Unzip it into the `data` folder
-* Run Neo4j! You should be able to see some nodes at `http://localhost:7474/`
-
-### Setting up Swagger
-
-You can see the demonstration web app is GETing information about movies and people from [http://movieapi-neo4j.herokuapp.com](http://movieapi-neo4j.herokuapp.com). However, we want to be able to run the web application locally or from another server. 
-
-[Learn more about Swagger.](http://neo4j-swagger.tinj.com/)
-
-### Putting it all together
-
-First, let's make a change to our local database so we know which database we're looking at. 
-
-Run the following query:
- 
-```
-MATCH (n:Movie) WHERE n.`title` = 'The Matrix' SET n.rated = 'awesome' RETURN n
-```
-
-### Swagger
-Open to the `api/neo4j/config.js` file. You’ll see:
+* Download Neo4j: http://neo4j.com/download/
+* Verify that it worked by running the Neo4j browser: http://localhost:7474/browser/
+* Assuming you are in the root directory, run the following import script to create a new database:
 
 ```
-nconf.defaults({
-    'neo4j': 'remote',
-    'neo4j-local': 'http://localhost:7474',
-    'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
-
-...
-```
-Replace the above with:
-
-```
-nconf.defaults({
-    'neo4j': 'local',
-    'neo4j-local': 'http://localhost:7474',
-    'neo4j-remote': 'http://default-environment-txj2pq5mwx.elasticbeanstalk.com/',
-
-...
+neo4j-import --into database/ --nodes:Person csv/person_node.csv --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
 ```
 
-From your parent directory, run `node api/app.js` to get Swagger started.
+* Using the Neo4j GUI, select the database you just built, and run it!
+* You should see a database populated with Movie, Genre, Keyword, and Person nodes.  
 
-Head on over to `http://localhost:3000/docs/`, GET The Matrix [you can do a search by title, for instance](http://localhost:3000/docs/#!/movies/getMovieByTitle_get_3), and verify that this movie is now rated `awesome`.
+## API
 
-### The Frontend
+Start the API by running `node api/app.js`
 
-Make sure whaveter database you're pointing at (whether a local one on port 7474 or a remote database) are running, and you've started your Swagger API with `node api/app.js`. 
+Look at the docs at http://localhost:3000/docs
 
-Again run `node web/app.js` in the `neo4j-movies-template` directory, and `.\bin\neo4j start` from your Neo4j directory, if it isn’t already running. 
+* `cd api`
+* `npm install` (if `package.json` changed)
+* in `config.js`, update the `neo4j-local` and `neo4j-remote` URLs as needed
+* `node app.js` starts the API
+* Take a look at the docs at http://localhost:3000/docs
 
-Verify that *The Matrix* is indeed rated *awesome*, and have fun.
+## Front-end
+
+Start the app with:
+
+* `cd web`
+* `npm install` (if `package.json` changed)
+* `bower install` to install the styles
+* copy `config/settings.example.js` to `settings.js`
+* `gulp` (starts the app on http://localhost:4000/)

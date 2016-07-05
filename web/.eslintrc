@@ -1,0 +1,45 @@
+{
+  "ecmaFeatures": {
+    "jsx": true,
+    "modules": true,
+    "experimentalObjectRestSpread": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "semi": 2,
+    "quotes": [
+      2,
+      "single"
+    ],
+    "camelcase": 0,
+    "strict": 0,
+    "global-strict": 0,
+    "no-debugger": 1,
+    "react/display-name": 1,
+    "jsx-quotes": 1,
+    "react/jsx-no-undef": 1,
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 1,
+    "react/no-did-mount-set-state": 1,
+    "react/no-did-update-set-state": 1,
+    "react/no-multi-comp": 1,
+    "react/prop-types": 0,
+    "react/react-in-jsx-scope": 1,
+    "react/self-closing-comp": 1,
+    "react/wrap-multilines": 1,
+    "no-console": 1
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "amd": true
+  },
+  "globals": {
+    "$": false,
+    "_": false,
+    "google": false,
+    "FB": false
+  }
+}

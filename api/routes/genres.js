@@ -2,7 +2,6 @@
 
 var Genres = require("../models/genres");
 var sw = require("swagger-node-express");
-var param = sw.params;
 var url = require("url");
 var swe = sw.errors;
 var _ = require("underscore");
@@ -46,7 +45,6 @@ exports.list = {
     "nickname" : "getGenre"
   },
   "action": function (req, res) {
-    // var friends = parseBool(req, 'friends');
     var options = {
       neo4j: parseBool(req, "neo4j")
     };

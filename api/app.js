@@ -7,7 +7,10 @@ var express         = require('express')
   , fs              = require('fs')
   , nconf           = require('./config')
   , swagger         = require('swagger-node-express')
-  , method_override = require('method-override');
+  , methodOverride = require('method-override')
+  , errorHandler = require('errorhandler')
+  , logger = require('morgan')
+  , bodyParser = require('body-parser');
 
 var app         = express()
   , subpath     = express();
@@ -15,24 +18,21 @@ var app         = express()
 app.use(nconf.get('api_path'), subpath);
 
 // configure /api/v0 subpath for api versioning
-subpath.use(express.json()); // just using json for the api
-subpath.use(express.methodOverride());
+subpath.use(bodyParser.json()); // just using json for the api
+subpath.use(methodOverride());
 
 // all environments
 app.set('port', nconf.get('PORT'));
-app.use(express.favicon());
 
 // just using json for the api
-app.use(express.json());
-app.use(express.methodOverride());
-app.use(app.router);
+app.use(bodyParser.json());
+app.use(methodOverride());
 
 // development only
 if ('development' == nconf.get('NODE_ENV')) {
-  app.use(express.logger('dev'));
-  app.use(express.errorHandler());
+  app.use(logger('dev'));
+  app.use(errorHandler());
 }
-
 
 // Set the main handler in swagger to the express subpath
 swagger.setAppHandler(subpath);
@@ -64,24 +64,20 @@ var models = require("./models/swagger_models");
 swagger.addModels(models)
 .addGet(routes.genres.list)
 .addGet(routes.movies.list)
-//.addGet(routes.movies.movieCount)
 .addGet(routes.movies.findById)
-.addGet(routes.movies.findByTitle)
 .addGet(routes.movies.findMoviesByDateRange)
 .addGet(routes.movies.findMoviesByActor)
 .addGet(routes.movies.findByGenre)
 .addGet(routes.people.getBaconPeople)
 .addGet(routes.people.list)
-.addGet(routes.people.findPersonByDirectedMovie)
-.addGet(routes.people.findActorsByCoActor)
-.addGet(routes.people.findRolesByMovie)
-.addGet(routes.people.findByName);
-
+.addGet(routes.movies.findMoviesByWriter)
+.addGet(routes.movies.findMoviesbyDirector)
+.addGet(routes.people.findFiveMostRelated)
+.addGet(routes.people.findById);
 
 // Configures the app's base path and api version.
 console.log(nconf.get('base_url') + nconf.get('api_path'));
 swagger.configure(nconf.get('base_url') + nconf.get('api_path'), "0.0.10");
-
 
 // Routes
 

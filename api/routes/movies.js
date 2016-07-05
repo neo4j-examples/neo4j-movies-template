@@ -6,7 +6,6 @@ var url = require("url");
 var swe = sw.errors;
 var _ = require('underscore');
 
-
 /*
  *  Util Functions
  */
@@ -37,7 +36,7 @@ exports.list = {
   'spec': {
     "description" : "List all movies",
     "path" : "/movies",
-    "notes" : "DOES THIS WORK Returns all movies",
+    "notes" : "Returns all movies",
     "summary" : "Find all movies",
     "method": "GET",
     "params" : [],
@@ -113,7 +112,6 @@ exports.findById = {
       writeResponse(res, response, start);
     };
 
-
     Movies.getById(params, options, callback);
 
   }
@@ -157,35 +155,36 @@ exports.findByTitle = {
 exports.findByGenre = {
   'spec': {
     "description" : "Find a movie",
-    "path" : "/movies/genre/{name}",
-    "notes" : "Returns movies based on genre",
-    "summary" : "Find movie by genre",
+    "path" : "/movies/genre/{id}",
+    "notes" : "Returns movies based on genre id",
+    "summary" : "Find movie by genre id",
     "method": "GET",
     "params" : [
-      param.path("name", "The name of the genre", "string")
+      param.path("id", "The id of the genre", "integer")
     ],
     "responseClass" : "Movie",
-    "errorResponses" : [swe.invalid('name'), swe.notFound('movie')],
+    "errorResponses" : [swe.invalid('id'), swe.notFound('movies')],
     "nickname" : "getMoviesByGenre"
   },
   'action': function (req,res) {
-    var name = req.params.name;
+    var id = req.params.id;
     var options = {
       neo4j: parseBool(req, 'neo4j')
     };
     var start = new Date();
 
-    if (!name) throw swe.invalid('name');
+    if (!id) throw swe.invalid('id');
 
     var params = {
-      name: name
+      id: id
     };
 
-    Movies.getByGenre(params, options, function (err, response) {
-        if (err) throw swe.notFound('movies');
-        writeResponse(res, response, start);
-      });
+    var callback = function (err, response) {
+      if (err) throw swe.notFound('movie');
+      writeResponse(res, response, start);
+    };
 
+    Movies.getByGenre(params, options, callback);
   }
 };
 
@@ -230,30 +229,66 @@ exports.findMoviesByDateRange = {
   }
 };
 
+exports.findMoviesbyDirector = {
+  'spec': {
+    "description" : "Find a director",
+    "path" : "/movies/directed_by/{id}",
+    "notes" : "Returns movies directed by a person",
+    "summary" : "Returns movies directed by a person",
+    "method": "GET",
+    "params" : [
+      param.path("id", "Id of the director person", "integer")
+    ],
+    "responseClass" : "Movie",
+    "errorResponses" : [swe.invalid('id'), swe.notFound('person')],
+    "nickname" : "findMoviesbyDirector"
+  },
+  'action': function (req,res) {
+    var id = req.params.id;
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+    var start = new Date();
+
+    if (!id) throw swe.invalid('id');
+
+    var params = {
+      id: id
+    };
+
+    var callback = function (err, response) {
+      if (err) throw swe.notFound('person');
+      writeResponse(res, response, start);
+    };
+
+    Movies.getMoviesbyDirector(params, options, callback);
+  }
+};
+
 exports.findMoviesByActor = {
   'spec': {
-    "description" : "Find movies",
-    "path" : "/movies/actor/{name}",
+    "description" : "Find movies acted in by some person",
+    "path" : "/movies/acted_in_by/{id}",
     "notes" : "Returns movies that a person acted in",
     "summary" : "Find movies by actor",
     "method": "GET",
     "params" : [
-      param.path("name", "Name of the actor who acted in movies", "string")
+      param.path("id", "id of the actor who acted in the movies", "integer")
     ],
     "responseClass" : "Movie",
-    "errorResponses" : [swe.invalid('name'), swe.notFound('movie')],
+    "errorResponses" : [swe.invalid('id'), swe.notFound('movie')],
     "nickname" : "getMoviesByActor"
   },
   'action': function (req,res) {
-    var name = req.params.name;
+    var id = req.params.id;
     var options = {
       neo4j: parseBool(req, 'neo4j')
     };
 
-    if (!name) throw swe.invalid('name');
+    if (!id) throw swe.invalid('id');
 
     var params = {
-      name: name
+      id: id
     };
 
     var callback = function (err, response) {
@@ -261,8 +296,44 @@ exports.findMoviesByActor = {
       writeResponse(res, response, new Date());
     };
 
-
     Movies.getByActor(params, options, callback);
 
   }
 };
+
+exports.findMoviesByWriter = {
+  'spec': {
+    "description" : "Find movies written by some person",
+    "path" : "/movies/written_by/{id}",
+    "notes" : "Returns movies that a person wrote",
+    "summary" : "Find movies by writer",
+    "method": "GET",
+    "params" : [
+      param.path("id", "id of the writer who wrote the movies", "integer")
+    ],
+    "responseClass" : "Movie",
+    "errorResponses" : [swe.invalid('id'), swe.notFound('movie')],
+    "nickname" : "getMoviesByWriter"
+  },
+  'action': function (req,res) {
+    var id = req.params.id;
+    var options = {
+      neo4j: parseBool(req, 'neo4j')
+    };
+
+    if (!id) throw swe.invalid('id');
+
+    var params = {
+      id: id
+    };
+
+    var callback = function (err, response) {
+      if (err) throw swe.notFound('movie');
+      writeResponse(res, response, new Date());
+    };
+
+    Movies.getMoviesByWriter(params, options, callback);
+
+  }
+};
+
