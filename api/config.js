@@ -1,8 +1,14 @@
 'use strict';
 
 var nconf = require('nconf');
-//var USER_NAME = 'neo4j';
-//var PASSWORD = '12345678';
+var auth = '';
+
+// If your database using authenticaion, uncomment the three lines below
+// and update your credentials
+
+// var USER_NAME = 'neo4j';   // use your username
+// var PASSWORD = 'neo4j';    // use your password
+// var auth = USER_NAME + ':' + PASSWORD + '@'
 
 nconf.env(['PORT', 'NODE_ENV'])
   .argv({
@@ -25,10 +31,9 @@ nconf.env(['PORT', 'NODE_ENV'])
       default: "local"
     }
   })
-  .file({file: './api/config/settings.json'})
   .defaults({
     'neo4j': 'local',
-    'neo4j-local': 'http://localhost:7474', // http://usernama@password:localhost:7474
+    'neo4j-local': 'http://' + auth + 'localhost:7474',
     'neo4j-remote': 'http://162.243.100.222:7474',
     'base_url': 'http://localhost:3000',
     'api_path': '/api/v0'

@@ -41,6 +41,7 @@ java -cp /Applications/Neo4j\ Community\ Edition.app/Contents/Resources/app/bin/
 ```
 
 * Using the *Neo4j GUI*, select the database you just built, and run it!
+* Set your username and password
 * You should see a database populated with `Movie`, `Genre`, `Keyword`, and `Person` nodes.  
 
 ## API
@@ -50,6 +51,7 @@ From the root directory of this project:
 * `cd api`
 * `npm install`
 * in `config.js`, update the `neo4j-local` and `neo4j-remote` URLs as needed
+* in `config.js` update the credentials for your database as needed
 * `node app.js` starts the API
 * Take a look at the docs at [http://localhost:3000/docs](http://localhost:3000/docs)
 
