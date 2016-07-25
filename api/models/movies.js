@@ -7,6 +7,8 @@ var _ = require('underscore');
 var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var Movie = require('../models/neo4j/movie');
+var Person = require('../models/neo4j/person');
+var Genre = require('../models/neo4j/genre');
 var randomName = require('random-name');
 
 /*
@@ -23,71 +25,40 @@ function _randomNames (n) {
 
 /**
  *  Result Functions
- *  to be combined with queries using _.partial()
  */
 
-// return a single movie
-var _singleMovie = function (results, callback) {
-if (results.length)
+// return many movies without extended details
+var _manyMovies = function (record) {
+  return new Movie(record.get('movie'));
+};
+
+//TODO - handle Integers - process single *extended* movie 
+var _singleMovieWithDetails = function (record) {
+    if (record.length)
     {
-      var thisMovie = new Movie(results[0].movie);
-      thisMovie.related = results[0].related;
-      callback(null, thisMovie);
+      var result = {};
+      _.extend(result, new Movie(record.get('movie')));
+      result.directors = _.map(record.get('directors'), function (record) {return new Person(record);});
+      result.genres = _.map(record.get('genres'), function (record) {return new Genre(record);});
+      result.producers = _.map(record.get('producers'), function (record) {return new Person(record);});
+      result.writers = _.map(record.get('writers'), function (record) {return new Person(record);});
+      result.actors = _.map(record.get('actors'), function (record) {
+      if (record.id >=0) {
+          record.id = record.id.toNumber();
+        }
+        return record;
+      });
+      result.related = _.map(record.get('related'), function (record) {return new Movie(record);});
+      result.keywords = record.get('keywords');
+
+      return result;
     } else {
-      callback(null, null);
+      return null; 
     }
-};
-
-var _singleMovieWithDetails = function (results, callback) {
-    if (results.length)
-    {
-      var thisMovie = new Movie(results[0].movie);
-      thisMovie.genres = results[0].genres;
-      thisMovie.directors = results[0].directors;
-      thisMovie.producers = results[0].producers;
-      thisMovie.writers = results[0].writers;
-      thisMovie.actors = results[0].actors;
-      thisMovie.related = results[0].related;
-      thisMovie.keywords = results[0].keywords;
-      callback(null, thisMovie);
-    } else {
-      callback(null, null);
-    }
-};
-
-// return many movies
-var _manyMovies = function (results, callback) {
-  var movies = _.map(results, function (result) {
-    return new Movie(result.movie);
-  });
-
-  callback(null, movies);
-};
-
-var _manyMoviesWithGenres = function (results, callback) {
-  var movies = _.map(results, function (result) {
-    var thisMovie = new Movie(result.movie);
-    thisMovie.genres = result.genres;
-    return thisMovie;
-  });
-
-  callback(null, movies);
-};
-
-// return a count
-var _singleCount = function (results, callback) {
-  if (results.length) {
-    callback(null, {
-      count: results[0].c || 0
-    });
-  } else {
-    callback(null, null);
-  }
 };
 
 /**
  *  Query Functions
- *  to be combined with result functions using _.partial()
  */
 
 var _matchBy = function (keys, params, options, callback) {
@@ -102,7 +73,7 @@ var _matchBy = function (keys, params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-// returns data needed to build the movie detail page
+// Find movie by ID and return extended movie details
 var _matchById = function (params, options, callback) {
   var cypher_params = {
     n: parseInt(params.id)
@@ -121,18 +92,19 @@ var _matchById = function (params, options, callback) {
     'WITH DISTINCT movie, genre, keyword, d, p, w, a, r, related, count(related) AS countRelated',
     'ORDER BY countRelated DESC',
     'RETURN DISTINCT movie,',
-    'collect(DISTINCT{ name:keyword.name, id:keyword.id }) AS keywords, ',
-    'collect(DISTINCT{ name:d.name, id:d.id, poster_image:a.poster_image}) AS directors,',
-    'collect(DISTINCT{ name:p.name, id:p.id, poster_image:a.poster_image}) AS producers,',
-    'collect(DISTINCT{ name:w.name, id:w.id, poster_image:a.poster_image}) AS writers,',
+    'collect(DISTINCT keyword) AS keywords, ',                  
+    'collect(DISTINCT d) AS directors,',
+    'collect(DISTINCT p) AS producers,',
+    'collect(DISTINCT w) AS writers,',
     'collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,',
-    'collect(DISTINCT{ title:related.title, id:related.id, poster_image:related.poster_image}) AS related,',
-    'collect(DISTINCT{ name:genre.name, id:genre.id}) AS genres',
+    'collect(DISTINCT related) AS related,',
+    'collect(DISTINCT genre) AS genres',
   ].join('\n');
 
   callback(null, query, cypher_params);
 };
 
+// todo - add release date to database
 var _getByDateRange = function (params, options, callback) {
   var cypher_params = {
     start: parseInt(params.start || 0),
@@ -148,21 +120,7 @@ var _getByDateRange = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _getMoviesWithGenres = function (params, options, callback) {
-  var cypher_params = {};
-  var query = [
-    'MATCH (movie:Movie)',
-    'WITH movie',
-    'OPTIONAL MATCH (genre)<-[:HAS_GENRE]-(movie)',
-    'WITH movie, genre', 
-    'RETURN movie, collect(genre.name) AS genres',
-    'ORDER BY movie.released DESC'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
-var _matchByGenre = function (params, options, callback) {
+var _getByGenre = function (params, options, callback) {
   var cypher_params = {
     n: parseInt(params.id)
   };
@@ -189,7 +147,7 @@ var _getByActor = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _getMoviesbyDirector = function (params, options, callback) {
+var _getByDirector = function (params, options, callback) {
   var cypher_params = {
     id: parseInt(params.id)
   };
@@ -202,7 +160,7 @@ var _getMoviesbyDirector = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _byWriter = function (params, options, callback) {
+var _getByWriter = function (params, options, callback) {
   var cypher_params = {
     id: parseInt(params.id)
   };
@@ -215,25 +173,12 @@ var _byWriter = function (params, options, callback) {
   callback(null, query, cypher_params);
 };
 
-var _byProducer = function (params, options, callback) {
-  var cypher_params = {
-    id: parseInt(params.id)
-  };
-
-  var query = [
-    'MATCH (:Person {id:{id}})-[:PRODUCED]->(movie:Movie)',
-    'RETURN DISTINCT movie'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
 var _matchAll = _.partial(_matchBy, []);
 
 // exposed functions
 
 // get a single movie by id
-var getById = Cypher(_matchById, _singleMovieWithDetails);
+var getById = Cypher(_matchById, _singleMovieWithDetails, {single:true});
 
 // Get by date range
 var getByDateRange = Cypher(_getByDateRange, _manyMovies);
@@ -242,30 +187,25 @@ var getByDateRange = Cypher(_getByDateRange, _manyMovies);
 var getByActor = Cypher(_getByActor, _manyMovies);
 
 // get a movie by genre
-var getByGenre = Cypher(_matchByGenre, _manyMovies);
-
-var getManyMoviesWithGenres = Cypher(_getMoviesWithGenres, _manyMoviesWithGenres);
+var getByGenre = Cypher(_getByGenre, _manyMovies);
 
 // get all movies
 var getAll = Cypher(_matchAll, _manyMovies);
 
 // Get many movies directed by a person
-var getMoviesbyDirector = Cypher(_getMoviesbyDirector, _manyMovies);
+var getByDirector = Cypher(_getByDirector, _manyMovies);
 
 // Get many movies written by a person
-var getMoviesByWriter = Cypher(_byWriter, _manyMovies);
-
-// Get many movies produced by a person
-var getMoviesByProducer = Cypher(_byProducer, _manyMovies);
+var getByWriter = Cypher(_getByWriter, _manyMovies);
 
 // export exposed functions
 
 module.exports = {
-  getAll: getManyMoviesWithGenres,
+  getAll: getAll,
   getById: getById,
-  getByDateRange: getByDateRange,
+  getByDateRange: getByDateRange, // unused
   getByActor: getByActor,
-  getByGenre: getByGenre,
-  getMoviesbyDirector: getMoviesbyDirector,
-  getMoviesByWriter: getMoviesByWriter
+  getByGenre: getByGenre, //unused
+  getMoviesbyDirector: getByDirector, 
+  getMoviesByWriter: getByWriter
 };

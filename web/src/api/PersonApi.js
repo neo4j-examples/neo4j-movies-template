@@ -8,10 +8,6 @@ export default class PersonApi {
   static getPerson(id) {
     return axios.get(`${apiBaseUrl}/people/${id}`);
   }
-
-  static getRelated(id) {
-    return axios.get(`${apiBaseUrl}/people/related/${id}`);
-  }
 }
 
 

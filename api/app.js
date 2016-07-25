@@ -72,7 +72,6 @@ swagger.addModels(models)
 .addGet(routes.people.list)
 .addGet(routes.movies.findMoviesByWriter)
 .addGet(routes.movies.findMoviesbyDirector)
-.addGet(routes.people.findFiveMostRelated)
 .addGet(routes.people.findById);
 
 // Configures the app's base path and api version.
@@ -101,5 +100,5 @@ app.get('/', function(req, res) {
 });
 
 app.listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + app.get('port'));
+  console.log('Express server listening on port ' + app.get('port') + ' see docs at /docs');
 });
