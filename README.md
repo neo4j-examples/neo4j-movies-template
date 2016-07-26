@@ -25,8 +25,10 @@ Feel encouraged to fork and update this repo!
 
 ### The database
 
-* [Download Neo4j](http://neo4j.com/download/)
-* Assuming you are in the this example project's directory, run the following import script below to create a new database. This command will create a new `database` directory and populate with an example dataset. 
+First, [download Neo4j, Community Edition](http://neo4j.com/download/)
+
+Assuming you are in the root of this example project, run the import script below to create a new database. 
+The following command will use the data from the `/csv` directory to create a new `database` directory containing the movie database. 
 
 ```
 neo4j-import --into database/ --nodes:Person csv/person_node.csv --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
@@ -58,8 +60,7 @@ From the root directory of this project:
 
 * `cd api`
 * `npm install`
-* in `config.js`, update the `neo4j-local` and `neo4j-remote` URLs as needed
-* in `config.js` update the credentials for your database as needed
+* in `config.js`, update the credentials for your database as needed
 * `node app.js` starts the API
 * Take a look at the docs at [http://localhost:3000/docs](http://localhost:3000/docs)
 

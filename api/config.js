@@ -3,12 +3,11 @@
 var nconf = require('nconf');
 var auth = '';
 
-// If your database using authenticaion, uncomment the three lines below
-// and update your credentials
+// If your database is not using authenticaion, comment the three lines below
 
-// var USER_NAME = 'neo4j';   // use your username
-// var PASSWORD = 'neo4j';    // use your password
-// var auth = USER_NAME + ':' + PASSWORD + '@'
+var USER_NAME = 'neo4j';   // use your username
+var PASSWORD = 'neo4j';    // use your password
+var auth = USER_NAME + ':' + PASSWORD + '@'
 
 nconf.env(['PORT', 'NODE_ENV'])
   .argv({
