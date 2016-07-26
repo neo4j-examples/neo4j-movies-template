@@ -1,3 +1,4 @@
+.DS_Store
 web/config/settings.js
 web/build
 web/bower_components
