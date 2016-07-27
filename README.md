@@ -21,11 +21,9 @@ Feel encouraged to fork and update this repo!
 * `(:Person)-[:PRODUCED]->(:Movie)`
 * `(:MOVIE)-[:HAS_GENRE]->(:Genre)`
 
-## Setup
+## Database Setup
 
-### Setting up the Neo4j Database
-
-#### Unix
+### Unix
 
 * [Download Neo4j Community Edition: .tar Version](https://neo4j.com/download/other-releases/)
 * Set your `NEO4J_HOME` variable: `export NEO4J_HOME=/path/to/neo4j-community`
@@ -37,11 +35,11 @@ $NEO4J_HOME/bin/neo4j-import --into $NEO4J_HOME/data/databases/graph.db --nodes:
 
 * Start the database: `$NEO4J_HOME/bin/neo4j console`
 
-#### Windows
+### Windows
 
 [Download Neo4j Community Edition](https://neo4j.com/download/)
 
-`neo4j-import` does not come with Neo4j-Desktop (Neo4j-Desktop (`.exe` on Windows, `.dmg` on OSX).
+`neo4j-import` does not come with Neo4j-Desktop (`.exe` on Windows, `.dmg` on OSX).
 To get around this issue, find your OS [here](https://gist.github.com/jexp/4692ad9cd14b6d9c1cc8bffa079c98fa) and try using the alternate import command for your system.
 Update the Neo4j version in the snippet with whatever you're using, and replacing `"$@"` or `%*` with: 
 
