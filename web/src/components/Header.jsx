@@ -26,7 +26,7 @@ export default class Header extends React.Component {
             <a className="nt-app-header-link"
                href="http://neo4j.com/"
                target="_blank">
-              Neo4j 2.0
+              Neo4j 3.0.3
             </a>
           </li>
         </ul>
