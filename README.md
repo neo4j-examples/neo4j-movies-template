@@ -1,7 +1,7 @@
 # README
 
-This web app originally written by kbastani and theflipside.
-The API is built with Express 4 and the frontend is witten with React. 
+This Neo4j-based node / react web app displays movie and person data in a manner similar to IMDB.
+It is designed to serve as a template for further development projects. 
 Feel encouraged to fork and update this repo! 
 
 ## The Model
