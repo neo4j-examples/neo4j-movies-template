@@ -6,7 +6,7 @@ Feel encouraged to fork and update this repo!
 
 ## The Model
 
-![image of movie model](./img/model.svg)
+![image of movie model](./img/model.png)
 
 ### Nodes
 
