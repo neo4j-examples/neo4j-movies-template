@@ -37,6 +37,7 @@
     "morgan": "^1.7.0",
     "nconf": "^0.8.4",
     "neo4j": "^1.1.1",
+    "neo4j-driver": "^1.1.0-M01",
     "neo4j-swagger-ui": "^0.0.14",
     "random-name": "^0.1.1",
     "serve-favicon": "^2.3.0",

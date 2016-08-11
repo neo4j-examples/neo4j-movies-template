@@ -15,14 +15,12 @@ export default class Person extends React.Component {
   componentWillMount() {
     var {id} = this.props.params;
     this.props.getPerson(id);
-    this.props.getRelated(id);
   }
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.params.id != this.props.params.id) {
       var {id} = nextProps.params;
       this.props.getPerson(id);
-      this.props.getRelated(id);
     }
   }
 
@@ -32,7 +30,7 @@ export default class Person extends React.Component {
 
   render() {
     var {person} = this.props;
-    var {detail, isFetching, related, isFetchingRelated} = person;
+    var {detail, isFetching} = person;
 
     return (
       <div className="nt-person">
@@ -66,7 +64,7 @@ export default class Person extends React.Component {
                     </div>
                     <div className="nt-box-row">
                       {isFetching ? <Loading/> : null}
-                      {this.renderRelatedPeople(related)}
+                      {this.renderRelatedPeople(detail.related)}
                     </div>
                   </div>
                 </div>

@@ -1,134 +1,40 @@
 // neo4j cypher helper module
-var neo4j = require('neo4j'),
-    nconf = require('../config'),
-    _ = require('underscore');
+nconf = require('../config'),
+_ = require('underscore');
+var neo4j = require('neo4j-driver').v1;
 
-var db = new neo4j.GraphDatabase(nconf.get('neo4j-local'));
+var driver = neo4j.driver(nconf.get('neo4j-local'), neo4j.auth.basic(nconf.get('USERNAME'), nconf.get('PASSWORD')));
+
 if(nconf.get('neo4j') == 'remote'){
-  db = new neo4j.GraphDatabase(nconf.get('neo4j-remote'));
+  driver = neo4j.driver(nconf.get('neo4j-remote'), neo4j.auth.basic(nconf.get('USERNAME'), nconf.get('PASSWORD')));
 }
 
-function formatResponse (options, finalResults, query, cypher_params, results, err) {
-  if (err) console.log(err);
+var session = driver.session();
 
-  // if options.neo4j == true, add cypher query, params, results, and err to response
-  if (options && options.neo4j) {
-    return {
-      results: finalResults,
-      neo4j: neo4jObj(query, cypher_params, results, err)
-    };
-  } else {
-    return {
-      results: finalResults
-    };
-  }
-}
-
-function neo4jObj (query, cypher_params, results, err) {
-  return {
-    query: query,
-    params: cypher_params,
-    results: _cleanResults(results),
-    err: err
-  };
-}
-
-/* Cypher
- * returns a combined function for creating cypher queries and processing the results
- *
- * queryFn : takes in params and options and returns a callback with the cypher query
- *
- * resultsFn : takes the results from a cypher query and does something and then callback
- *
- * db.query : executes a cypher query to neo4j
- *
- * formatResponse : structures the results based on options param
- */
-
-var Cypher = function (queryFn, resultsFn) {
-  return function (params, options, callback) {
-    queryFn(params, options, function (err, query, cypher_params) {
+var Cypher = function(queryFn, resultsFn, resultsOptions) {
+  return function(params, options, callback) {
+    queryFn(params, options, function(err, query, cypher_params) {
       if (err) {
         return callback(err, formatResponse(options, null, query, cypher_params, null, err));
-      }
-      db.query(query, cypher_params, function (err, results) {
-        if (err || !_.isFunction(resultsFn)) {
-          return callback(err, formatResponse(options, null, query, cypher_params, results, err));
-        } else {
-          resultsFn(results, function (err, finalResults) {
-            return callback(err, formatResponse(options, finalResults, query, cypher_params, results, err));
-          });
-        }
-      });
+      } else {
+        var myResult = [];
+        session.run(query, cypher_params).then(function(result) {
+            result.records.forEach(function(record) {
+            myResult.push(resultsFn(record))
+            if (resultsOptions && resultsOptions.single) { myResult = myResult[0] } 
+            }); // Completed!
+            return callback(err, {
+              results: myResult
+            });
+            session.close();
+          })
+          .catch(function(error) {
+            console.log(error);
+        });
+      };
     });
   };
 };
-
-// merges an array of responses
-Cypher.mergeReponses = function (err, responses, callback) {
-  var response = {};
-  if (responses.length) {
-    response.results = _.pluck(responses, 'results');
-    if (responses[0] && responses[0].neo4j) {
-      response.neo4j = _.pluck(responses, 'neo4j');
-    }
-  }
-  callback(err, response);
-};
-
-// merges only neo4j in an array of responses
-Cypher.mergeRaws = function (err, responses, callback) {
-  var response = {};
-  if (responses.length) {
-    response.results = _.last(responses).results;
-    if (responses[0].neo4j) {
-      response.neo4j = _.pluck(responses, 'neo4j');
-    }
-  }
-  callback(err, response);
-};
-
-/*
- *  Neo4j results cleaning functions
- *  strips RESTful data from cypher results
- */
-
-// creates a clean results which removes all non _data properties from nodes/rels
-function _cleanResults (results, stringify) {
-  var clean = _.map(results, function (res) {
-    return _.reduce(res, _cleanObject, {});
-  });
-  if (stringify) return JSON.stringify(clean, '', '  ');
-  return clean;
-}
-
-// copies only the data from nodes/rels to a new object
-function _cleanObject (memo, value, key) {
-  if (_hasData(value)) {
-    memo[key] = value._data.data;
-  } else if (_.isArray(value)) {
-    memo[key] = _.reduce(value, _cleanArray, []);
-  } else {
-    memo[key] = value;
-  }
-  return memo;
-}
-
-// cleans an array of nodes/rels
-function _cleanArray (memo, value) {
-  if (_hasData(value)) {
-    return memo.concat(value._data.data);
-  } else if (_.isArray(value)) {
-    return memo.concat(_.reduce(value, _cleanArray, []));
-  } else {
-    return memo.concat(value);
-  }
-}
-
-function _hasData (value) {
-  return _.isObject(value) && value._data;
-}
-
 
 /**
  *  Util Functions
@@ -149,5 +55,6 @@ Cypher.where = function (name, keys) {
     }).join(' AND ');
   }
 };
+
 
 module.exports = Cypher;

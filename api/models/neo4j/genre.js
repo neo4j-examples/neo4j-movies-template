@@ -3,5 +3,8 @@
 var _ = require('underscore');
 
 var Genre = module.exports = function (_node) {
-  _(this).extend(_node.data);
+  _(this).extend(_node.properties);
+  if (this.id) { 
+    this.id = this.id.toNumber();
+  };
 };

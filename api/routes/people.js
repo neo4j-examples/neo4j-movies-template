@@ -85,42 +85,6 @@ exports.listgenres = {
   }
 };
 
-exports.findFiveMostRelated = {
-  'spec': {
-    "description" : "Find the five most related people to a person",
-    "path" : "/people/related/{id}",
-    "notes" : "Returns the 25 most related people to a person",
-    "summary" : "Returns the 25 most related people to a person",
-    "method": "GET",
-    "params" : [
-      param.path("id", "id of the person", "integer")
-    ],
-    "responseClass" : "List[Person]",
-    "errorResponses" : [swe.notFound('people')],
-    "nickname" : "getFiveMostRelated"
-  },
-  'action': function (req, res) {
-    var id = req.params.id;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-
-    if (!id) throw swe.invalid('id');
-
-    var params = {
-      id: id
-    };
-
-    var callback = function (err, response) {
-      if (err) throw swe.notFound('person');
-      writeResponse(res, response, start);
-    };
-
-    People.getFiveMostRelated(params, options, callback);
-  }
-};
-
 exports.getBaconPeople = {
   'spec': {
     "description" : "List all people",
@@ -185,6 +149,7 @@ exports.findById = {
     };
 
     var callback = function (err, response) {
+      // console.log(response)
       if (err) throw swe.notFound('person');
       writeResponse(res, response, start);
     };
