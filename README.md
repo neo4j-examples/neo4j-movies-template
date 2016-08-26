@@ -66,7 +66,7 @@ Use the GUI to select and start your database.
 * Set your username and password
 * You should see a database populated with `Movie`, `Genre`, `Keyword`, and `Person` nodes.
 
-## API
+## Node API
 
 From the root directory of this project:
 
@@ -76,6 +76,18 @@ From the root directory of this project:
 * `node app.js` starts the API
 * Take a look at the docs at [http://localhost:3000/docs](http://localhost:3000/docs)
 
+## Alternative: Flask API
+
+From the root directory of this project:
+
+* `cd flask-api`
+* `pip install -r requirements.txt` (you should be using a virtualenv)
+* set your neo4j database username `export MOVIE_DATABASE_USERNAME=myusername`
+* set your neo4j database password `export MOVIE_DATABASE_PASSWORD=mypassword`
+* `export FLASK_APP=app.py`
+* `flask run` starts the API
+* Take a look at the docs at [http://localhost:5000/docs](http://localhost:5000/docs)
+
 ## Frontend
 
 From the root directory of this project, set up and start the frontend with:
@@ -83,5 +95,7 @@ From the root directory of this project, set up and start the frontend with:
 * `cd web`
 * `npm install` (if `package.json` changed)
 * `bower install` to install the styles
-* `cp config/settings.example.js config/settings.js`
-* `gulp` (starts the app on [http://localhost:4000/](http://localhost:4000/) )
+* update config.settings.js file
+** if you are using the Node API: `cp config/settings.example.js config/settings.js`
+** if you are using the flask api then edit `config/settings.js` and change the `apiBaseUrl` to `http://localhost:5000/api/v0`
+* `gulp` starts the app on [http://localhost:4000/](http://localhost:4000/)
