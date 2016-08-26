@@ -6,6 +6,7 @@ web/node_modules
 
 api/node_modules
 api/config/settings.json
+*.pyc
 
 database/*
 
