@@ -1,19 +1,28 @@
+import binascii
+import hashlib
 import os
+import re
+import sys
+import uuid
+from functools import wraps
 
 from flask import Flask, g, request, send_from_directory, abort
 from flask_cors import CORS
 from flask_restful import Resource
 from flask_restful_swagger_2 import Api, swagger, Schema
 
-from neo4j.v1 import GraphDatabase, basic_auth
+from neo4j.v1 import GraphDatabase, basic_auth, ResultError
+
+from . import config
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'super secret guy'
 api = Api(app, title='Neo4j Movie Demo API', api_version='0.0.10')
 CORS(app)
 
 
-driver = GraphDatabase.driver('bolt://localhost', auth=basic_auth(os.environ['MOVIE_DATABASE_USERNAME'], os.environ['MOVIE_DATABASE_PASSWORD']))
+driver = GraphDatabase.driver('bolt://localhost', auth=basic_auth(config.DATABASE_USERNAME, str(config.DATABASE_PASSWORD)))
 
 
 def get_db():
@@ -27,6 +36,30 @@ def close_db(error):
     if hasattr(g, 'neo4j_db'):
         g.neo4j_db.close()
 
+
+def login_required(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return {'detail': 'no authorization provided'}, 401
+        match = re.match(r'^Token (\S+)', auth_header)
+        if not match:
+            return {'detail': 'invalid authorization format. Follow `Token <token>`'}, 401
+        token = match.group(1)
+
+        db = get_db()
+        results = db.run(
+            '''
+            MATCH (user:User {api_key: {api_key}}) RETURN user
+            ''', {'api_key': token}
+        )
+        try:
+            g.user = results.single()['user']
+        except ResultError:
+            return {'detail': 'invalid authorization key'}, 401
+        return f(*args, **kwargs)
+    return wrapped
 
 class GenreModel(Schema):
     type = 'object'
@@ -88,6 +121,21 @@ class PersonModel(Schema):
     }
 
 
+class UserModel(Schema):
+    type = 'object'
+    properties = {
+        'id': {
+            'type': 'string',
+        },
+        'username': {
+            'type': 'string',
+        },
+        'avatar': {
+            'type': 'object',
+        }
+    }
+
+
 def serialize_genre(genre):
     return {
         'id': genre['id'],
@@ -117,11 +165,38 @@ def serialize_person(person):
     }
 
 
+def serialize_user(user):
+    return {
+        'id': user['id'],
+        'username': user['username'],
+        'avatar': {
+            'full_size': 'https://www.gravatar.com/avatar/{}?d=retro'.format(hash_avatar(user['username']))
+        }
+    }
+
+
+def hash_password(username, password):
+    if sys.version[0] == 2:
+        s = '{}:{}'.format(username, password)
+    else:
+        s = '{}:{}'.format(username, password).encode('utf-8')
+    return hashlib.sha256(s).hexdigest()
+
+
+def hash_avatar(username):
+    if sys.version[0] == 2:
+        s = username
+    else:
+        s = username.encode('utf-8')
+    return hashlib.md5(s).hexdigest()
+
+
 class ApiDocs(Resource):
     def get(self, path=None):
         if not path:
             path = 'index.html'
         return send_from_directory('swaggerui', path)
+
 
 class GenreList(Resource):
     @swagger.doc({
@@ -586,6 +661,162 @@ class PersonBacon(Resource):
         return [serialize_person(record['person']) for record in results]
 
 
+class Register(Resource):
+    @swagger.doc({
+        'tags': ['users'],
+        'summary': 'Register a new user',
+        'description': 'Register a new user',
+        'parameters': [
+            {
+                'name': 'body',
+                'in': 'body',
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'username': {
+                            'type': 'string',
+                        },
+                        'password': {
+                            'type': 'string',
+                        }
+                    }
+                }
+            },
+        ],
+        'responses': {
+            '201': {
+                'description': 'Your new user',
+                'schema': UserModel,
+            },
+            '400': {
+                'description': 'Error message(s)',
+            },
+        }
+    })
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        if not username:
+            return {'username': 'This field is required.'}, 400
+        if not password:
+            return {'password': 'This field is required.'}, 400
+
+        db = get_db()
+
+        results = db.run(
+            '''
+            MATCH (user:User {username: {username}}) RETURN user
+            ''', {'username': username}
+        )
+        try:
+            results.single()
+        except ResultError:
+            pass
+        else:
+            return {'username': 'username already in use'}, 400
+
+        results = db.run(
+            '''
+            CREATE (user:User {id: {id}, username: {username}, password: {password}, api_key: {api_key}}) RETURN user
+            ''',
+            {
+                'id': str(uuid.uuid4()),
+                'username': username,
+                'password': hash_password(username, password),
+                'api_key': binascii.hexlify(os.urandom(20)).decode()
+            }
+        )
+        user = results.single()['user']
+        return serialize_user(user), 201
+
+
+class Login(Resource):
+    @swagger.doc({
+        'tags': ['users'],
+        'summary': 'Login',
+        'description': 'Login',
+        'parameters': [
+            {
+                'name': 'body',
+                'in': 'body',
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'username': {
+                            'type': 'string',
+                        },
+                        'password': {
+                            'type': 'string',
+                        }
+                    }
+                }
+            },
+        ],
+        'responses': {
+            '200': {
+                'description': 'succesful login'
+            },
+            '400': {
+                'description': 'invalid credentials'
+            }
+        }
+    })
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        if not username:
+            return {'username': 'This field is required.'}, 400
+        if not password:
+            return {'password': 'This field is required.'}, 400
+
+        db = get_db()
+        results = db.run(
+            '''
+            MATCH (user:User {username: {username}}) RETURN user
+            ''', {'username': username}
+        )
+        try:
+            user = results.single()['user']
+        except ResultError:
+            return {'username': 'username does not exist'}, 400
+
+        expected_password = hash_password(user['username'], password)
+        if user['password'] != expected_password:
+            return {'password': 'wrong password'}, 400
+        return {
+            'token': user['api_key']
+        }
+
+
+class UserMe(Resource):
+    @swagger.doc({
+        'tags': ['users'],
+        'summary': 'Get your user',
+        'description': 'Get your user',
+        'parameters': [{
+            'name': 'Authorization',
+            'in': 'header',
+            'type': 'string',
+            'required': True,
+            'default': 'Token <token goes here>',
+        }],
+        'responses': {
+            '200': {
+                'description': 'the user',
+                'schema': UserModel,
+            },
+            '401': {
+                'description': 'invalid / missing authentication',
+            },
+        }
+    })
+    @login_required
+    def get(self):
+        return serialize_user(g.user)
+
+
 api.add_resource(ApiDocs, '/docs', '/docs/<path:path>')
 api.add_resource(GenreList, '/api/v0/genres')
 api.add_resource(Movie, '/api/v0/movies/<int:id>')
@@ -598,3 +829,6 @@ api.add_resource(MovieListByDirectedBy, '/api/v0/movies/directed_by/<int:person_
 api.add_resource(Person, '/api/v0/people/<int:id>')
 api.add_resource(PersonList, '/api/v0/people')
 api.add_resource(PersonBacon, '/api/v0/people/bacon')
+api.add_resource(Register, '/api/v0/register')
+api.add_resource(Login, '/api/v0/login')
+api.add_resource(UserMe, '/api/v0/users/me')
