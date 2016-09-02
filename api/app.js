@@ -1,19 +1,19 @@
 /**
  * Module dependencies.
  */
-var express         = require('express')
-  , url             = require('url')
-  , routes          = require('./routes')
-  , fs              = require('fs')
-  , nconf           = require('./config')
-  , swagger         = require('swagger-node-express')
+var express = require('express')
+  , url = require('url')
+  , routes = require('./routes')
+  , fs = require('fs')
+  , nconf = require('./config')
+  , swagger = require('swagger-node-express')
   , methodOverride = require('method-override')
   , errorHandler = require('errorhandler')
   , logger = require('morgan')
   , bodyParser = require('body-parser');
 
-var app         = express()
-  , subpath     = express();
+var app = express()
+  , subpath = express();
 
 app.use(nconf.get('api_path'), subpath);
 
@@ -48,7 +48,7 @@ swagger.addValidator(
     if ("POST" == httpMethod || "DELETE" == httpMethod || "PUT" == httpMethod) {
       var apiKey = req.headers["api_key"];
       if (!apiKey) {
-        apiKey = url.parse(req.url,true).query["api_key"];
+        apiKey = url.parse(req.url, true).query["api_key"];
       }
 
       return "special-key" == apiKey;
@@ -62,17 +62,20 @@ var models = require("./models/swagger_models");
 
 // Add models and methods to swagger
 swagger.addModels(models)
-.addGet(routes.genres.list)
-.addGet(routes.movies.list)
-.addGet(routes.movies.findById)
-.addGet(routes.movies.findMoviesByDateRange)
-.addGet(routes.movies.findMoviesByActor)
-.addGet(routes.movies.findByGenre)
-.addGet(routes.people.getBaconPeople)
-.addGet(routes.people.list)
-.addGet(routes.movies.findMoviesByWriter)
-.addGet(routes.movies.findMoviesbyDirector)
-.addGet(routes.people.findById);
+  .addPost(routes.users.registerUser)
+  .addPost(routes.users.login)
+  .addGet(routes.users.userMe)
+  .addGet(routes.genres.list)
+  .addGet(routes.movies.list)
+  .addGet(routes.movies.findById)
+  .addGet(routes.movies.findMoviesByDateRange)
+  .addGet(routes.movies.findMoviesByActor)
+  .addGet(routes.movies.findByGenre)
+  .addGet(routes.people.getBaconPeople)
+  .addGet(routes.people.list)
+  .addGet(routes.movies.findMoviesByWriter)
+  .addGet(routes.movies.findMoviesbyDirector)
+  .addGet(routes.people.findById);
 
 // Configures the app's base path and api version.
 console.log(nconf.get('base_url') + nconf.get('api_path'));
@@ -85,7 +88,7 @@ var docs_handler = express.static(__dirname + '/node_modules/neo4j-swagger-ui/di
 app.get(/^\/docs(\/.*)?$/, (req, res, next) => {
   if (req.url === '/docs') { 
     // express static barfs on root url w/o trailing slash
-    res.writeHead(302, { 'Location' : req.url + '/' });
+    res.writeHead(302, {'Location': req.url + '/'});
     res.end();
     return;
   }

@@ -80,5 +80,19 @@ module.exports = {
         "type":"string"
       }
     }
+  },
+  "User":{
+    "id":"Person",
+    "properties":{
+      "id":{
+        "type":"string"
+      },
+      "username":{
+        "type":"string"
+      },
+      "avatar":{
+        "type":"object"
+      }
+    }
   }
 };
