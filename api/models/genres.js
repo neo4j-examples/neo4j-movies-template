@@ -18,7 +18,7 @@ var _getAll = function (params, options, callback) {
 // parse the results
 var _singleGenre = function (record) {
   return new Genre(record.get('genre'));
-}
+};
 
 var getAll = Cypher(_getAll, _singleGenre);
 

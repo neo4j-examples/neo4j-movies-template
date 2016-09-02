@@ -13,20 +13,45 @@ var Movie = require('../models/neo4j/movie');
  */
 
 var _singlePersonWithDetails = function (record) {
-  if (record.length)
-    {
-      var result = {};
-      _.extend(result, new Person(record.get('person')));
-      // mappings are temporary until the neo4j driver team decides what to do about numbers
-      result.directed = _.map(record.get('directed'), function (record) {if (record.id) { record.id = record.id.toNumber();}return record;});
-      result.produced = _.map(record.get('produced'), function (record) {if (record.id) { record.id = record.id.toNumber();}return record;});
-      result.wrote = _.map(record.get('wrote'), function (record) {if (record.id) { record.id = record.id.toNumber();}return record;});
-      result.actedIn = _.map(record.get('actedIn'), function (record) {if (record.id) { record.id = record.id.toNumber();}return record;});
-      result.related = _.map(record.get('related'), function (record) {if (record.id) { record.id = record.id.toNumber();}return record;});
-      return result;
-    } else {
-      return null; 
-    }
+  if (record.length) {
+    var result = {};
+    _.extend(result, new Person(record.get('person')));
+    // mappings are temporary until the neo4j driver team decides what to do about numbers
+    result.directed = _.map(record.get('directed'), record => {
+      if (record.id) {
+        record.id = record.id.toNumber();
+      }
+      return record;
+    });
+    result.produced = _.map(record.get('produced'), record => {
+      if (record.id) {
+        record.id = record.id.toNumber();
+      }
+      return record;
+    });
+    result.wrote = _.map(record.get('wrote'), record => {
+      if (record.id) {
+        record.id = record.id.toNumber();
+      }
+      return record;
+    });
+    result.actedIn = _.map(record.get('actedIn'), record => {
+      if (record.id) {
+        record.id = record.id.toNumber();
+      }
+      return record;
+    });
+    result.related = _.map(record.get('related'), record => {
+      if (record.id) {
+        record.id = record.id.toNumber();
+      }
+      return record;
+    });
+    return result;
+  }
+  else {
+    return null;
+  }
 };
 
 // return many people
@@ -66,8 +91,8 @@ var _matchById = function (params, options, callback) {
     'collect(DISTINCT { name:d.title, id:d.id, poster_image:d.poster_image}) AS directed,',
     'collect(DISTINCT { name:p.title, id:p.id, poster_image:p.poster_image}) AS produced,',
     'collect(DISTINCT { name:w.title, id:w.id, poster_image:w.poster_image}) AS wrote,',
-    'collect(DISTINCT{ name:a.title, id:a.id, poster_image:a.poster_image, role:r.role}) AS actedIn,', 
-    'collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.id, poster_image:relatedPerson.poster_image, role:relatedRole.role}) AS related' 
+    'collect(DISTINCT{ name:a.title, id:a.id, poster_image:a.poster_image, role:r.role}) AS actedIn,',
+    'collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.id, poster_image:relatedPerson.poster_image, role:relatedRole.role}) AS related'
   ].join('\n');
   callback(null, query, cypher_params);
 };
@@ -91,7 +116,7 @@ var _matchBacon = function (params, options, callback) {
 };
 
 // get a single person by id
-var getById = Cypher(_matchById, _singlePersonWithDetails, {single:true});
+var getById = Cypher(_matchById, _singlePersonWithDetails, {single: true});
 
 // get all people
 var getAll = Cypher(_matchAll, _manyPersons);

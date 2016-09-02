@@ -53,7 +53,7 @@ exports.list = {
       neo4j: parseBool(req, 'neo4j')
     };
     var start = new Date();
-      People.getAll(null, options, function (err, response) {
+      People.getAll(null, options, (err, response) => {
         if (err || !response.results) throw swe.notFound('people');
         writeResponse(res, response, start);
       });
@@ -78,7 +78,7 @@ exports.listgenres = {
     };
     var start = new Date();
 
-      Genres.getAll(null, options, function (err, response) {
+      Genres.getAll(null, options, (err, response) => {
         if (err || !response.results) throw swe.notFound('genres');
         writeResponse(res, response, start);
       });
@@ -114,7 +114,7 @@ exports.getBaconPeople = {
       name2: name2
     };
 
-      People.getBaconPeople(params, options, function (err, response) {
+      People.getBaconPeople(params, options, (err, response) => {
         if (err || !response.results) throw swe.notFound('people');
         writeResponse(res, response, start);
       });
@@ -148,12 +148,10 @@ exports.findById = {
       id: id
     };
 
-    var callback = function (err, response) {
+    People.getById(params, options, (err, response) => {
       // console.log(response)
       if (err) throw swe.notFound('person');
       writeResponse(res, response, start);
-    };
-
-    People.getById(params, options, callback);
+    });
   }
 };
