@@ -6,9 +6,9 @@ import sys
 import uuid
 from functools import wraps
 
-from flask import Flask, g, request, send_from_directory, abort
+from flask import Flask, g, request, send_from_directory, abort, request_started
 from flask_cors import CORS
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import Api, swagger, Schema
 
 from neo4j.v1 import GraphDatabase, basic_auth, ResultError
@@ -37,29 +37,38 @@ def close_db(error):
         g.neo4j_db.close()
 
 
+def set_user(sender, **extra):
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        g.user = {'id': None}
+        return
+    match = re.match(r'^Token (\S+)', auth_header)
+    if not match:
+        return {'message': 'invalid authorization format. Follow `Token <token>`'}, 401
+    token = match.group(1)
+
+    db = get_db()
+    results = db.run(
+        '''
+            MATCH (user:User {api_key: {api_key}}) RETURN user
+            ''', {'api_key': token}
+    )
+    try:
+        g.user = results.single()['user']
+    except ResultError:
+        return {'message': 'invalid authorization key'}, 401
+request_started.connect(set_user, app)
+
+
 def login_required(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return {'detail': 'no authorization provided'}, 401
-        match = re.match(r'^Token (\S+)', auth_header)
-        if not match:
-            return {'detail': 'invalid authorization format. Follow `Token <token>`'}, 401
-        token = match.group(1)
-
-        db = get_db()
-        results = db.run(
-            '''
-            MATCH (user:User {api_key: {api_key}}) RETURN user
-            ''', {'api_key': token}
-        )
-        try:
-            g.user = results.single()['user']
-        except ResultError:
-            return {'detail': 'invalid authorization key'}, 401
+            return {'message': 'no authorization provided'}, 401
         return f(*args, **kwargs)
     return wrapped
+
 
 class GenreModel(Schema):
     type = 'object'
@@ -223,10 +232,17 @@ class Movie(Resource):
         'description': 'Returns a movie',
         'parameters': [
             {
+                'name': 'Authorization',
+                'in': 'header',
+                'type': 'string',
+                'default': 'Token <token goes here>',
+            },
+            {
                 'name': 'id',
                 'description': 'movie id',
                 'in': 'path',
                 'type': 'integer',
+                'required': True,
             }
         ],
         'responses': {
@@ -244,17 +260,20 @@ class Movie(Resource):
         result = db.run(
             '''
             MATCH (movie:Movie {id: {id}})
-            MATCH (movie)<-[r:ACTED_IN]-(a:Person) // movies must have actors
-            MATCH (related:Movie)<--(a:Person) // movies must have related movies
-            WHERE related <> movie
+            OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: {user_id}})
+            OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
+            OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
             OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)
             OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)
             OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)
             OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)
             OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)
-            WITH DISTINCT movie, genre, keyword, d, p, w, a, r, related, count(related) AS countRelated
+            WITH DISTINCT movie,
+            my_rated,
+            genre, keyword, d, p, w, a, r, related, count(related) AS countRelated
             ORDER BY countRelated DESC
             RETURN DISTINCT movie,
+            my_rated.rating AS my_rating,
             collect(DISTINCT keyword) AS keywords,
             collect(DISTINCT d) AS directors,
             collect(DISTINCT p) AS producers,
@@ -262,7 +281,7 @@ class Movie(Resource):
             collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,
             collect(DISTINCT related) AS related,
             collect(DISTINCT genre) AS genres
-            ''', {'id': id}
+            ''', {'id': id, 'user_id': g.user['id']}
         )
         for record in result:
             return {
@@ -274,6 +293,7 @@ class Movie(Resource):
                 'rated': record['movie']['rated'],
                 'tagline': record['movie']['tagline'],
                 'poster_image': record['movie']['poster_image'],
+                'my_rating': record['my_rating'],
                 'genres': [serialize_genre(genre) for genre in record['genres']],
                 'directors': [serialize_person(director)for director in record['directors']],
                 'producers': [serialize_person(producer) for producer in record['producers']],
@@ -817,9 +837,108 @@ class UserMe(Resource):
         return serialize_user(g.user)
 
 
+class RateMovie(Resource):
+    @swagger.doc({
+        'tags': ['movies'],
+        'summary': 'Rate a movie from',
+        'description': 'Rate a movie from 0-5 inclusive',
+        'parameters': [
+            {
+                'name': 'Authorization',
+                'in': 'header',
+                'type': 'string',
+                'required': True,
+                'default': 'Token <token goes here>',
+            },
+            {
+                'name': 'id',
+                'description': 'movie id',
+                'in': 'path',
+                'type': 'integer',
+            },
+            {
+                'name': 'body',
+                'in': 'body',
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'rating': {
+                            'type': 'integer',
+                        },
+                    }
+                }
+            },
+        ],
+        'responses': {
+            '200': {
+                'description': 'movie rating saved'
+            },
+            '401': {
+                'description': 'invalid / missing authentication'
+            }
+        }
+    })
+    @login_required
+    def post(self, id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('rating', choices=list(range(0, 6)), type=int, required=True, help='A rating from 0 - 5 inclusive (integers)')
+        args = parser.parse_args()
+        rating = args['rating']
+
+        db = get_db()
+        results = db.run(
+            '''
+            MATCH (u:User {id: {user_id}}),(m:Movie {id: {movie_id}})
+            MERGE (u)-[r:RATED]->(m)
+            SET r.rating = {rating}
+            RETURN m
+            ''', {'user_id': g.user['id'], 'movie_id': id, 'rating': rating}
+        )
+        return {}
+
+    @swagger.doc({
+        'tags': ['movies'],
+        'summary': 'Delete your rating for a movie',
+        'description': 'Delete your rating for a movie',
+        'parameters': [
+            {
+                'name': 'Authorization',
+                'in': 'header',
+                'type': 'string',
+                'required': True,
+                'default': 'Token <token goes here>',
+            },
+            {
+                'name': 'id',
+                'description': 'movie id',
+                'in': 'path',
+                'type': 'integer',
+            },
+        ],
+        'responses': {
+            '204': {
+                'description': 'movie rating deleted'
+            },
+            '401': {
+                'description': 'invalid / missing authentication'
+            }
+        }
+    })
+    @login_required
+    def delete(self, id):
+        db = get_db()
+        db.run(
+            '''
+            MATCH (u:User {id: {user_id}})-[r:RATED]->(m:Movie {id: {movie_id}}) DELETE r
+            ''', {'movie_id': id, 'user_id': g.user['id']}
+        )
+        return {}, 204
+
+
 api.add_resource(ApiDocs, '/docs', '/docs/<path:path>')
 api.add_resource(GenreList, '/api/v0/genres')
 api.add_resource(Movie, '/api/v0/movies/<int:id>')
+api.add_resource(RateMovie, '/api/v0/movies/<int:id>/rate')
 api.add_resource(MovieList, '/api/v0/movies')
 api.add_resource(MovieListByGenre, '/api/v0/movies/genre/<int:genre_id>/')
 api.add_resource(MovieListByDateRange, '/api/v0/movies/daterange/<string:start>/<string:end>')
