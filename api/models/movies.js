@@ -15,11 +15,11 @@ var randomName = require('random-name');
  *  Utility Functions
  */
 
-function _randomName () {
+function _randomName() {
   return randomName.first() + ' ' + randomName.last();
 }
 
-function _randomNames (n) {
+function _randomNames(n) {
   return _.times(n, _randomName);
 }
 
@@ -34,27 +34,36 @@ var _manyMovies = function (record) {
 
 //TODO - handle Integers - process single *extended* movie 
 var _singleMovieWithDetails = function (record) {
-    if (record.length)
-    {
-      var result = {};
-      _.extend(result, new Movie(record.get('movie')));
-      result.directors = _.map(record.get('directors'), function (record) {return new Person(record);});
-      result.genres = _.map(record.get('genres'), function (record) {return new Genre(record);});
-      result.producers = _.map(record.get('producers'), function (record) {return new Person(record);});
-      result.writers = _.map(record.get('writers'), function (record) {return new Person(record);});
-      result.actors = _.map(record.get('actors'), function (record) {
-      if (record.id >=0) {
-          record.id = record.id.toNumber();
-        }
-        return record;
-      });
-      result.related = _.map(record.get('related'), function (record) {return new Movie(record);});
-      result.keywords = record.get('keywords');
+  if (record.length) {
+    var result = {};
+    _.extend(result, new Movie(record.get('movie')));
+    result.directors = _.map(record.get('directors'), record => {
+      return new Person(record);
+    });
+    result.genres = _.map(record.get('genres'), record => {
+      return new Genre(record);
+    });
+    result.producers = _.map(record.get('producers'), record => {
+      return new Person(record);
+    });
+    result.writers = _.map(record.get('writers'), record => {
+      return new Person(record);
+    });
+    result.actors = _.map(record.get('actors'), record => {
+      if (record.id >= 0) {
+        record.id = record.id.toNumber();
+      }
+      return record;
+    });
+    result.related = _.map(record.get('related'), record => {
+      return new Movie(record);
+    });
+    result.keywords = record.get('keywords');
 
-      return result;
-    } else {
-      return null; 
-    }
+    return result;
+  } else {
+    return null;
+  }
 };
 
 /**
@@ -92,7 +101,7 @@ var _matchById = function (params, options, callback) {
     'WITH DISTINCT movie, genre, keyword, d, p, w, a, r, related, count(related) AS countRelated',
     'ORDER BY countRelated DESC',
     'RETURN DISTINCT movie,',
-    'collect(DISTINCT keyword) AS keywords, ',                  
+    'collect(DISTINCT keyword) AS keywords, ',
     'collect(DISTINCT d) AS directors,',
     'collect(DISTINCT p) AS producers,',
     'collect(DISTINCT w) AS writers,',
@@ -178,7 +187,7 @@ var _matchAll = _.partial(_matchBy, []);
 // exposed functions
 
 // get a single movie by id
-var getById = Cypher(_matchById, _singleMovieWithDetails, {single:true});
+var getById = Cypher(_matchById, _singleMovieWithDetails, {single: true});
 
 // Get by date range
 var getByDateRange = Cypher(_getByDateRange, _manyMovies);
@@ -206,6 +215,6 @@ module.exports = {
   getByDateRange: getByDateRange, // unused
   getByActor: getByActor,
   getByGenre: getByGenre, //unused
-  getMoviesbyDirector: getByDirector, 
+  getMoviesbyDirector: getByDirector,
   getMoviesByWriter: getByWriter
 };

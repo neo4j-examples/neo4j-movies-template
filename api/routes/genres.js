@@ -50,7 +50,7 @@ exports.list = {
     };
     var start = new Date();
 
-      Genres.getAll(null, options, function (err, response) {
+      Genres.getAll(null, options, (err, response) => {
         if (err || !response.results) throw swe.notFound("genres");
         writeResponse(res, response, start);
       });
