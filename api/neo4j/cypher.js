@@ -1,8 +1,10 @@
-// neo4j cypher helper module
-nconf = require('../config'),
-  _ = require('underscore');
-var neo4j = require('neo4j-driver').v1;
+"use strict";
 
+// neo4j cypher helper module
+var nconf = require('../config'),
+  _ = require('underscore');
+
+var neo4j = require('neo4j-driver').v1;
 var driver = neo4j.driver(nconf.get('neo4j-local'), neo4j.auth.basic(nconf.get('USERNAME'), nconf.get('PASSWORD')));
 
 if (nconf.get('neo4j') == 'remote') {
@@ -21,13 +23,18 @@ var Cypher = function (queryFn, resultsFn, resultsOptions) {
         var myResult = [];
         session.run(query, cypher_params)
           .then(result => {
-            result.records.forEach(record => {
-              myResult.push(resultsFn(record));
 
+            if (!_.isEmpty(result.records)) {
               if (resultsOptions && resultsOptions.single) {
-                myResult = myResult[0]
+                let singleRes = result.records[0];
+                myResult = resultsFn ? resultsFn(singleRes) : singleRes
               }
-            }); // Completed!
+              else {
+                myResult = result.records.map(record => {
+                  return resultsFn ? resultsFn(record) : record;
+                });
+              }
+            }
 
             return callback(err, {
               results: myResult
