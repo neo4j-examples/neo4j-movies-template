@@ -100,3 +100,82 @@ From the root directory of this project, set up and start the frontend with:
 ** if you are using the Node API: `cp config/settings.example.js config/settings.js`
 ** if you are using the flask api then edit `config/settings.js` and change the `apiBaseURL` to `http://localhost:5000/api/v0`
 * `gulp` starts the app on [http://localhost:4000/](http://localhost:4000/)
+
+## Ratings and Recommendations
+
+### Load some fake users and ratings
+ 
+If you're running the app locally, you might want to tweak or explore ratings without having a robust community of users. 
+In the `/csv` directory, note that there is a file called `ratings.csv`. 
+This file contains some pseudo-randomly generated users and ratings. 
+Load the users and ratings:
+
+Move `ratings.csv` into the `import` directory of your database either by dragging and dropping or using
+
+```
+cp csv/ratings.csv $NEO4J_HOME/import/ratings.csv
+```
+
+![put ratings.csv into the import directory](./img/ratings_csv.png =250x)
+
+Assuming your database is running, paste the following query into the Neo4j browser:
+
+```
+LOAD CSV WITH HEADERS FROM 'file:///ratings.csv' AS line
+MATCH (m:Movie {id:toInt(line.movie_id)})  
+MERGE (u:User {id:line.user_id, username:line.user_username}) // user ids are strings
+MERGE (u)-[r:RATED]->(m)
+SET r.rating = toInt(line.rating)
+RETURN m.title, r.rating, u.username
+```
+
+If you don't want to use the browser, you can uncomment out the above query in `setup.cql` and run it again using `$NEO4J_HOME/bin/neo4j-shell < setup.cql`
+
+### User-Centric, User-Based Recommendations
+
+Based on my similarity to other users, user `Sherman` might be interested in movies rated highly by users with similar ratings as himself. 
+
+```
+MATCH (me:User {username:'Sherman'})-[my:RATED]->(m:Movie)
+MATCH (other:User)-[their:RATED]->(m)
+WHERE me <> other
+AND abs(my.rating - their.rating) < 2
+WITH other,m
+MATCH (other)-[otherRating:RATED]->(movie:Movie)
+WHERE movie <> m
+WITH avg(otherRating.rating) AS avgRating, movie
+RETURN movie
+ORDER BY avgRating desc
+LIMIT 25
+```
+
+### Movie-Centric, Keyword-Based Recommendations
+
+Site visitors interested in movies like `Elysium` will likely be interested in movies with similar keywords. 
+
+```
+MATCH (m:Movie {title:'Elysium'})
+MATCH (m)-[:HAS_KEYWORD]->(k:Keyword)
+MATCH (movie:Movie)-[r:HAS_KEYWORD]->(k)
+WHERE m <> movie
+WITH movie, count(DISTINCT r) AS commonKeywords
+RETURN movie
+ORDER BY commonKeywords DESC
+LIMIT 25
+```
+
+### User-Centric, Keyword-Based Recommendations
+
+`Sherman` has seen many movies, and is looking for movies similar to the ones he has already watched. 
+
+```
+MATCH (u:User {username:'Sherman'})-[:RATED]->(m:Movie)
+MATCH (m)-[:HAS_KEYWORD]->(k:Keyword)
+MATCH (movie:Movie)-[r:HAS_KEYWORD]->(k)
+WHERE m <> movie
+WITH movie, count(DISTINCT r) AS commonKeywords
+RETURN movie
+ORDER BY commonKeywords DESC
+LIMIT 25
+```
+
