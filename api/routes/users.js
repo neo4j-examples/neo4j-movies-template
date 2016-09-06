@@ -30,8 +30,9 @@ exports.registerUser = {
     "summary": "Register a new user",
     "method": "POST",
     "params": [
-      param.body('body', 'register body', 'object')],
-    "responseClass": "User",
+      param.body('body', 'register body', 'UserRegister')],
+    "responseClass": "UserResponse",
+    "errorResponses": [{"code": 400, "reason": "Error message(s)"}],
     "nickname": "register"
   },
   'action': function (req, res) {
@@ -63,8 +64,9 @@ exports.login = {
     "summary": "Login user",
     "method": "POST",
     "params": [
-      param.body('body', 'register body', 'object')],
-    "responseClass": "User",
+      param.body('body', 'login body', 'LoginRequest')],
+    "responseClass": "LoginResponse",
+    "errorResponses": [{"code": 400, "reason": "invalid credentials"}],
     "nickname": "login"
   },
   'action': function (req, res) {
@@ -97,18 +99,19 @@ exports.userMe = {
     "method": "GET",
     "params": [
       param.header('Authorization', 'Authorization token', 'string', true)],
-    "responseClass": "User",
+    "responseClass": "UserResponse",
+    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
     "nickname": "me"
   },
   'action': function (req, res) {
     var authHeader = req.headers['authorization'];
     if (!authHeader) {
-      return writeResponse(res, {detail: 'no authorization provided'}, 400);
+      return writeResponse(res, {detail: 'no authorization provided'}, 401);
     }
 
     var match = authHeader.match(/^Token (\S+)/);
     if (!match || !match[1]) {
-      return writeResponse(res, {detail: 'invalid authorization format. Follow `Token <token>`'}, 400);
+      return writeResponse(res, {detail: 'invalid authorization format. Follow `Token <token>`'}, 401);
     }
 
     var token = match[1];
@@ -117,7 +120,7 @@ exports.userMe = {
         writeResponse(res, response);
       })
       .catch(err => {
-        writeResponse(res, err, 400);
+        writeResponse(res, err, 401);
       });
   }
 };

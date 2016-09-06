@@ -1,8 +1,8 @@
 module.exports = {
-  "Envelope":{
-    "id":"Envelope",
-    "properties":{
-      "response":[
+  "Envelope": {
+    "id": "Envelope",
+    "properties": {
+      "response": [
         "Person",
         "Movie",
         "Genre",
@@ -10,88 +10,118 @@ module.exports = {
         "List[Movie]",
         "List[Genre]",
       ],
-      "responseTime":"integer",
-      "name":{
-        "type":"string"
+      "responseTime": "integer",
+      "name": {
+        "type": "string"
       }
     }
   },
-  "Count":{
-    "id":"Count",
+  "Count": {
+    "id": "Count",
     "properties": {
-      "count":{
-        "type":"integer"
+      "count": {
+        "type": "integer"
       }
     }
   },
-  "Movie":{
-    "id":"Movie",
-    "properties":{
-      "id":{
-        "type":"integer"
+  "Movie": {
+    "id": "Movie",
+    "properties": {
+      "id": {
+        "type": "integer"
       },
-      "released":{
-        "type":"integer"
+      "released": {
+        "type": "integer"
       },
-      "summary":{
-        "type":"string"
+      "summary": {
+        "type": "string"
       },
-      "duration":{
-        "type":"integer"
+      "duration": {
+        "type": "integer"
       },
-      "poster_image":{
-        "type":"string"
+      "poster_image": {
+        "type": "string"
       },
-      "title":{
-        "type":"string"
+      "title": {
+        "type": "string"
       },
-      "tagline":{
-        "type":"string"
+      "tagline": {
+        "type": "string"
       },
-      "genres":{
-        "type":"array"
+      "genres": {
+        "type": "array"
       },
     }
   },
-  "Genre":{
-    "id":"Genre",
-    "properties":{
-      "id":{
-        "type":"integer"
+  "Genre": {
+    "id": "Genre",
+    "properties": {
+      "id": {
+        "type": "integer"
       },
-      "name":{
-        "type":"string"
+      "name": {
+        "type": "string"
       }
     }
   },
-  "Person":{
-    "id":"Person",
-    "properties":{
-      "id":{
-        "type":"integer"  
+  "Person": {
+    "id": "Person",
+    "properties": {
+      "id": {
+        "type": "integer"
       },
-      "name":{
-        "type":"string"
+      "name": {
+        "type": "string"
       },
-      "born":{
-        "type":"integer"
+      "born": {
+        "type": "integer"
       },
-      "poster_image":{
-        "type":"string"
+      "poster_image": {
+        "type": "string"
       }
     }
   },
-  "User":{
-    "id":"Person",
-    "properties":{
-      "id":{
-        "type":"string"
+  "UserResponse": {
+    "id": "UserResponse",
+    "properties": {
+      "id": {
+        "type": "string"
       },
-      "username":{
-        "type":"string"
+      "username": {
+        "type": "string"
       },
-      "avatar":{
-        "type":"object"
+      "avatar": {
+        "type": "object"
+      }
+    }
+  },
+  "UserRegister": {
+    "id": "UserRegister",
+    "properties": {
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      }
+    }
+  },
+  "LoginRequest": {
+    "id": "LoginRequest",
+    "properties": {
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      }
+    }
+  },
+  "LoginResponse": {
+    "id": "LoginResponse",
+    "properties": {
+      "token": {
+        "type": "string"
       }
     }
   }
