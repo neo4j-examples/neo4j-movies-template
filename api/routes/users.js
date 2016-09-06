@@ -80,7 +80,7 @@ exports.login = {
 
     Users.login(username, password)
       .then(response => {
-        writeResponse(res, response, 201);
+        writeResponse(res, response);
       })
       .catch(err => {
         writeResponse(res, err, 400);
@@ -114,7 +114,7 @@ exports.userMe = {
     var token = match[1];
     Users.me(token)
       .then(response => {
-        writeResponse(res, response, 201);
+        writeResponse(res, response);
       })
       .catch(err => {
         writeResponse(res, err, 400);
