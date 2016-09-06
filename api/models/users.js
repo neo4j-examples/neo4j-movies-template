@@ -5,6 +5,7 @@ var randomstring = require("randomstring");
 var _ = require('lodash');
 var dbUtils = require('../neo4j/dbUtils');
 var User = require('../models/neo4j/user');
+var crypto = require('crypto');
 
 var register = function (username, password) {
   var session = dbUtils.getSession();
@@ -20,7 +21,7 @@ var register = function (username, password) {
           {
             id: uuid.v4(),
             username: username,
-            password: password,
+            password: hashPassword(username, password),
             api_key: randomstring.generate({
               length: 20,
               charset: 'hex'
@@ -66,7 +67,7 @@ var login = function (username, password) {
         }
         else {
           var dbUser = _.get(results.records[0].get('user'), 'properties');
-          if(_.get(dbUser, 'password') != password) {
+          if (dbUser.password != hashPassword(username, password)) {
             throw {password: 'wrong password'}
           }
           return {token: _.get(dbUser, 'api_key')};
@@ -78,6 +79,11 @@ var login = function (username, password) {
       throw err;
     });
 };
+
+function hashPassword(username, password) {
+  var s = username + ':' + password;
+  return crypto.createHash('sha256').update(s).digest('hex');
+}
 
 module.exports = {
   register: register,
