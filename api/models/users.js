@@ -12,6 +12,7 @@ var register = function (username, password) {
   return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
     .then(results => {
       if (!_.isEmpty(results.records)) {
+        session.close();
         throw {username: 'username already in use'}
       }
       else {
