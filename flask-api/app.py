@@ -108,6 +108,9 @@ class MovieModel(Schema):
         },
         'poster_image': {
             'type': 'string',
+        },
+        'my_rating': {
+            'type': 'integer',
         }
     }
 
@@ -152,7 +155,7 @@ def serialize_genre(genre):
     }
 
 
-def serialize_movie(movie):
+def serialize_movie(movie, my_rating=None):
     return {
         'id': movie['id'],
         'title': movie['title'],
@@ -162,6 +165,7 @@ def serialize_movie(movie):
         'rated': movie['rated'],
         'tagline': movie['tagline'],
         'poster_image': movie['poster_image'],
+        'my_rating': my_rating,
     }
 
 
@@ -518,6 +522,42 @@ class MovieListByDirectedBy(Resource):
             ''', {'person_id': person_id}
         )
         return [serialize_movie(record['movie']) for record in result]
+
+
+class MovieListRatedByMe(Resource):
+    @swagger.doc({
+        'tags': ['movies'],
+        'summary': 'A list of movies the authorized user has rated.',
+        'description': 'A list of movies the authorized user has rated.',
+        'parameters': [
+            {
+                'name': 'Authorization',
+                'in': 'header',
+                'type': 'string',
+                'default': 'Token <token goes here>',
+                'required': True
+            },
+        ],
+        'responses': {
+            '200': {
+                'description': 'A list of movies the authorized user has rated',
+                'schema': {
+                    'type': 'array',
+                    'items': MovieModel,
+                }
+            }
+        }
+    })
+    @login_required
+    def get(self):
+        db = get_db()
+        result = db.run(
+            '''
+            MATCH (:User {id: {user_id}})-[rated:RATED]->(movie:Movie)
+            RETURN DISTINCT movie, rated.rating as my_rating
+            ''', {'user_id': g.user['id']}
+        )
+        return [serialize_movie(record['movie'], record['my_rating']) for record in result]
 
 
 class Person(Resource):
@@ -945,6 +985,7 @@ api.add_resource(MovieListByDateRange, '/api/v0/movies/daterange/<string:start>/
 api.add_resource(MovieListByPersonActedIn, '/api/v0/movies/acted_in_by/<int:person_id>')
 api.add_resource(MovieListByWrittenBy, '/api/v0/movies/written_by/<int:person_id>')
 api.add_resource(MovieListByDirectedBy, '/api/v0/movies/directed_by/<int:person_id>')
+api.add_resource(MovieListRatedByMe, '/api/v0/movies/rated')
 api.add_resource(Person, '/api/v0/people/<int:id>')
 api.add_resource(PersonList, '/api/v0/people')
 api.add_resource(PersonBacon, '/api/v0/people/bacon')
