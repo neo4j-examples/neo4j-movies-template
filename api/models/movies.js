@@ -37,12 +37,8 @@ var _manyMovies = function (record) {
 var _singleMovieWithDetails = function (record) {
   if (record.length) {
     var result = {};
-    _.extend(result, new Movie(record.get('movie')));
+    _.extend(result, new Movie(record.get('movie'), record.get('my_rating')));
 
-    var userRating = record.get('my_rating');
-    if(userRating || userRating === 0) {
-      result['my_rating'] = userRating;
-    }
     result.directors = _.map(record.get('directors'), record => {
       return new Person(record);
     });
@@ -238,6 +234,18 @@ var deleteRating = function (session, userId, movieId) {
   );
 };
 
+var getRatedByUser = function (session, userId) {
+  return session.run(
+    'MATCH (:User {id: {userId}})-[rated:RATED]->(movie:Movie) \
+     RETURN DISTINCT movie, rated.rating as my_rating',
+    {userId: userId}
+  ).then(result => {
+    return result.records.map(r => {
+      return new Movie(r.get('movie'), r.get('my_rating'));
+    })
+  });
+};
+
 // export exposed functions
 module.exports = {
   getAll: getAll,
@@ -248,5 +256,6 @@ module.exports = {
   getMoviesbyDirector: getByDirector,
   getMoviesByWriter: getByWriter,
   rate: rate,
-  deleteRating: deleteRating
+  deleteRating: deleteRating,
+  getRatedByUser: getRatedByUser
 };

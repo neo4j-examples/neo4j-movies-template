@@ -355,7 +355,7 @@ exports.rateMovie = {
       }
 
       Movies.rate(dbUtils.getSession(req), req.params.id, req.user.id, rating)
-        .then(response => writeSimpleResponse(res, response))
+        .then(response => writeSimpleResponse(res, {}))
         .catch(err => writeSimpleResponse(res, err, 400));
     });
   }
@@ -379,6 +379,29 @@ exports.deleteMovieRating = {
     loginRequired(req, res, () => {
       Movies.deleteRating(dbUtils.getSession(req), req.params.id, req.user.id)
         .then(response => writeSimpleResponse(res, response, 204))
+        .catch(err => writeSimpleResponse(res, err, 400));
+    })
+  }
+};
+
+exports.findMoviesRatedByMe = {
+  'spec': {
+    "description": "A list of movies the authorized user has rated",
+    "path": "/movies/rated",
+    "notes": "A list of movies the authorized user has rated",
+    "summary": "A list of movies the authorized user has rated",
+    "method": "GET",
+    "params": [
+      param.header('Authorization', 'Authorization token', 'string', true)
+    ],
+    "responseClass": "List[Movie]",
+    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
+    "nickname": "findMoviesRatedByMe"
+  },
+  'action': function (req, res) {
+    loginRequired(req, res, () => {
+      Movies.getRatedByUser(dbUtils.getSession(req), req.user.id)
+        .then(response => writeSimpleResponse(res, response, 200))
         .catch(err => writeSimpleResponse(res, err, 400));
     })
   }
