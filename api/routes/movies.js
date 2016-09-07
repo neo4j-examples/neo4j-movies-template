@@ -1,10 +1,14 @@
 // movies.js
-var Movies = require('../models/movies');
-var sw = require("swagger-node-express");
-var param = sw.params;
-var url = require("url");
-var swe = sw.errors;
-var _ = require('underscore');
+var Movies = require('../models/movies')
+  , sw = require("swagger-node-express")
+  , param = sw.params
+  , url = require("url")
+  , swe = sw.errors
+  , _ = require('underscore')
+  , _l = require('lodash')
+  , writeSimpleResponse = require('../helpers/writeResponse')
+  , loginRequired = require('../middlewares/loginRequired')
+  , dbUtils = require('../neo4j/dbUtils');
 
 /*
  *  Util Functions
@@ -88,6 +92,7 @@ exports.findById = {
     "summary": "Find movie by ID",
     "method": "GET",
     "params": [
+      param.header('Authorization', 'Authorization token', 'string', false),
       param.path("id", "ID of movie that needs to be fetched", "integer")
     ],
     "responseClass": "Movie",
@@ -104,7 +109,8 @@ exports.findById = {
     if (!id) throw swe.invalid('id');
 
     var params = {
-      id: id
+      id: id,
+      userId: req.user.id
     };
 
     Movies.getById(params, options, (err, response) => {
@@ -122,7 +128,7 @@ exports.findByTitle = {
     "summary": "Find movie by title",
     "method": "GET",
     "params": [
-      param.path("title", "Title of movie that needs to be fetched", "string")
+      param.path("title", "Title of movie that needs to be fetched", "string", true)
     ],
     "responseClass": "Movie",
     "errorResponses": [swe.invalid('title'), swe.notFound('movie')],
@@ -157,7 +163,7 @@ exports.findByGenre = {
     "summary": "Find movie by genre id",
     "method": "GET",
     "params": [
-      param.path("id", "The id of the genre", "integer")
+      param.path("id", "The id of the genre", "integer", true)
     ],
     "responseClass": "Movie",
     "errorResponses": [swe.invalid('id'), swe.notFound('movies')],
@@ -228,7 +234,7 @@ exports.findMoviesbyDirector = {
     "summary": "Returns movies directed by a person",
     "method": "GET",
     "params": [
-      param.path("id", "Id of the director person", "integer")
+      param.path("id", "Id of the director person", "integer", true)
     ],
     "responseClass": "Movie",
     "errorResponses": [swe.invalid('id'), swe.notFound('person')],
@@ -264,7 +270,7 @@ exports.findMoviesByActor = {
     "summary": "Find movies by actor",
     "method": "GET",
     "params": [
-      param.path("id", "id of the actor who acted in the movies", "integer")
+      param.path("id", "id of the actor who acted in the movies", "integer", true)
     ],
     "responseClass": "Movie",
     "errorResponses": [swe.invalid('id'), swe.notFound('movie')],
@@ -288,7 +294,6 @@ exports.findMoviesByActor = {
     };
 
     Movies.getByActor(params, options, callback);
-
   }
 };
 
@@ -300,7 +305,7 @@ exports.findMoviesByWriter = {
     "summary": "Find movies by writer",
     "method": "GET",
     "params": [
-      param.path("id", "id of the writer who wrote the movies", "integer")
+      param.path("id", "id of the writer who wrote the movies", "integer", true)
     ],
     "responseClass": "Movie",
     "errorResponses": [swe.invalid('id'), swe.notFound('movie')],
@@ -325,3 +330,56 @@ exports.findMoviesByWriter = {
   }
 };
 
+exports.rateMovie = {
+  'spec': {
+    "description": "Rate a movie from 0-5 inclusive",
+    "path": "/movies/{id}/rate",
+    "notes": "rate",
+    "summary": "Rate a movie",
+    "method": "POST",
+    "params": [
+      param.path("id", "ID of movie that needs to be fetched", "integer"),
+      param.header('Authorization', 'Authorization token', 'string', true),
+      param.body('body', 'register body', 'MovieRating')],
+    "errorResponses": [
+      {"code": 401, "reason": "invalid / missing authentication"},
+      swe.invalid('rating')
+    ],
+    "nickname": "rateMovie"
+  },
+  'action': function (req, res) {
+    loginRequired(req, res, () => {
+      var rating = Number(_l.get(req.body, 'rating'));
+      if (isNaN(rating) || rating < 0 || rating >= 6) {
+        writeSimpleResponse(res, {rating: 'Rating value is invalid'}, 400);
+      }
+
+      Movies.rate(dbUtils.getSession(req), req.params.id, req.user.id, rating)
+        .then(response => writeSimpleResponse(res, response))
+        .catch(err => writeSimpleResponse(res, err, 400));
+    });
+  }
+};
+
+exports.deleteMovieRating = {
+  'spec': {
+    "description": "Delete your rating for a movie",
+    "path": "/movies/{id}/rate",
+    "notes": "Delete your rating for a movie",
+    "summary": "Delete your rating for a movie",
+    "method": "DELETE",
+    "params": [
+      param.path("id", "ID of movie that needs to be fetched", "integer"),
+      param.header('Authorization', 'Authorization token', 'string', true)
+    ],
+    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
+    "nickname": "deleteMovieRating"
+  },
+  'action': function (req, res) {
+    loginRequired(req, res, () => {
+      Movies.deleteRating(dbUtils.getSession(req), req.params.id, req.user.id)
+        .then(response => writeSimpleResponse(res, response, 204))
+        .catch(err => writeSimpleResponse(res, err, 400));
+    })
+  }
+};

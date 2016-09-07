@@ -11,7 +11,13 @@ if (nconf.get('neo4j') == 'remote') {
   driver = neo4j.driver(nconf.get('neo4j-remote'), neo4j.auth.basic(nconf.get('USERNAME'), nconf.get('PASSWORD')));
 }
 
-exports.getSession = function () {
-  return driver.session();
+exports.getSession = function (context) {
+  if(context.neo4jSession) {
+    return context.neo4jSession;
+  }
+  else {
+    context.neo4jSession = driver.session();
+    return context.neo4jSession;
+  }
 };
 

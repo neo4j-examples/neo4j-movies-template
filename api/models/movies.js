@@ -6,6 +6,7 @@
 var _ = require('underscore');
 var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
+var dbUtils = require('../neo4j/dbUtils');
 var Movie = require('../models/neo4j/movie');
 var Person = require('../models/neo4j/person');
 var Genre = require('../models/neo4j/genre');
@@ -37,6 +38,11 @@ var _singleMovieWithDetails = function (record) {
   if (record.length) {
     var result = {};
     _.extend(result, new Movie(record.get('movie')));
+
+    var userRating = record.get('my_rating');
+    if(userRating || userRating === 0) {
+      result['my_rating'] = userRating;
+    }
     result.directors = _.map(record.get('directors'), record => {
       return new Person(record);
     });
@@ -85,22 +91,26 @@ var _matchBy = function (keys, params, options, callback) {
 // Find movie by ID and return extended movie details
 var _matchById = function (params, options, callback) {
   var cypher_params = {
-    n: parseInt(params.id)
+    id: parseInt(params.id),
+    userId: params.userId
   };
 
   var query = [
-    'MATCH (movie:Movie {id:{n}})',
-    'MATCH (movie)<-[r:ACTED_IN]-(a:Person) // movies must have actors',
-    'MATCH (related:Movie)<--(a:Person) // movies must have related movies',
-    'WHERE related <> movie',
+    'MATCH (movie:Movie {id: {id}})',
+    'OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: {userId}})',
+    'OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)',
+    'OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie',
     'OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)',
     'OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)',
     'OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)',
     'OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)',
     'OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)',
-    'WITH DISTINCT movie, genre, keyword, d, p, w, a, r, related, count(related) AS countRelated',
+    'WITH DISTINCT movie,',
+    'my_rated,',
+    'genre, keyword, d, p, w, a, r, related, count(related) AS countRelated',
     'ORDER BY countRelated DESC',
     'RETURN DISTINCT movie,',
+    'my_rated.rating AS my_rating,',
     'collect(DISTINCT keyword) AS keywords, ',
     'collect(DISTINCT d) AS directors,',
     'collect(DISTINCT p) AS producers,',
@@ -207,8 +217,28 @@ var getByDirector = Cypher(_getByDirector, _manyMovies);
 // Get many movies written by a person
 var getByWriter = Cypher(_getByWriter, _manyMovies);
 
-// export exposed functions
+var rate = function (session, movieId, userId, rating) {
+  return session.run(
+    'MATCH (u:User {id: {userId}}),(m:Movie {id: {movieId}}) \
+    MERGE (u)-[r:RATED]->(m) \
+    SET r.rating = {rating} \
+    RETURN m',
+    {
+      userId: userId,
+      movieId: parseInt(movieId),
+      rating: parseInt(rating)
+    }
+  );
+};
 
+var deleteRating = function (session, userId, movieId) {
+  return session.run(
+    'MATCH (u:User {id: {userId}})-[r:RATED]->(m:Movie {id: {movieId}}) DELETE r',
+    {userId: userId, movieId: movieId}
+  );
+};
+
+// export exposed functions
 module.exports = {
   getAll: getAll,
   getById: getById,
@@ -216,5 +246,7 @@ module.exports = {
   getByActor: getByActor,
   getByGenre: getByGenre, //unused
   getMoviesbyDirector: getByDirector,
-  getMoviesByWriter: getByWriter
+  getMoviesByWriter: getByWriter,
+  rate: rate,
+  deleteRating: deleteRating
 };
