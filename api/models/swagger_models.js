@@ -124,5 +124,13 @@ module.exports = {
         "type": "string"
       }
     }
+  },
+  "MovieRating": {
+    "id": "MovieRating",
+    "properties": {
+      "rating": {
+        "type": "integer"
+      }
+    }
   }
 };

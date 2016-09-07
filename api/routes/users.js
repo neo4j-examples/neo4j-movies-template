@@ -1,22 +1,15 @@
 // movies.js
-var Users = require('../models/users');
-var sw = require("swagger-node-express");
-var param = sw.params;
-
-var url = require("url");
-var swe = sw.errors;
-var error = sw.error;
-var _ = require('underscore');
-var _l = require('lodash');
-
-/*
- *  Util Functions
- */
-
-function writeResponse(res, response, status) {
-  sw.setHeaders(res);
-  res.status(status || 200).send(JSON.stringify(response));
-}
+var Users = require('../models/users')
+  , writeResponse = require('../helpers/writeResponse')
+  , loginRequired = require('../middlewares/loginRequired')
+  , dbUtils = require('../neo4j/dbUtils')
+  , sw = require("swagger-node-express")
+  , param = sw.params
+  , url = require("url")
+  , swe = sw.errors
+  , error = sw.error
+  , _ = require('underscore')
+  , _l = require('lodash');
 
 /*
  * API Specs and Functions
@@ -46,13 +39,9 @@ exports.registerUser = {
       return writeResponse(res, {password: 'This field is required.'}, 400);
     }
 
-    Users.register(username, password)
-      .then(response => {
-        writeResponse(res, response, 201);
-      })
-      .catch(err => {
-        writeResponse(res, err, 400);
-      });
+    Users.register(dbUtils.getSession(req), username, password)
+      .then(response => writeResponse(res, response, 201))
+      .catch(err => writeResponse(res, err, 400));
   }
 };
 
@@ -80,13 +69,9 @@ exports.login = {
       return writeResponse(res, {password: 'This field is required.'}, 400);
     }
 
-    Users.login(username, password)
-      .then(response => {
-        writeResponse(res, response);
-      })
-      .catch(err => {
-        writeResponse(res, err, 400);
-      });
+    Users.login(dbUtils.getSession(req),username, password)
+      .then(response => writeResponse(res, response))
+      .catch(err => writeResponse(res, err, 400));
   }
 };
 
@@ -104,23 +89,17 @@ exports.userMe = {
     "nickname": "me"
   },
   'action': function (req, res) {
-    var authHeader = req.headers['authorization'];
-    if (!authHeader) {
-      return writeResponse(res, {detail: 'no authorization provided'}, 401);
-    }
+    loginRequired(req, res, () => {
+      var authHeader = req.headers['authorization'];
+      var match = authHeader.match(/^Token (\S+)/);
+      if (!match || !match[1]) {
+        return writeResponse(res, {detail: 'invalid authorization format. Follow `Token <token>`'}, 401);
+      }
 
-    var match = authHeader.match(/^Token (\S+)/);
-    if (!match || !match[1]) {
-      return writeResponse(res, {detail: 'invalid authorization format. Follow `Token <token>`'}, 401);
-    }
-
-    var token = match[1];
-    Users.me(token)
-      .then(response => {
-        writeResponse(res, response);
-      })
-      .catch(err => {
-        writeResponse(res, err, 401);
-      });
+      var token = match[1];
+      Users.me(dbUtils.getSession(req), token)
+        .then(response => writeResponse(res, response))
+        .catch(err => writeResponse(res, err, 401));
+    })
   }
 };

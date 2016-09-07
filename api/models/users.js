@@ -7,13 +7,10 @@ var dbUtils = require('../neo4j/dbUtils');
 var User = require('../models/neo4j/user');
 var crypto = require('crypto');
 
-var register = function (username, password) {
-  var session = dbUtils.getSession();
-
+var register = function (session, username, password) {
   return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
     .then(results => {
       if (!_.isEmpty(results.records)) {
-        session.close();
         throw {username: 'username already in use'}
       }
       else {
@@ -28,40 +25,26 @@ var register = function (username, password) {
             })
           }
         ).then(results => {
-            session.close();
             return new User(results.records[0].get('user'));
           }
         )
       }
-    })
-    .catch(err => {
-      session.close();
-      throw err;
     });
 };
 
-var me = function (apiKey) {
-  var session = dbUtils.getSession();
-
+var me = function (session, apiKey) {
   return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {api_key: apiKey})
     .then(results => {
-      session.close();
       if (_.isEmpty(results.records)) {
         throw {detail: 'invalid authorization key'};
       }
       return new User(results.records[0].get('user'));
-    })
-    .catch(err => {
-      session.close();
-      throw err;
     });
 };
 
-var login = function (username, password) {
-  var session = dbUtils.getSession();
+var login = function (session, username, password) {
   return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
     .then(results => {
-        session.close();
         if (_.isEmpty(results.records)) {
           throw {username: 'username does not exist'}
         }
@@ -73,11 +56,7 @@ var login = function (username, password) {
           return {token: _.get(dbUser, 'api_key')};
         }
       }
-    )
-    .catch(err => {
-      session.close();
-      throw err;
-    });
+    );
 };
 
 function hashPassword(username, password) {

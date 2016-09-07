@@ -10,7 +10,9 @@ var express = require('express')
   , methodOverride = require('method-override')
   , errorHandler = require('errorhandler')
   , logger = require('morgan')
-  , bodyParser = require('body-parser');
+  , bodyParser = require('body-parser')
+  , setAuthUser = require('./middlewares/setAuthUser')
+  , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup');
 
 var app = express()
   , subpath = express();
@@ -20,6 +22,10 @@ app.use(nconf.get('api_path'), subpath);
 // configure /api/v0 subpath for api versioning
 subpath.use(bodyParser.json()); // just using json for the api
 subpath.use(methodOverride());
+
+//custom middlewares:
+subpath.use(setAuthUser);
+subpath.use(neo4jSessionCleanup);
 
 // all environments
 app.set('port', nconf.get('PORT'));
@@ -67,10 +73,13 @@ swagger.addModels(models)
   .addGet(routes.users.userMe)
   .addGet(routes.genres.list)
   .addGet(routes.movies.list)
+  .addGet(routes.movies.findMoviesRatedByMe)
   .addGet(routes.movies.findById)
   .addGet(routes.movies.findMoviesByDateRange)
   .addGet(routes.movies.findMoviesByActor)
   .addGet(routes.movies.findByGenre)
+  .addPost(routes.movies.rateMovie)
+  .addDelete(routes.movies.deleteMovieRating)
   .addGet(routes.people.getBaconPeople)
   .addGet(routes.people.list)
   .addGet(routes.movies.findMoviesByWriter)
