@@ -1,8 +1,9 @@
 import React, {PropTypes} from 'react';
 import { render } from 'react-dom';
-import { Router, Route, Link } from 'react-router';
 
 import Header from '../components/Header.jsx';
+import {getProfile} from "../redux/actions/ProfileActions";
+import UserSession from "../UserSession";
 import Footer from '../components/Footer.jsx';
 import Breadcrumbs from '../components/Breadcrumbs.jsx';
 
@@ -15,12 +16,19 @@ class App extends React.Component {
     super();
   }
 
+  componentWillMount() {
+    if (UserSession.getToken() && !this.props.profile) {
+      this.props.dispatch(getProfile());
+    }
+  }
+
   render() {
-    var {routes, movie, person, params} = this.props;
+    var {auth, profile, routes, movie, person, params} = this.props;
 
     return (
       <div className="nt-app">
-        <Header />
+        <Header auth={auth}
+                profile={profile}/>
         <Breadcrumbs routes={routes}
                      params={params}
                      movie={movie}
@@ -45,7 +53,9 @@ App.propTypes = {
 function mapStateToProps(state) {
   return {
     movie: state.movies.detail,
-    person: state.person.detail
+    person: state.person.detail,
+    auth: state.auth,
+    profile: _.get(state.profile, 'profile', null)
   };
 }
 

@@ -98,5 +98,5 @@ From the root directory of this project, set up and start the frontend with:
 * `bower install` to install the styles
 * update config.settings.js file
 ** if you are using the Node API: `cp config/settings.example.js config/settings.js`
-** if you are using the flask api then edit `config/settings.js` and change the `apiBaseUrl` to `http://localhost:5000/api/v0`
+** if you are using the flask api then edit `config/settings.js` and change the `apiBaseURL` to `http://localhost:5000/api/v0`
 * `gulp` starts the app on [http://localhost:4000/](http://localhost:4000/)

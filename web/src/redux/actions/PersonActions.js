@@ -1,6 +1,4 @@
 import * as Types from './PersonActionTypes';
-import PersonApi from '../../api/PersonApi';
-import {callApi} from './ApiActions';
 
 export function clearPerson() {
   return {
@@ -9,15 +7,25 @@ export function clearPerson() {
 }
 
 export function getPerson(id) {
-  return callApi({
-    types: [Types.PERSON_DETAIL_GET_REQUEST, Types.PERSON_DETAIL_GET_SUCCESS],
-    callAPI: () => PersonApi.getPerson(id)
-  });
+  return {type: Types.PERSON_DETAIL_GET_REQUEST, id};
+}
+
+export function getPersonSuccess(response) {
+  return {type: Types.PERSON_DETAIL_GET_SUCCESS, response};
+}
+
+export function getPersonFailure(error) {
+  return {type: Types.PERSON_DETAIL_GET_FAILURE, error};
 }
 
 export function getRelated(id) {
-  return callApi({
-    types: [Types.PERSON_RELATED_GET_REQUEST, Types.PERSON_RELATED_GET_SUCCESS],
-    callAPI: () => PersonApi.getRelated(id)
-  });
+  return {type: Types.PERSON_RELATED_GET_REQUEST, id};
+}
+
+export function getRelatedSuccess(response) {
+  return {type: Types.PERSON_RELATED_GET_SUCCESS, response};
+}
+
+export function getRelatedFailure(error) {
+  return {type: Types.PERSON_RELATED_GET_FAILURE, error};
 }

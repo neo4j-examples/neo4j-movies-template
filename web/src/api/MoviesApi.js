@@ -2,14 +2,14 @@ import settings from '../../config/settings';
 import axios from './axios';
 import _ from 'lodash';
 
-const {apiBaseUrl} = settings;
+const {apiBaseURL} = settings;
 
 export default class MoviesApi {
   constructor() {
   }
 
   static getGenres() {
-    return axios.get(`${apiBaseUrl}/genres`);
+    return axios.get(`${apiBaseURL}/genres`);
   }
 
   static getMoviesByGenres(genreNames) {
@@ -21,7 +21,7 @@ export default class MoviesApi {
 
         return Promise.all(
           movieGenres.map(genre => {
-              return axios.get(`${apiBaseUrl}/movies/genre/${genre.id}/`);
+              return axios.get(`${apiBaseURL}/movies/genre/${genre.id}/`);
             }
           ))
           .then(genreResults => {
@@ -37,14 +37,14 @@ export default class MoviesApi {
 
   static getFeaturedMovies() {
     return Promise.all([
-      axios.get(`${apiBaseUrl}/movies/1`),
-      axios.get(`${apiBaseUrl}/movies/28`),
-      axios.get(`${apiBaseUrl}/movies/68`)
+      axios.get(`${apiBaseURL}/movies/1`),
+      axios.get(`${apiBaseURL}/movies/28`),
+      axios.get(`${apiBaseURL}/movies/68`)
     ]);
   }
 
   static getMovie(id) {
-      return axios.get(`${apiBaseUrl}/movies/${id}`);
+      return axios.get(`${apiBaseURL}/movies/${id}`);
   }
 }
 

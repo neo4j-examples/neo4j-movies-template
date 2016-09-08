@@ -14,7 +14,7 @@ var webpack = require('webpack');
  */
 module.exports = function (release) {
   return {
-    entry: './src/client.js',
+    entry: ['babel-polyfill', './src/client.js'],
 
     output: {
       filename: 'client.js',
