@@ -12,8 +12,6 @@ export default function* watchErrors(getState) {
 }
 
 function createErrorNotification(err) {
-  console.error('Encountered error:', err);
-
   if (err.status !== 401) {
     var errMessages = [];
     if (err.data) {

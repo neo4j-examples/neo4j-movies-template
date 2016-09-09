@@ -6,6 +6,7 @@ import {getProfile} from "../redux/actions/ProfileActions";
 import UserSession from "../UserSession";
 import Footer from '../components/Footer.jsx';
 import Breadcrumbs from '../components/Breadcrumbs.jsx';
+import NotificationContainer from "../components/common/NotificationContainer.jsx";
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -37,6 +38,7 @@ class App extends React.Component {
           {this.props.children}
         </div>
         {/*<Footer />*/}
+        <NotificationContainer />
       </div>
     );
   }
