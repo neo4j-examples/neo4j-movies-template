@@ -7,7 +7,7 @@ import * as PersonActions from '../redux/actions/PersonActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-export default class Person extends React.Component {
+class Person extends React.Component {
   constructor() {
     super();
   }

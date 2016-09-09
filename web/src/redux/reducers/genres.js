@@ -16,7 +16,7 @@ export default function genres(state = initialState, action) {
       return  {
         ...state,
         isFetching: false,
-        items: action.response
+        items: action.genres
       };
     default:
       return state;

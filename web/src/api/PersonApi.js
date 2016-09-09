@@ -2,11 +2,11 @@ import settings from '../../config/settings';
 import axios from './axios';
 import _ from 'lodash';
 
-const {apiBaseUrl} = settings;
+const {apiBaseURL} = settings;
 
 export default class PersonApi {
   static getPerson(id) {
-    return axios.get(`${apiBaseUrl}/people/${id}`);
+    return axios.get(`${apiBaseURL}/people/${id}`);
   }
 }
 

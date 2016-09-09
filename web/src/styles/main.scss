@@ -2,6 +2,7 @@
 @import '../../bower_components/foundation/scss/normalize';
 @import '../../bower_components/foundation/scss/foundation';
 
+@import "components/notificationContainer";
 @import "components/header";
 @import "components/header";
 @import "components/loading";
@@ -10,6 +11,7 @@
 @import "views/home";
 @import "views/movie";
 @import "views/person";
+@import "views/profile";
 
 .nt-app {
   background-image: url("/neo4j_background3.gif");

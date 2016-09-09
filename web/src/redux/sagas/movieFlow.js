@@ -1,0 +1,57 @@
+import {call, put} from "redux-saga/effects";
+import {takeEvery} from "redux-saga";
+import MoviesApi from "../../api/MoviesApi";
+import * as Actions from "../actions/MovieActions";
+import * as Types from "../actions/MovieActionTypes";
+
+export default function* movieFlow() {
+
+  yield [
+    takeEvery(Types.MOVIE_GENRES_GET_REQUEST, getGenres),
+    takeEvery(Types.MOVIES_BY_GENRES_GET_REQUEST, getMoviesByGenre),
+    takeEvery(Types.MOVIES_FEATURED_GET_REQUEST, getFeaturedMovies),
+    takeEvery(Types.MOVIE_DETAIL_GET_REQUEST, getMovie),
+  ];
+}
+
+function* getGenres() {
+  try {
+    const response = yield call(MoviesApi.getGenres);
+    yield put(Actions.getGenresSuccess(response));
+  }
+  catch (error) {
+    yield put(Actions.getGenresFailure(error));
+  }
+}
+
+function* getMoviesByGenre(action) {
+  var {names} = action;
+  try {
+    const response = yield call(MoviesApi.getMoviesByGenres, names);
+    yield put(Actions.getMoviesByGenresSuccess(response));
+  }
+  catch (error) {
+    yield put(Actions.getMoviesByGenresFailure(error));
+  }
+}
+
+function* getFeaturedMovies() {
+  try {
+    const response = yield call(MoviesApi.getFeaturedMovies);
+    yield put(Actions.getFeaturedMoviesSuccess(response));
+  }
+  catch (error) {
+    yield put(Actions.getFeaturedMoviesFailure(error));
+  }
+}
+
+function* getMovie(action) {
+  var {id} = action;
+  try {
+    const response = yield call(MoviesApi.getMovie, id);
+    yield put(Actions.getMovieSuccess(response));
+  }
+  catch (error) {
+    yield put(Actions.getMovieFailure(error));
+  }
+}

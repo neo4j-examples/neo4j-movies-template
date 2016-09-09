@@ -28,6 +28,22 @@
     }
   }
 
+  &-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 2em;
+    background-size: contain !important;
+    a {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   &-link {
+  }
+
+  &-profile-links{
+    float: right;
   }
 }
