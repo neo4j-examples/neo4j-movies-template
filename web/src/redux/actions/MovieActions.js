@@ -52,5 +52,29 @@ export function getMovieFailure(error) {
   return {type: Types.MOVIE_DETAIL_GET_FAILURE, error};
 }
 
+export function rateMovie(id, rating) {
+  return {type: Types.MOVIE_RATE, id, rating};
+}
+
+export function rateMovieSuccess() {
+  return {type: Types.MOVIE_RATE_SUCCESS};
+}
+
+export function rateMovieFailure() {
+  return {type: Types.MOVIE_RATE_FAILURE};
+}
+
+export function deleteMovieRating(id) {
+  return {type: Types.MOVIE_DELETE_RATING, id};
+}
+
+export function deleteMovieRatingSuccess() {
+  return {type: Types.MOVIE_DELETE_RATING_SUCCESS};
+}
+
+export function deleteMovieRatingFailure() {
+  return {type: Types.MOVIE_DELETE_RATING_FAILURE};
+}
+
 
 

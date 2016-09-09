@@ -4,7 +4,7 @@ import {LOGOUT} from "../actions/AuthActionTypes";
 export default function profile(state = getInitialState(null), action) {
   switch (action.type) {
     case LOGOUT:
-      return getInitialState(null);
+      return getInitialState();
     default:
       return state;
     case Types.PROFILE_GET:
@@ -21,9 +21,9 @@ export default function profile(state = getInitialState(null), action) {
   }
 }
 
-function getInitialState(profile) {
+function getInitialState() {
   return {
     isFetching: false,
-    profile
+    profile: null
   }
 }
