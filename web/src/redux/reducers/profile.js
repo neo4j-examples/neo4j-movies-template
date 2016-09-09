@@ -8,6 +8,7 @@ export default function profile(state = getInitialState(null), action) {
     default:
       return state;
     case Types.PROFILE_GET:
+    case Types.PROFILE_GET_RATINGS:
       return {
         ...state,
         isFetching: true
@@ -18,12 +19,19 @@ export default function profile(state = getInitialState(null), action) {
         isFetching: false,
         profile: action.payload
       };
+    case Types.PROFILE_GET_RATINGS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        ratedMovies: action.payload
+      };
   }
 }
 
 function getInitialState() {
   return {
     isFetching: false,
-    profile: null
+    profile: null,
+    ratedMovies: []
   }
 }
