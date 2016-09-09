@@ -227,10 +227,10 @@ var rate = function (session, movieId, userId, rating) {
   );
 };
 
-var deleteRating = function (session, userId, movieId) {
+var deleteRating = function (session, movieId, userId) {
   return session.run(
     'MATCH (u:User {id: {userId}})-[r:RATED]->(m:Movie {id: {movieId}}) DELETE r',
-    {userId: userId, movieId: movieId}
+    {userId: userId, movieId: parseInt(movieId)}
   );
 };
 
