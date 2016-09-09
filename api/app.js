@@ -23,6 +23,15 @@ app.use(nconf.get('api_path'), subpath);
 subpath.use(bodyParser.json()); // just using json for the api
 subpath.use(methodOverride());
 
+//enable CORS
+subpath.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
+
 //custom middlewares:
 subpath.use(setAuthUser);
 subpath.use(neo4jSessionCleanup);
@@ -44,25 +53,6 @@ if ('development' == nconf.get('NODE_ENV')) {
 swagger.setAppHandler(subpath);
 
 swagger.configureSwaggerPaths("", "/api-docs", "");
-
-// This is a sample validator.  It simply says that for _all_ POST, DELETE, PUT
-// methods, the header `api_key` OR query param `api_key` must be equal
-// to the string literal `special-key`.  All other HTTP ops are A-OK
-swagger.addValidator(
-  function validate(req, path, httpMethod) {
-    //  example, only allow POST for api_key="special-key"
-    if ("POST" == httpMethod || "DELETE" == httpMethod || "PUT" == httpMethod) {
-      var apiKey = req.headers["api_key"];
-      if (!apiKey) {
-        apiKey = url.parse(req.url, true).query["api_key"];
-      }
-
-      return "special-key" == apiKey;
-    }
-    return true;
-  }
-);
-
 
 var models = require("./models/swagger_models");
 
