@@ -11,6 +11,8 @@ export default function* movieFlow() {
     takeEvery(Types.MOVIES_BY_GENRES_GET_REQUEST, getMoviesByGenre),
     takeEvery(Types.MOVIES_FEATURED_GET_REQUEST, getFeaturedMovies),
     takeEvery(Types.MOVIE_DETAIL_GET_REQUEST, getMovie),
+    takeEvery(Types.MOVIE_RATE, rateMovie),
+    takeEvery(Types.MOVIE_DELETE_RATING, deleteRating),
   ];
 }
 
@@ -53,5 +55,29 @@ function* getMovie(action) {
   }
   catch (error) {
     yield put(Actions.getMovieFailure(error));
+  }
+}
+
+function* rateMovie(action) {
+  var {id, rating} = action;
+  try {
+    const response = yield call(MoviesApi.rateMovie, id, rating);
+    yield put(Actions.rateMovieSuccess(response));
+    yield put(Actions.getMovie(id));
+  }
+  catch (error) {
+    yield put(Actions.rateMovieFailure(error));
+  }
+}
+
+function* deleteRating(action) {
+  var {id} = action;
+  try {
+    const response = yield call(MoviesApi.deleteRating, id);
+    yield put(Actions.deleteMovieRatingSuccess(response));
+    yield put(Actions.getMovie(id));
+  }
+  catch (error) {
+    yield put(Actions.deleteMovieRatingFailure(error));
   }
 }

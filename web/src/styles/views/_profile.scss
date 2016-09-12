@@ -1,5 +1,13 @@
-.nt-profile{
-  div:nth-child(n){
-    padding: 1rem;
+.nt-profile {
+  .nt-box {
+    margin: .5rem 0;
+  }
+
+  &-movie {
+    padding-top: 1rem;
+
+    &-title {
+      font-size: .8rem;
+    }
   }
 }

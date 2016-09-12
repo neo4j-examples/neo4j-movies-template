@@ -1,12 +1,12 @@
-import React from 'react';
-import _ from 'lodash';
-import Loading from '../components/Loading.jsx';
-import Carousel from '../components/Carousel.jsx';
-import { Link } from 'react-router';
-import * as MovieActions from '../redux/actions/MovieActions';
-import { bindActionCreators } from 'redux';
-
-import { connect } from 'react-redux';
+import React from "react";
+import _ from "lodash";
+import Loading from "../components/Loading.jsx";
+import Carousel from "../components/Carousel.jsx";
+import UserRating from "../components/UserRating.jsx";
+import {Link} from "react-router";
+import * as MovieActions from "../redux/actions/MovieActions";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
 
 
 class Movie extends React.Component {
@@ -34,7 +34,7 @@ class Movie extends React.Component {
 
 
   render() {
-    var {isFetching, movie} = this.props;
+    var {isFetching, movie, rateMovie, deleteMovieRating, profile} = this.props;
 
     return (
       <div className="nt-movie">
@@ -64,6 +64,19 @@ class Movie extends React.Component {
               </div>
               <div className="small-12 medium-8 columns nt-movie-main">
                 <div>
+                  {profile ?
+                    <div className="nt-box">
+                      <p className="nt-box-row">
+                        <strong>Your rating: </strong>
+                        <UserRating movieId={movie.id}
+                                    savedRating={movie.myRating}
+                                    onSubmitRating={rateMovie}
+                                    onDeleteRating={deleteMovieRating}/>
+                      </p>
+                    </div>
+                    :
+                    null
+                  }
                   <div className="nt-box">
                     <div className="nt-box-title">
                       Movie Details
@@ -118,8 +131,8 @@ class Movie extends React.Component {
 
   getKeywordsText(movie) {
     _.filter(movie.keywords, k => {
-        return !!k.name;
-      })
+      return !!k.name;
+    })
       .join(', ');
   }
 
@@ -179,6 +192,7 @@ class Movie extends React.Component {
       </span>);
     });
   }
+
   renderGenre(genres) {
     return genres.map((g, i) => {
       return <span key={g.id}>
@@ -186,14 +200,15 @@ class Movie extends React.Component {
         {i < genres.length - 1 ? <span>, </span> : null}
       </span>
     })
-  } 
+  }
 }
 Movie.displayName = 'Movie';
 
 function mapStateToProps(state) {
   return {
     movie: state.movies.detail,
-    isFetching: state.movies.isFetching
+    isFetching: state.movies.isFetching,
+    profile: _.get(state, 'profile.profile')
   };
 }
 

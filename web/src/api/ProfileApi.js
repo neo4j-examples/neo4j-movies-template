@@ -9,7 +9,7 @@ export default class ProfileApi {
     return axios.get(`${apiBaseURL}/users/me`);
   }
 
-  // static updateProfile(id, update) {
-  //   return axios.patch(`${apiBaseURL}/users/${id}`, update);
-  // }
+  static getProfileRatings() {
+    return axios.get(`${apiBaseURL}/movies/rated`);
+  }
 }
