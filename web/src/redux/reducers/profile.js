@@ -4,10 +4,11 @@ import {LOGOUT} from "../actions/AuthActionTypes";
 export default function profile(state = getInitialState(null), action) {
   switch (action.type) {
     case LOGOUT:
-      return getInitialState(null);
+      return getInitialState();
     default:
       return state;
     case Types.PROFILE_GET:
+    case Types.PROFILE_GET_RATINGS:
       return {
         ...state,
         isFetching: true
@@ -18,12 +19,19 @@ export default function profile(state = getInitialState(null), action) {
         isFetching: false,
         profile: action.payload
       };
+    case Types.PROFILE_GET_RATINGS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        ratedMovies: action.payload
+      };
   }
 }
 
-function getInitialState(profile) {
+function getInitialState() {
   return {
     isFetching: false,
-    profile
+    profile: null,
+    ratedMovies: []
   }
 }
