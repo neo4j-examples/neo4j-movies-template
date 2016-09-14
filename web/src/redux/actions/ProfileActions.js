@@ -63,3 +63,15 @@ export function profileDeleteMovieRatingSuccess() {
 export function profileDeleteMovieRatingFailure() {
   return {type: Types.PROFILE_MOVIE_DELETE_RATING_FAILURE};
 }
+
+export function getProfileRecommendations(id) {
+  return {type: Types.PROFILE_GET_RECOMMENDATIONS, id};
+}
+
+export function getProfileRecommendationsSuccess(payload) {
+  return {type: Types.PROFILE_GET_RECOMMENDATIONS_SUCCESS, payload};
+}
+
+export function getProfileRecommendationsFailure() {
+  return {type: Types.PROFILE_GET_RECOMMENDATIONS_FAILURE};
+}

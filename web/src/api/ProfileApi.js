@@ -12,4 +12,8 @@ export default class ProfileApi {
   static getProfileRatings() {
     return axios.get(`${apiBaseURL}/movies/rated`);
   }
+
+  static getProfileRecommendations() {
+    return axios.get(`${apiBaseURL}/movies/recommended`);
+  }
 }
