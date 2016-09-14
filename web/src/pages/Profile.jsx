@@ -1,8 +1,8 @@
 import React from "react";
 import AuthenticatedPage from "./AuthenticatedPage.jsx";
-import Loading from "../components/Loading.jsx";
 import {Link} from "react-router";
 import UserRating from "../components/UserRating.jsx";
+import Carousel from "../components/Carousel.jsx";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import _ from "lodash";
@@ -15,10 +15,11 @@ class Profile extends React.Component {
 
   componentDidMount() {
     this.props.getProfileRatings();
+    this.props.getProfileRecommendations();
   }
 
   render() {
-    var {profile, isFetching, ratedMovies} = this.props.profile;
+    var {profile, isFetching, ratedMovies, recommendedMovies} = this.props.profile;
     var {profileRateMovie, profileDeleteMovieRating} = this.props;
 
     if (!profile) {
@@ -49,47 +50,67 @@ class Profile extends React.Component {
             </div>
           </div>
         </div>
-        {
-          !_.isEmpty(ratedMovies) ?
-            <div className="row">
-              <div className="nt-box">
-                <div className="nt-box-title">
-                  My rated movies
-                </div>
-                <div className="nt-box-row">
-                  <div className="row">
-                    {ratedMovies.map((movie, i, array) => {
-                      return (
-                        <div key={movie.id}
-                             className={'columns small-4' + ((i == array.length-1) ? ' end' : '')}>
-                          <div className="nt-profile-movie">
-                            <Link to={`/movie/${movie.id}`}>
-                              <img src={movie.posterImage} className="nt-profile-movie-cover"/>
-                            </Link>
-                            <div className="nt-profile-movie-title">
-                              <Link to={`/movie/${movie.id}`}>
-                                {movie.title}
-                              </Link>
-                            </div>
-                            <div>
-                              <UserRating movieId={movie.id}
-                                          savedRating={movie.myRating}
-                                          onSubmitRating={profileRateMovie}
-                                          onDeleteRating={profileDeleteMovieRating}/>
-                            </div>
-                          </div>
 
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
+        <div className="row">
+          <div className="nt-box">
+            <div className="nt-box-title">
+              My rated movies
             </div>
-            :
-            null
-        }
+            {!_.isEmpty(ratedMovies) ?
+              <Carousel>
+                {ratedMovies.map((movie, i, array) => {
+                  return (
+                    <div key={movie.id}>
+                      <Link to={`/movie/${movie.id}`}>
+                        <img src={movie.posterImage} className="nt-profile-movie-cover"/>
+                      </Link>
+                      <div className="nt-profile-movie-title">
+                        <Link to={`/movie/${movie.id}`}>
+                          {movie.title}
+                        </Link>
+                      </div>
+                      <div>
+                        <UserRating movieId={movie.id}
+                                    savedRating={movie.myRating}
+                                    onSubmitRating={profileRateMovie}
+                                    onDeleteRating={profileDeleteMovieRating}/>
+                      </div>
+                    </div>
+                  )
+                })}
+              </Carousel>
+              :
+              null
+            }
+          </div>
+        </div>
 
+        <div className="row">
+          <div className="nt-box">
+            <div className="nt-box-title">
+              Recommended for me
+            </div>
+            {
+              !_.isEmpty(recommendedMovies) ?
+                <Carousel>
+                  {recommendedMovies.map(m => {
+                    return (
+                      <div key={m.id}>
+                        <Link to={`/movie/${m.id}`}>
+                          <img src={m.posterImage}/>
+                        </Link>
+                        <div className="nt-carousel-movie-title">
+                          <Link to={`/movie/${m.id}`}>{m.title}</Link>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </Carousel>
+                :
+                null
+            }
+          </div>
+        </div>
       </div>
     );
   }

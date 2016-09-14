@@ -12,6 +12,7 @@ export default function* profileFlow() {
     takeEvery(Types.PROFILE_GET_RATINGS, getProfileRatings),
     takeEvery(Types.PROFILE_MOVIE_RATE, profileRateMovie),
     takeEvery(Types.PROFILE_MOVIE_DELETE_RATING, profileDeleteRating),
+    takeEvery(Types.PROFILE_GET_RECOMMENDATIONS, getProfileRecommendations)
   ]
 }
 
@@ -56,5 +57,15 @@ function* profileDeleteRating(action) {
   }
   catch (error) {
     yield put(Actions.profileDeleteMovieRatingFailure(error));
+  }
+}
+
+function* getProfileRecommendations() {
+  try {
+    const response = yield call(ProfileApi.getProfileRecommendations);
+    yield put(Actions.getProfileRecommendationsSuccess(response));
+  }
+  catch (error) {
+    yield put(Actions.getProfileRecommendationsFailure(error));
   }
 }
