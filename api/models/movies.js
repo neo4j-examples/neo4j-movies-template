@@ -246,6 +246,27 @@ var getRatedByUser = function (session, userId) {
   });
 };
 
+var getRecommended = function (session, userId) {
+  return session.run(
+    'MATCH (me:User {id: {userId}})-[my:RATED]->(m:Movie) \
+  MATCH (other:User)-[their:RATED]->(m) \
+  WHERE me <> other \
+  AND abs(my.rating - their.rating) < 2 \
+  WITH other,m \
+  MATCH (other)-[otherRating:RATED]->(movie:Movie) \
+  WHERE movie <> m \
+  WITH avg(otherRating.rating) AS avgRating, movie \
+  RETURN movie \
+  ORDER BY avgRating desc \
+  LIMIT 25',
+    {userId: userId}
+  ).then(result => {
+    return result.records.map(r => {
+      return new Movie(r.get('movie'));
+    })
+  });
+};
+
 // export exposed functions
 module.exports = {
   getAll: getAll,
@@ -257,5 +278,6 @@ module.exports = {
   getMoviesByWriter: getByWriter,
   rate: rate,
   deleteRating: deleteRating,
-  getRatedByUser: getRatedByUser
+  getRatedByUser: getRatedByUser,
+  getRecommended: getRecommended
 };

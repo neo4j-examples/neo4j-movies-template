@@ -406,3 +406,26 @@ exports.findMoviesRatedByMe = {
     })
   }
 };
+
+exports.getRecommendedMovies = {
+  'spec': {
+    "description": "A list of recommended movies for the authorized user",
+    "path": "/movies/recommended",
+    "notes": "A list of recommended movies for the authorized user",
+    "summary": "A list of recommended movies for the authorized user",
+    "method": "GET",
+    "params": [
+      param.header('Authorization', 'Authorization token', 'string', true)
+    ],
+    "responseClass": "List[Movie]",
+    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
+    "nickname": "getRecommendedMovies"
+  },
+  'action': function (req, res) {
+    loginRequired(req, res, () => {
+      Movies.getRecommended(dbUtils.getSession(req), req.user.id)
+        .then(response => writeSimpleResponse(res, response, 200))
+        .catch(err => writeSimpleResponse(res, err, 400));
+    })
+  }
+};
