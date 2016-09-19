@@ -47,7 +47,7 @@ If you see `Input error: Directory 'neo4j-community-3.0.3/data/databases/graph.d
 
 `neo4j-import` does not come with Neo4j-Desktop (`.exe` on Windows, `.dmg` on OSX).
 To get around this issue, find your OS [here](https://gist.github.com/jexp/4692ad9cd14b6d9c1cc8bffa079c98fa) and try using the alternate import command for your system.
-Update the Neo4j version in the snippet with whatever you're using, and replacing `"$@"` or `%*` with: 
+Update the Neo4j version in the snippet with whatever you're using, and replacing `"$@"` or `%\*` with:
 
 ```
 --into database/ --nodes:Person csv/person_node.csv --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
@@ -179,3 +179,19 @@ ORDER BY commonKeywords DESC
 LIMIT 25
 ```
 
+## Contributing
+
+### Flask API
+
+The flask API is located in the flask-api folder.  The application code is in the `app.py` file.
+
+#### Create Endpoint
+
+The API itself is created using the [Flask-RESTful](http://flask-restful-cn.readthedocs.io/en/0.3.5/) library.  The API endpoints
+are documented using swagger with the [flask-restful-swagger-2](https://github.com/swege/flask-restful-swagger-2.0) library.
+
+To add a new API endpoint there are 3 steps:
+
+1. Create a new Flask-RESTful resource class
+2. Create an endpoint method including the swagger docs decorator.
+3. Add the new resource to the API at the bottom of the file.
