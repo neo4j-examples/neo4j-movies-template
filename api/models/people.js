@@ -2,7 +2,7 @@
  *  Person functions
  */
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Cypher = require('../neo4j/cypher');
 var Person = require('../models/neo4j/person');
 var Movie = require('../models/neo4j/movie');

@@ -1,4 +1,3 @@
-_ = require('underscore');
 var Cypher = require('../neo4j/cypher');
 var Genre = require('../models/neo4j/genre');
 

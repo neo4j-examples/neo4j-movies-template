@@ -4,8 +4,7 @@ var Movies = require('../models/movies')
   , param = sw.params
   , url = require("url")
   , swe = sw.errors
-  , _ = require('underscore')
-  , _l = require('lodash')
+  , _ = require('lodash')
   , writeSimpleResponse = require('../helpers/writeResponse')
   , loginRequired = require('../middlewares/loginRequired')
   , dbUtils = require('../neo4j/dbUtils');
@@ -349,7 +348,7 @@ exports.rateMovie = {
   },
   'action': function (req, res) {
     loginRequired(req, res, () => {
-      var rating = Number(_l.get(req.body, 'rating'));
+      var rating = Number(_.get(req.body, 'rating'));
       if (isNaN(rating) || rating < 0 || rating >= 6) {
         writeSimpleResponse(res, {rating: 'Rating value is invalid'}, 400);
       }
