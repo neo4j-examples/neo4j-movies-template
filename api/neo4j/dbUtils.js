@@ -20,3 +20,18 @@ exports.getSession = function (context) {
   }
 };
 
+exports.dbWhere = function (name, keys) {
+  if (_.isArray(name)) {
+    _.map(name, (obj) => {
+      return _whereTemplate(obj.name, obj.key, obj.paramKey);
+    });
+  } else if (keys && keys.length) {
+    return 'WHERE ' + _.map(keys, (key) => {
+        return _whereTemplate(name, key);
+      }).join(' AND ');
+  }
+};
+
+function whereTemplate(name, key, paramKey) {
+  return name + '.' + key + '={' + (paramKey || key) + '}';
+}

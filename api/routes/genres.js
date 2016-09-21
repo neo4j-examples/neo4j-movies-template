@@ -1,57 +1,39 @@
-// genres.js
+var Genres = require("../models/genres")
+  , writeResponse = require('../helpers/response').writeResponse
+  , dbUtils = require('../neo4j/dbUtils');
 
-var Genres = require("../models/genres");
-var sw = require("swagger-node-express");
-var url = require("url");
-var swe = sw.errors;
-
-/*
- *  Util Functions
+/**
+ * @swagger
+ * definition:
+ *   Genre:
+ *     type: object
+ *     properties:
+ *       id:
+ *         type: integer
+ *       name:
+ *         type: string
  */
 
-function writeResponse (res, response, start) {
-  sw.setHeaders(res);
-  res.header("Duration-ms", new Date() - start);
-  if (response.neo4j) {
-    res.header("Neo4j", JSON.stringify(response.neo4j));
-  }
-  res.send(JSON.stringify(response.results));
-}
-
-function parseUrl(req, key) {
-  return url.parse(req.url,true).query[key];
-}
-
-function parseBool (req, key) {
-  return 'true' == url.parse(req.url,true).query[key];
-}
-
-
-/*
- * API Specs and Functions
+/**
+ * @swagger
+ * /api/v0/genres:
+ *   get:
+ *     tags:
+ *     - genres
+ *     description: Returns all genres
+ *     summary: Returns all genres
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: A list of genres
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Genre'
  */
-
-exports.list = {
-  "spec": {
-    "description" : "List all genres",
-    "path" : "/genres",
-    "notes" : "Returns all genres",
-    "summary" : "Find all genres",
-    "method": "GET",
-    "params" : [],
-    "responseClass" : "List[Genre]",
-    "errorResponses" : [swe.notFound("genre")],
-    "nickname" : "getGenre"
-  },
-  "action": function (req, res) {
-    var options = {
-      neo4j: parseBool(req, "neo4j")
-    };
-    var start = new Date();
-
-      Genres.getAll(null, options, (err, response) => {
-        if (err || !response.results) throw swe.notFound("genres");
-        writeResponse(res, response, start);
-      });
-  }
+exports.list = function (req, res, next) {
+  Genres.getAll(dbUtils.getSession(req))
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };

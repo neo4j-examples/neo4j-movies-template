@@ -1,4 +1,4 @@
-var writeResponse = require('../helpers/writeResponse');
+var writeError = require('../helpers/response').writeError;
 var Users = require('../models/users');
 var dbUtils = require('../neo4j/dbUtils');
 
@@ -11,7 +11,7 @@ module.exports = function setAuthUser(req, res, next) {
   else {
     var match = authHeader.match(/^Token (\S+)/);
     if (!match || !match[1]) {
-      return writeResponse(res, {detail: 'invalid authorization format. Follow `Token <token>`'}, 401);
+      return writeError(res, {detail: 'invalid authorization format. Follow `Token <token>`'}, 401);
     }
     var token = match[1];
 
@@ -20,9 +20,6 @@ module.exports = function setAuthUser(req, res, next) {
         req.user = user;
         next();
       })
-      .catch(err => {
-        writeResponse(res, err, 401);
-      });
+      .catch(next);
   }
 };
-

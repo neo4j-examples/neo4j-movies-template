@@ -1,430 +1,432 @@
 // movies.js
 var Movies = require('../models/movies')
-  , sw = require("swagger-node-express")
-  , param = sw.params
-  , url = require("url")
-  , swe = sw.errors
   , _ = require('lodash')
-  , writeSimpleResponse = require('../helpers/writeResponse')
+  , writeResponse = require('../helpers/response').writeResponse
+  , writeError = require('../helpers/response').writeError
   , loginRequired = require('../middlewares/loginRequired')
   , dbUtils = require('../neo4j/dbUtils');
 
-/*
- *  Util Functions
+/**
+ * @swagger
+ * definition:
+ *   Movie:
+ *     type: object
+ *     properties:
+ *       id:
+ *         type: integer
+ *       title:
+ *         type: string
+ *       summary:
+ *         type: object
+ *       released:
+ *         type: integer
+ *       duration:
+ *         type: integer
+ *       rated:
+ *         type: string
+ *       tagline:
+ *         type: string
+ *       poster_image:
+ *         type: string
+ *       my_rating:
+ *         type: integer
  */
 
-function writeResponse(res, response, start) {
-  sw.setHeaders(res);
-  res.header('Duration-ms', new Date() - start);
-  if (response.neo4j) {
-    res.header('Neo4j', JSON.stringify(response.neo4j));
-  }
-  res.send(JSON.stringify(response.results));
-}
-
-function parseUrl(req, key) {
-  return url.parse(req.url, true).query[key];
-}
-
-function parseBool(req, key) {
-  return 'true' == url.parse(req.url, true).query[key];
-}
-
-
-/*
- * API Specs and Functions
+/**
+ * @swagger
+ * /api/v0/movies:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Find all movies
+ *     summary: Find all movies
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
  */
-
-exports.list = {
-  'spec': {
-    "description": "List all movies",
-    "path": "/movies",
-    "notes": "Returns all movies",
-    "summary": "Find all movies",
-    "method": "GET",
-    "params": [],
-    "responseClass": "List[Movie]",
-    "errorResponses": [swe.notFound('movies')],
-    "nickname": "getMovies"
-  },
-  'action': function (req, res) {
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-    Movies.getAll(null, options, (err, response) => {
-      if (err || !response.results) throw swe.notFound('movies');
-      writeResponse(res, response, start);
-    });
-  }
+exports.list = function (req, res, next) {
+  Movies.getAll(dbUtils.getSession(req))
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.movieCount = {
-  'spec': {
-    "description": "Movie count",
-    "path": "/movies/count",
-    "notes": "Movie count",
-    "summary": "Movie count",
-    "method": "GET",
-    "params": [],
-    "responseClass": "Count",
-    "errorResponses": [swe.notFound('movies')],
-    "nickname": "movieCount"
-  },
-  'action': function (req, res) {
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
-    Movies.getAllCount(null, options, (err, response) => {
-      // if (err || !response.results) throw swe.notFound('movies');
-      writeResponse(res, response, start);
-    });
-  }
+/**
+ * @swagger
+ * /api/v0/movies/{id}:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Find movie by ID
+ *     summary: Find movie by ID
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: movie id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: Authorization
+ *         in: header
+ *         type: string
+ *         description: Token (token goes here)
+ *     responses:
+ *       200:
+ *         description: A movie
+ *         schema:
+ *           $ref: '#/definitions/Movie'
+ *       404:
+ *         description: movie not found
+ */
+exports.findById = function (req, res, next) {
+  Movies.getById(dbUtils.getSession(req), req.params.id, req.user.id)
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.findById = {
-  'spec': {
-    "description": "find a movie",
-    "path": "/movies/{id}",
-    "notes": "Returns a movie based on ID",
-    "summary": "Find movie by ID",
-    "method": "GET",
-    "params": [
-      param.header('Authorization', 'Authorization token', 'string', false),
-      param.path("id", "ID of movie that needs to be fetched", "integer")
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('id'), swe.notFound('movie')],
-    "nickname": "getMovieById"
-  },
-  'action': function (req, res) {
-    var id = req.params.id;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
+/**
+ * @swagger
+ * /api/v0/movies/genre/{id}:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Returns movies based on genre id
+ *     summary: Returns movies based on genre id
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: genre id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       400:
+ *         description: Invalid genre id
+ */
+exports.findByGenre = function (req, res, next) {
+  var id = req.params.id;
+  if (!id) return writeResponse(res, {message: 'Invalid id'}, 400);
 
-    if (!id) throw swe.invalid('id');
-
-    var params = {
-      id: id,
-      userId: req.user.id
-    };
-
-    Movies.getById(params, options, (err, response) => {
-      if (err) throw swe.notFound('movie');
-      writeResponse(res, response, start);
-    });
-  }
+  Movies.getByGenre(dbUtils.getSession(req), id)
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.findByTitle = {
-  'spec': {
-    "description": "Find a movie",
-    "path": "/movies/title/{title}",
-    "notes": "Returns a movie based on title",
-    "summary": "Find movie by title",
-    "method": "GET",
-    "params": [
-      param.path("title", "Title of movie that needs to be fetched", "string", true)
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('title'), swe.notFound('movie')],
-    "nickname": "getMovieByTitle"
-  },
-  'action': function (req, res) {
-    var title = req.params.title;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
+/**
+ * @swagger
+ * /api/v0/movies/daterange/{start}/{end}:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Returns movies between a year range
+ *     summary: Returns movies between a year range
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: start
+ *         description: Year that the movie was released on or after
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: end
+ *         description: Year that the movie was released before
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       400:
+ *         description: Error message(s)
+ */
+exports.findMoviesByDateRange = function (req, res, next) {
+  var start = req.params.start;
+  var end = req.params.end;
 
-    if (!title) throw swe.invalid('title');
+  if (!start) writeResponse(res, {message: 'Invalid start', status: 400});
+  if (!end) writeResponse(res, {message: 'Invalid end', status: 400});
 
-    var params = {
-      title: title
-    };
-
-    Movies.getByTitle(params, options, (err, response) => {
-      if (err) throw swe.notFound('movies');
-      writeResponse(res, response, start);
-    });
-
-  }
+  Movies.getByDateRange(dbUtils.getSession(req), start, end)
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.findByGenre = {
-  'spec': {
-    "description": "Find a movie",
-    "path": "/movies/genre/{id}",
-    "notes": "Returns movies based on genre id",
-    "summary": "Find movie by genre id",
-    "method": "GET",
-    "params": [
-      param.path("id", "The id of the genre", "integer", true)
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('id'), swe.notFound('movies')],
-    "nickname": "getMoviesByGenre"
-  },
-  'action': function (req, res) {
-    var id = req.params.id;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
+/**
+ * @swagger
+ * /api/v0/movies/directed_by/{id}:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Returns movies directed by a person
+ *     summary: Returns movies directed by a person
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: Id of the director person
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       400:
+ *         description: Error message(s)
+ */
+exports.findMoviesByDirector = function (req, res, next) {
+  var id = req.params.id;
+  if (!id) writeResponse(res, {message: 'Invalid id', status: 400});
 
-    if (!id) throw swe.invalid('id');
-
-    var params = {
-      id: id
-    };
-
-    Movies.getByGenre(params, options, (err, response) => {
-      if (err) throw swe.notFound('movie');
-      writeResponse(res, response, start);
-    });
-  }
+  Movies.getMoviesbyDirector(dbUtils.getSession(req), id)
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.findMoviesByDateRange = {
-  'spec': {
-    "description": "Find movies",
-    "path": "/movies/daterange/{start}/{end}",
-    "notes": "Returns movies between a year range",
-    "summary": "Find movie by year range",
-    "method": "GET",
-    "params": [
-      param.path("start", "Year that the movie was released on or after", "integer"),
-      param.path("end", "Year that the movie was released before", "integer")
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('start'), swe.invalid('end'), swe.notFound('movie')],
-    "nickname": "getMoviesByDateRange"
-  },
-  'action': function (req, res) {
-    var start = req.params.start;
-    var end = req.params.end;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
+/**
+ * @swagger
+ * /api/v0/movies/acted_in_by/{id}:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Returns movies acted in by some person
+ *     summary: Returns movies acted in by some person
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: id of the actor who acted in the movies
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       400:
+ *         description: Error message(s)
+ */
+exports.findMoviesByActor = function (req, res, next) {
+  var id = req.params.id;
+  if (!id) writeResponse(res, {message: 'Invalid id', status: 400});
 
-    if (!start) throw swe.invalid('start');
-    if (!end) throw swe.invalid('end');
-
-    var params = {
-      start: start,
-      end: end
-    };
-
-    Movies.getByDateRange(params, options, (err, response) => {
-      if (err) throw swe.notFound('movie');
-      writeResponse(res, response, new Date());
-    });
-  }
+  Movies.getByActor(dbUtils.getSession(req), id)
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.findMoviesbyDirector = {
-  'spec': {
-    "description": "Find a director",
-    "path": "/movies/directed_by/{id}",
-    "notes": "Returns movies directed by a person",
-    "summary": "Returns movies directed by a person",
-    "method": "GET",
-    "params": [
-      param.path("id", "Id of the director person", "integer", true)
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('id'), swe.notFound('person')],
-    "nickname": "findMoviesbyDirector"
-  },
-  'action': function (req, res) {
-    var id = req.params.id;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-    var start = new Date();
+/**
+ * @swagger
+ * /api/v0/movies/written_by/{id}:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: Returns movies written by some person
+ *     summary: Returns movies written by some person
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: id of the writer who wrote the movies
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       400:
+ *         description: Error message(s)
+ */
+exports.findMoviesByWriter = function (req, res, next) {
+  var id = req.params.id;
+  if (!id) writeResponse(res, {message: 'Invalid id', status: 400});
 
-    if (!id) throw swe.invalid('id');
-
-    var params = {
-      id: id
-    };
-
-    var callback = function (err, response) {
-      if (err) throw swe.notFound('person');
-      writeResponse(res, response, start);
-    };
-
-    Movies.getMoviesbyDirector(params, options, callback);
-  }
+  Movies.getMoviesByWriter(dbUtils.getSession(req), id)
+    .then(response => writeResponse(res, response))
+    .catch(next);
 };
 
-exports.findMoviesByActor = {
-  'spec': {
-    "description": "Find movies acted in by some person",
-    "path": "/movies/acted_in_by/{id}",
-    "notes": "Returns movies that a person acted in",
-    "summary": "Find movies by actor",
-    "method": "GET",
-    "params": [
-      param.path("id", "id of the actor who acted in the movies", "integer", true)
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('id'), swe.notFound('movie')],
-    "nickname": "getMoviesByActor"
-  },
-  'action': function (req, res) {
-    var id = req.params.id;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
+/**
+ * @swagger
+ * /api/v0/movies/{id}/rate:
+ *   post:
+ *     tags:
+ *     - movies
+ *     description: Rate a movie from 0-5 inclusive
+ *     summary: Rate a movie from 0-5 inclusive
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: id of the writer who wrote the movies
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: body
+ *         in: body
+ *         type: object
+ *         schema:
+ *           properties:
+ *             rating:
+ *               type: integer
+ *       - name: Authorization
+ *         in: header
+ *         type: string
+ *         required: true
+ *         description: Token (token goes here)
+ *     responses:
+ *       200:
+ *         description: movie rating saved
+ *       400:
+ *         description: Error message(s)
+ *       401:
+ *         description: invalid / missing authentication
+ */
+exports.rateMovie = function (req, res, next) {
+  loginRequired(req, res, () => {
+    var rating = Number(_.get(req.body, 'rating'));
+    if (isNaN(rating) || rating < 0 || rating >= 6) {
+      writeResponse(res, {rating: 'Rating value is invalid'}, 400);
+    }
 
-    if (!id) throw swe.invalid('id');
-
-    var params = {
-      id: id
-    };
-
-    var callback = function (err, response) {
-      if (err) throw swe.notFound('movie');
-      writeResponse(res, response, new Date());
-    };
-
-    Movies.getByActor(params, options, callback);
-  }
+    Movies.rate(dbUtils.getSession(req), req.params.id, req.user.id, rating)
+      .then(response => writeResponse(res, {}))
+      .catch(next);
+  });
 };
 
-exports.findMoviesByWriter = {
-  'spec': {
-    "description": "Find movies written by some person",
-    "path": "/movies/written_by/{id}",
-    "notes": "Returns movies that a person wrote",
-    "summary": "Find movies by writer",
-    "method": "GET",
-    "params": [
-      param.path("id", "id of the writer who wrote the movies", "integer", true)
-    ],
-    "responseClass": "Movie",
-    "errorResponses": [swe.invalid('id'), swe.notFound('movie')],
-    "nickname": "getMoviesByWriter"
-  },
-  'action': function (req, res) {
-    var id = req.params.id;
-    var options = {
-      neo4j: parseBool(req, 'neo4j')
-    };
-
-    if (!id) throw swe.invalid('id');
-
-    var params = {
-      id: id
-    };
-
-    Movies.getMoviesByWriter(params, options, (err, response) => {
-      if (err) throw swe.notFound('movie');
-      writeResponse(res, response, new Date());
-    });
+/**
+ * @swagger
+ * /api/v0/movies/{id}/rate:
+ *   delete:
+ *     tags:
+ *     - movies
+ *     description: Delete your rating for a movie
+ *     summary: Delete your rating for a movie
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: id of the writer who wrote the movies
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: Authorization
+ *         in: header
+ *         type: string
+ *         required: true
+ *         description: Token (token goes here)
+ *     responses:
+ *       204:
+ *         description: movie rating deleted
+ *       400:
+ *         description: Error message(s)
+ *       401:
+ *         description: invalid / missing authentication
+ */
+exports.deleteMovieRating = function (req, res, next) {
+  if (!req.params.id) {
+    writeResponse(res, {message: 'Invalid movie id', status: 400});
   }
+
+  loginRequired(req, res, () => {
+    Movies.deleteRating(dbUtils.getSession(req), req.params.id, req.user.id)
+      .then(response => writeResponse(res, response, 204))
+      .catch(next);
+  })
 };
 
-exports.rateMovie = {
-  'spec': {
-    "description": "Rate a movie from 0-5 inclusive",
-    "path": "/movies/{id}/rate",
-    "notes": "rate",
-    "summary": "Rate a movie",
-    "method": "POST",
-    "params": [
-      param.path("id", "ID of movie that needs to be fetched", "integer"),
-      param.header('Authorization', 'Authorization token', 'string', true),
-      param.body('body', 'register body', 'MovieRating')],
-    "errorResponses": [
-      {"code": 401, "reason": "invalid / missing authentication"},
-      swe.invalid('rating')
-    ],
-    "nickname": "rateMovie"
-  },
-  'action': function (req, res) {
-    loginRequired(req, res, () => {
-      var rating = Number(_.get(req.body, 'rating'));
-      if (isNaN(rating) || rating < 0 || rating >= 6) {
-        writeSimpleResponse(res, {rating: 'Rating value is invalid'}, 400);
-      }
-
-      Movies.rate(dbUtils.getSession(req), req.params.id, req.user.id, rating)
-        .then(response => writeSimpleResponse(res, {}))
-        .catch(err => writeSimpleResponse(res, err, 400));
-    });
-  }
+/**
+ * @swagger
+ * /api/v0/movies/rated:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: A list of movies the authorized user has rated
+ *     summary: A list of movies the authorized user has rated
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: Authorization
+ *         in: header
+ *         type: string
+ *         required: true
+ *         description: Token (token goes here)
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       401:
+ *         description: invalid / missing authentication
+ */
+exports.findMoviesRatedByMe = function (req, res, next) {
+  loginRequired(req, res, () => {
+    Movies.getRatedByUser(dbUtils.getSession(req), req.user.id)
+      .then(response => writeResponse(res, response, 200))
+      .catch(next);
+  })
 };
 
-exports.deleteMovieRating = {
-  'spec': {
-    "description": "Delete your rating for a movie",
-    "path": "/movies/{id}/rate",
-    "notes": "Delete your rating for a movie",
-    "summary": "Delete your rating for a movie",
-    "method": "DELETE",
-    "params": [
-      param.path("id", "ID of movie that needs to be fetched", "integer"),
-      param.header('Authorization', 'Authorization token', 'string', true)
-    ],
-    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
-    "nickname": "deleteMovieRating"
-  },
-  'action': function (req, res) {
-    loginRequired(req, res, () => {
-      Movies.deleteRating(dbUtils.getSession(req), req.params.id, req.user.id)
-        .then(response => writeSimpleResponse(res, response, 204))
-        .catch(err => writeSimpleResponse(res, err, 400));
-    })
-  }
-};
-
-exports.findMoviesRatedByMe = {
-  'spec': {
-    "description": "A list of movies the authorized user has rated",
-    "path": "/movies/rated",
-    "notes": "A list of movies the authorized user has rated",
-    "summary": "A list of movies the authorized user has rated",
-    "method": "GET",
-    "params": [
-      param.header('Authorization', 'Authorization token', 'string', true)
-    ],
-    "responseClass": "List[Movie]",
-    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
-    "nickname": "findMoviesRatedByMe"
-  },
-  'action': function (req, res) {
-    loginRequired(req, res, () => {
-      Movies.getRatedByUser(dbUtils.getSession(req), req.user.id)
-        .then(response => writeSimpleResponse(res, response, 200))
-        .catch(err => writeSimpleResponse(res, err, 400));
-    })
-  }
-};
-
-exports.getRecommendedMovies = {
-  'spec': {
-    "description": "A list of recommended movies for the authorized user",
-    "path": "/movies/recommended",
-    "notes": "A list of recommended movies for the authorized user",
-    "summary": "A list of recommended movies for the authorized user",
-    "method": "GET",
-    "params": [
-      param.header('Authorization', 'Authorization token', 'string', true)
-    ],
-    "responseClass": "List[Movie]",
-    "errorResponses": [{"code": 401, "reason": "invalid / missing authentication"}],
-    "nickname": "getRecommendedMovies"
-  },
-  'action': function (req, res) {
-    loginRequired(req, res, () => {
-      Movies.getRecommended(dbUtils.getSession(req), req.user.id)
-        .then(response => writeSimpleResponse(res, response, 200))
-        .catch(err => writeSimpleResponse(res, err, 400));
-    })
-  }
+/**
+ * @swagger
+ * /api/v0/movies/recommended:
+ *   get:
+ *     tags:
+ *     - movies
+ *     description: A list of recommended movies for the authorized user
+ *     summary: A list of recommended movies for the authorized user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: Authorization
+ *         in: header
+ *         type: string
+ *         required: true
+ *         description: Token (token goes here)
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Movie'
+ *       401:
+ *         description: invalid / missing authentication
+ */
+exports.getRecommendedMovies = function (req, res, next) {
+  loginRequired(req, res, () => {
+    Movies.getRecommended(dbUtils.getSession(req), req.user.id)
+      .then(response => writeResponse(res, response, 200))
+      .catch(next);
+  })
 };
