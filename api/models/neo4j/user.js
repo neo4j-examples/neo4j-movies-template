@@ -1,12 +1,12 @@
 // extracts just the data from the query results
 
-var _ = require('underscore');
+var _ = require('lodash');
 var md5 = require('md5');
 
 var User = module.exports = function (_node) {
   var username = _node.properties['username'];
 
-  _(this).extend({
+  _.extend(this, {
     'id': _node.properties['id'],
     'username': username,
     'avatar': {

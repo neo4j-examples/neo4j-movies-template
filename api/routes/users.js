@@ -5,11 +5,10 @@ var Users = require('../models/users')
   , dbUtils = require('../neo4j/dbUtils')
   , sw = require("swagger-node-express")
   , param = sw.params
-  , url = require("url")
+  , url = require('url')
   , swe = sw.errors
   , error = sw.error
-  , _ = require('underscore')
-  , _l = require('lodash');
+  , _ = require('lodash');
 
 /*
  * API Specs and Functions
@@ -29,8 +28,8 @@ exports.registerUser = {
     "nickname": "register"
   },
   'action': function (req, res) {
-    var username = _l.get(req.body, 'username');
-    var password = _l.get(req.body, 'password');
+    var username = _.get(req.body, 'username');
+    var password = _.get(req.body, 'password');
 
     if (!username) {
       return writeResponse(res, {username: 'This field is required.'}, 400);
@@ -59,8 +58,8 @@ exports.login = {
     "nickname": "login"
   },
   'action': function (req, res) {
-    var username = _l.get(req.body, 'username');
-    var password = _l.get(req.body, 'password');
+    var username = _.get(req.body, 'username');
+    var password = _.get(req.body, 'password');
 
     if (!username) {
       return writeResponse(res, {username: 'This field is required.'}, 400);

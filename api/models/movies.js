@@ -3,26 +3,13 @@
  *  these are mostly written in a functional style
  */
 
-var _ = require('underscore');
+var _ = require('lodash');
 var uuid = require('hat'); // generates uuids
 var Cypher = require('../neo4j/cypher');
 var dbUtils = require('../neo4j/dbUtils');
 var Movie = require('../models/neo4j/movie');
 var Person = require('../models/neo4j/person');
 var Genre = require('../models/neo4j/genre');
-var randomName = require('random-name');
-
-/*
- *  Utility Functions
- */
-
-function _randomName() {
-  return randomName.first() + ' ' + randomName.last();
-}
-
-function _randomNames(n) {
-  return _.times(n, _randomName);
-}
 
 /**
  *  Result Functions

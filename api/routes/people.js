@@ -5,9 +5,9 @@ var Genres = require('../models/genres');
 
 var sw = require("swagger-node-express");
 var param = sw.params;
-var url = require("url");
+var url = require('url');
 var swe = sw.errors;
-var _ = require('underscore');
+var _ = require('lodash');
 
 /*
  *  Util Functions
