@@ -1,26 +1,9 @@
-/**
- *  neo4j movie functions
- *  these are mostly written in a functional style
- */
-
 var _ = require('lodash');
-var uuid = require('hat'); // generates uuids
-var Cypher = require('../neo4j/cypher');
 var dbUtils = require('../neo4j/dbUtils');
 var Movie = require('../models/neo4j/movie');
 var Person = require('../models/neo4j/person');
 var Genre = require('../models/neo4j/genre');
 
-/**
- *  Result Functions
- */
-
-// return many movies without extended details
-var _manyMovies = function (record) {
-  return new Movie(record.get('movie'));
-};
-
-//TODO - handle Integers - process single *extended* movie 
 var _singleMovieWithDetails = function (record) {
   if (record.length) {
     var result = {};
@@ -48,7 +31,6 @@ var _singleMovieWithDetails = function (record) {
       return new Movie(record);
     });
     result.keywords = record.get('keywords');
-
     return result;
   } else {
     return null;
@@ -59,27 +41,34 @@ var _singleMovieWithDetails = function (record) {
  *  Query Functions
  */
 
-var _matchBy = function (keys, params, options, callback) {
-  var cypher_params = _.pick(params, keys);
+var _getByWriter = function (params, options, callback) {
+  var cypher_params = {
+    id: parseInt(params.id)
+  };
 
   var query = [
-    'MATCH (movie:Movie)',
-    Cypher.where('movie', keys),
-    'RETURN movie'
+    'MATCH (:Person {id:{id}})-[:WRITER_OF]->(movie:Movie)',
+    'RETURN DISTINCT movie'
   ].join('\n');
 
   callback(null, query, cypher_params);
 };
 
-// Find movie by ID and return extended movie details
-var _matchById = function (params, options, callback) {
-  var cypher_params = {
-    id: parseInt(params.id),
-    userId: params.userId
-  };
+function manyMovies(neo4jResult) {
+  return neo4jResult.records.map(r => new Movie(r.get('movie')))
+}
 
+// get all movies
+var getAll = function (session) {
+  return session
+    .run('MATCH (movie:Movie) RETURN movie')
+    .then(r => manyMovies(r));
+};
+
+// get a single movie by id
+var getById = function (session, movieId, userId) {
   var query = [
-    'MATCH (movie:Movie {id: {id}})',
+    'MATCH (movie:Movie {id: {movieId}})',
     'OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: {userId}})',
     'OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)',
     'OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie',
@@ -103,102 +92,81 @@ var _matchById = function (params, options, callback) {
     'collect(DISTINCT genre) AS genres',
   ].join('\n');
 
-  callback(null, query, cypher_params);
+  return session.run(query, {
+    movieId: parseInt(movieId),
+    userId: userId
+  }).then(result => {
+    if (!_.isEmpty(result.records)) {
+      return _singleMovieWithDetails(result.records[0]);
+    }
+    else {
+      throw {message: 'movie not found', status: 404}
+    }
+  });
 };
 
-// todo - add release date to database
-var _getByDateRange = function (params, options, callback) {
-  var cypher_params = {
-    start: parseInt(params.start || 0),
-    end: parseInt(params.end || 0)
-  };
-
+// Get by date range
+var getByDateRange = function (session, start, end) {
   var query = [
     'MATCH (movie:Movie)',
     'WHERE movie.released > {start} AND movie.released < {end}',
     'RETURN movie'
   ].join('\n');
 
-  callback(null, query, cypher_params);
+  return session.run(query, {
+    start: parseInt(start || 0),
+    end: parseInt(end || 0)
+  }).then(result => manyMovies(result))
 };
 
-var _getByGenre = function (params, options, callback) {
-  var cypher_params = {
-    n: parseInt(params.id)
-  };
-
-  var query = [
-    'MATCH (movie:Movie)-[:HAS_GENRE]->(genre)',
-    'WHERE genre.id = {n}',
-    'RETURN movie'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
-var _getByActor = function (params, options, callback) {
-  var cypher_params = {
-    id: parseInt(params.id)
-  };
-
+// Get by date range
+var getByActor = function (session, id) {
   var query = [
     'MATCH (actor:Person {id:{id}})-[:ACTED_IN]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
 
-  callback(null, query, cypher_params);
+  return session.run(query, {
+    id: parseInt(id)
+  }).then(result => manyMovies(result))
 };
-
-var _getByDirector = function (params, options, callback) {
-  var cypher_params = {
-    id: parseInt(params.id)
-  };
-
-  var query = [
-    'MATCH (:Person {id:{id}})-[:DIRECTED]->(movie:Movie)',
-    'RETURN DISTINCT movie'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
-var _getByWriter = function (params, options, callback) {
-  var cypher_params = {
-    id: parseInt(params.id)
-  };
-
-  var query = [
-    'MATCH (:Person {id:{id}})-[:WRITER_OF]->(movie:Movie)',
-    'RETURN DISTINCT movie'
-  ].join('\n');
-
-  callback(null, query, cypher_params);
-};
-
-var _matchAll = _.partial(_matchBy, []);
-
-// exposed functions
-
-// get a single movie by id
-var getById = Cypher(_matchById, _singleMovieWithDetails, {single: true});
-
-// Get by date range
-var getByDateRange = Cypher(_getByDateRange, _manyMovies);
-
-// Get by date range
-var getByActor = Cypher(_getByActor, _manyMovies);
 
 // get a movie by genre
-var getByGenre = Cypher(_getByGenre, _manyMovies);
+var getByGenre = function(session, genreId) {
+  var query = [
+    'MATCH (movie:Movie)-[:HAS_GENRE]->(genre)',
+    'WHERE genre.id = {genreId}',
+    'RETURN movie'
+  ].join('\n');
 
-// get all movies
-var getAll = Cypher(_matchAll, _manyMovies);
+  return session.run(query, {
+    genreId: parseInt(genreId)
+  }).then(result => manyMovies(result));
+};
 
 // Get many movies directed by a person
-var getByDirector = Cypher(_getByDirector, _manyMovies);
+var getByDirector = function(session, personId) {
+  var query = [
+    'MATCH (:Person {id:{personId}})-[:DIRECTED]->(movie:Movie)',
+    'RETURN DISTINCT movie'
+  ].join('\n');
+
+  return session.run(query, {
+    personId: parseInt(personId)
+  }).then(result => manyMovies(result));
+};
 
 // Get many movies written by a person
-var getByWriter = Cypher(_getByWriter, _manyMovies);
+var getByWriter = function(session, personId) {
+  var query = [
+    'MATCH (:Person {id:{personId}})-[:WRITER_OF]->(movie:Movie)',
+    'RETURN DISTINCT movie'
+  ].join('\n');
+
+  return session.run(query, {
+    personId: parseInt(personId)
+  }).then(result => manyMovies(result));
+};
 
 var rate = function (session, movieId, userId, rating) {
   return session.run(
@@ -227,9 +195,7 @@ var getRatedByUser = function (session, userId) {
      RETURN DISTINCT movie, rated.rating as my_rating',
     {userId: userId}
   ).then(result => {
-    return result.records.map(r => {
-      return new Movie(r.get('movie'), r.get('my_rating'));
-    })
+    return result.records.map(r => new Movie(r.get('movie'), r.get('my_rating')))
   });
 };
 
@@ -247,20 +213,17 @@ var getRecommended = function (session, userId) {
   ORDER BY avgRating desc \
   LIMIT 25',
     {userId: userId}
-  ).then(result => {
-    return result.records.map(r => {
-      return new Movie(r.get('movie'));
-    })
-  });
+  ).then(result => manyMovies(result)
+  );
 };
 
 // export exposed functions
 module.exports = {
   getAll: getAll,
   getById: getById,
-  getByDateRange: getByDateRange, // unused
+  getByDateRange: getByDateRange,
   getByActor: getByActor,
-  getByGenre: getByGenre, //unused
+  getByGenre: getByGenre,
   getMoviesbyDirector: getByDirector,
   getMoviesByWriter: getByWriter,
   rate: rate,

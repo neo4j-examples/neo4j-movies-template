@@ -1,30 +1,55 @@
-/**
- * Module dependencies.
- */
 var express = require('express')
-  , url = require('url')
+  , path = require('path')
   , routes = require('./routes')
-  , fs = require('fs')
   , nconf = require('./config')
-  , swagger = require('swagger-node-express')
+  , swaggerJSDoc = require('swagger-jsdoc')
   , methodOverride = require('method-override')
   , errorHandler = require('errorhandler')
-  , logger = require('morgan')
   , bodyParser = require('body-parser')
   , setAuthUser = require('./middlewares/setAuthUser')
-  , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup');
+  , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup')
+  , writeError = require('./helpers/response').writeError;
 
 var app = express()
-  , subpath = express();
+  , api = express();
 
-app.use(nconf.get('api_path'), subpath);
+app.use(nconf.get('api_path'), api);
 
-// configure /api/v0 subpath for api versioning
-subpath.use(bodyParser.json()); // just using json for the api
-subpath.use(methodOverride());
+var swaggerDefinition = {
+  info: {
+    title: 'Neo4j Movie Demo API (Node/Express)',
+    version: '1.0.0',
+    description: '',
+  },
+  host: 'localhost:3000',
+  basePath: '/',
+};
+
+// options for the swagger docs
+var options = {
+  // import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['./routes/*.js'],
+};
+
+// initialize swagger-jsdoc
+var swaggerSpec = swaggerJSDoc(options);
+
+// serve swagger
+api.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+app.use('/docs', express.static(path.join(__dirname, 'swaggerui')));
+app.set('port', nconf.get('PORT'));
+
+api.use(bodyParser.json());
+api.use(methodOverride());
 
 //enable CORS
-subpath.use(function(req, res, next) {
+api.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
@@ -32,74 +57,36 @@ subpath.use(function(req, res, next) {
   next();
 });
 
-//custom middlewares:
-subpath.use(setAuthUser);
-subpath.use(neo4jSessionCleanup);
+//api custom middlewares:
+api.use(setAuthUser);
+api.use(neo4jSessionCleanup);
 
-// all environments
-app.set('port', nconf.get('PORT'));
+//api routes
+api.post('/register', routes.users.register);
+api.post('/login', routes.users.login);
+api.get('/users/me', routes.users.me);
+api.get('/movies', routes.movies.list);
+api.get('/movies/recommended', routes.movies.getRecommendedMovies);
+api.get('/movies/rated', routes.movies.findMoviesRatedByMe);
+api.get('/movies/:id',  routes.movies.findById);
+api.get('/movies/genre/:id',  routes.movies.findByGenre);
+api.get('/movies/daterange/:start/:end', routes.movies.findMoviesByDateRange);
+api.get('/movies/directed_by/:id', routes.movies.findMoviesByDirector);
+api.get('/movies/acted_in_by/:id', routes.movies.findMoviesByActor);
+api.get('/movies/written_by/:id', routes.movies.findMoviesByWriter);
+api.post('/movies/:id/rate', routes.movies.rateMovie);
+api.delete('/movies/:id/rate', routes.movies.deleteMovieRating);
+api.get('/people', routes.people.list);
+api.get('/people/:id', routes.people.findById);
+api.get('/people/bacon', routes.people.getBaconPeople);
+api.get('/genres', routes.genres.list);
 
-// just using json for the api
-app.use(bodyParser.json());
-app.use(methodOverride());
-
-// development only
-if ('development' == nconf.get('NODE_ENV')) {
-  app.use(logger('dev'));
-  app.use(errorHandler());
-}
-
-// Set the main handler in swagger to the express subpath
-swagger.setAppHandler(subpath);
-
-swagger.configureSwaggerPaths("", "/api-docs", "");
-
-var models = require("./models/swagger_models");
-
-// Add models and methods to swagger
-swagger.addModels(models)
-  .addPost(routes.users.registerUser)
-  .addPost(routes.users.login)
-  .addGet(routes.users.userMe)
-  .addGet(routes.genres.list)
-  .addGet(routes.movies.list)
-  .addGet(routes.movies.findMoviesRatedByMe)
-  .addGet(routes.movies.getRecommendedMovies)
-  .addGet(routes.movies.findById)
-  .addGet(routes.movies.findMoviesByDateRange)
-  .addGet(routes.movies.findMoviesByActor)
-  .addGet(routes.movies.findByGenre)
-  .addPost(routes.movies.rateMovie)
-  .addDelete(routes.movies.deleteMovieRating)
-  .addGet(routes.people.getBaconPeople)
-  .addGet(routes.people.list)
-  .addGet(routes.movies.findMoviesByWriter)
-  .addGet(routes.movies.findMoviesbyDirector)
-  .addGet(routes.people.findById);
-
-// Configures the app's base path and api version.
-console.log(nconf.get('base_url') + nconf.get('api_path'));
-swagger.configure(nconf.get('base_url') + nconf.get('api_path'), "0.0.10");
-
-// Routes
-
-// Serve up swagger ui at /docs via static route
-var docs_handler = express.static(__dirname + '/node_modules/neo4j-swagger-ui/dist/');
-app.get(/^\/docs(\/.*)?$/, (req, res, next) => {
-  if (req.url === '/docs') { 
-    // express static barfs on root url w/o trailing slash
-    res.writeHead(302, {'Location': req.url + '/'});
-    res.end();
-    return;
+//api error handler
+api.use(function(err, req, res, next) {
+  if(err && err.status) {
+    writeError(res, err);
   }
-  // take off leading /docs so that connect locates file correctly
-  req.url = req.url.substr('/docs'.length);
-  return docs_handler(req, res, next);
-});
-
-// redirect to /docs
-app.get('/', (req, res) => {
-  res.redirect('./docs');
+  else next(err);
 });
 
 app.listen(app.get('port'), () => {
