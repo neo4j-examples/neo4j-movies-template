@@ -7,6 +7,15 @@
   &-title {
     text-align: center;
   }
+
+  &-rating {
+    overflow: hidden;
+
+    strong {
+      float: left;
+    }
+  }
+
   &-poster {
     width: 100%;
   }

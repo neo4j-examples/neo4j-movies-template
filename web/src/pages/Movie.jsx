@@ -66,7 +66,7 @@ class Movie extends React.Component {
                 <div>
                   {profile ?
                     <div className="nt-box">
-                      <p className="nt-box-row">
+                      <p className="nt-box-row nt-movie-rating">
                         <strong>Your rating: </strong>
                         <UserRating movieId={movie.id}
                                     savedRating={movie.myRating}
