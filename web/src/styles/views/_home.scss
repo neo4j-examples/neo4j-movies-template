@@ -11,9 +11,10 @@
   &-featured {
     ul {
       list-style: none;
+      display: -webkit-flex;
       display: flex;
+      -webkit-justify-content: space-around;
       justify-content: space-around;
-
       li {
         padding: 1rem;
       }

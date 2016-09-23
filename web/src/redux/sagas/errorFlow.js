@@ -12,7 +12,11 @@ export default function* watchErrors(getState) {
 }
 
 function createErrorNotification(err) {
-  if (err.status !== 401) {
+  if(err.status == 500) {
+    return NotificationActions.createError(err.statusText || 'Internal Server Error');
+  }
+
+  if (err.status != 401) {
     var errMessages = [];
     if (err.data) {
       try {
