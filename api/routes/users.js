@@ -52,10 +52,10 @@ exports.register = function (req, res, next) {
   var password = _.get(req.body, 'password');
 
   if (!username) {
-    return writeError(res, {username: 'This field is required.'}, 400);
+    throw {username: 'This field is required.', status: 400};
   }
   if (!password) {
-    return writeError(res, {password: 'This field is required.'}, 400);
+    throw {password: 'This field is required.', status: 400};
   }
 
   Users.register(dbUtils.getSession(req), username, password)
@@ -97,10 +97,10 @@ exports.login = function (req, res, next) {
   var password = _.get(req.body, 'password');
 
   if (!username) {
-    return writeError(res, {username: 'This field is required.'}, 400);
+    throw {username: 'This field is required.', status: 400};
   }
   if (!password) {
-    return writeError(res, {password: 'This field is required.'}, 400);
+    throw {password: 'This field is required.', status: 400};
   }
 
   Users.login(dbUtils.getSession(req), username, password)
@@ -136,7 +136,7 @@ exports.me = function (req, res, next) {
     var authHeader = req.headers['authorization'];
     var match = authHeader.match(/^Token (\S+)/);
     if (!match || !match[1]) {
-      return writeError(res, {message: 'invalid authorization format. Follow `Token <token>`'}, 401);
+      throw {message: 'invalid authorization format. Follow `Token <token>`', status: 401};
     }
 
     var token = match[1];

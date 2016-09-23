@@ -109,7 +109,7 @@ exports.getBaconPeople = function (req, res, next) {
  */
 exports.findById = function (req, res, next) {
   var id = req.params.id;
-  if (!id) return writeResponse(res, {message: 'Invalid id'}, 400);
+  if (!id) throw {message: 'Invalid id', status: 400};
 
   People.getById(dbUtils.getSession(req), id)
     .then(response => writeResponse(res, response))

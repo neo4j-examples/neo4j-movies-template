@@ -1,4 +1,4 @@
-var writeError = require('../helpers/response').writeResponse
+var writeError = require('../helpers/response').writeResponse;
 
 module.exports = function loginRequired(req, res, next) {
   var authHeader = req.headers['authorization'];
