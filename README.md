@@ -181,6 +181,21 @@ LIMIT 25
 
 ## Contributing
 
+### Node.js/Express API
+
+The Express API is located in the `/api` folder.
+
+#### Create Endpoint
+
+The API itself is created using the [Express web framework for Node.js](https://expressjs.com/). The API endpoints
+are documented using swagger and [swagger-jsdoc](https://www.npmjs.com/package/swagger-jsdoc) module.
+
+To add a new API endpoint there are 3 steps:
+
+1. Create a new route method in `/api/routes` directory
+2. Describe the method with swagger specification inside a JSDoc comment to make it visible in swagger
+3. Add the new route method to the list of route methods in `/api/app.js`.
+
 ### Flask API
 
 The flask API is located in the flask-api folder.  The application code is in the `app.py` file.
