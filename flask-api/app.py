@@ -44,7 +44,8 @@ def set_user(sender, **extra):
         return
     match = re.match(r'^Token (\S+)', auth_header)
     if not match:
-        return {'message': 'invalid authorization format. Follow `Token <token>`'}, 401
+        abort(401, 'invalid authorization format. Follow `Token <token>`')
+        return
     token = match.group(1)
 
     db = get_db()
@@ -56,7 +57,8 @@ def set_user(sender, **extra):
     try:
         g.user = results.single()['user']
     except ResultError:
-        return {'message': 'invalid authorization key'}, 401
+        abort(401, 'invalid authorization key')
+        return
 request_started.connect(set_user, app)
 
 
