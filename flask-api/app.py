@@ -409,12 +409,16 @@ class MovieListByDateRange(Resource):
     })
     def get(self, start, end):
         db = get_db()
+        try:
+            params = {'start': long(start), 'end': long(end)}
+        except ValueError:
+            return {'description': 'invalid year format'}, 400
         result = db.run(
             '''
             MATCH (movie:Movie)
             WHERE movie.released > {start} AND movie.released < {end}
             RETURN movie
-            ''', {'start': start, 'end': end}
+            ''', params
         )
         return [serialize_movie(record['movie']) for record in result]
 
