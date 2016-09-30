@@ -566,6 +566,50 @@ class MovieListRatedByMe(Resource):
         return [serialize_movie(record['movie'], record['my_rating']) for record in result]
 
 
+class MovieListRecommended(Resource):
+    @swagger.doc({
+        'tags': ['movies'],
+        'summary': 'A list of recommended movies for the authorized user.',
+        'description': 'A list of recommended movies for the authorized user.',
+        'parameters': [
+            {
+                'name': 'Authorization',
+                'in': 'header',
+                'type': 'string',
+                'default': 'Token <token goes here>',
+                'required': True
+            },
+        ],
+        'responses': {
+            '200': {
+                'description': 'A list of recommended movies for the authorized user',
+                'schema': {
+                    'type': 'array',
+                    'items': MovieModel,
+                }
+            }
+        }
+    })
+    @login_required
+    def get(self):
+        db = get_db()
+        result = db.run(
+            '''
+            MATCH (me:User {id: {user_id}})-[my:RATED]->(m:Movie)
+            MATCH (other:User)-[their:RATED]->(m)
+            WHERE me <> other
+            AND abs(my.rating - their.rating) < 2
+            WITH other,m
+            MATCH (other)-[otherRating:RATED]->(movie:Movie)
+            WHERE movie <> m 
+            WITH avg(otherRating.rating) AS avgRating, movie
+            RETURN movie
+            ORDER BY avgRating desc
+            LIMIT 25
+            ''', {'user_id': g.user['id']}
+        )
+        return [serialize_movie(record['movie']) for record in result]
+
 class Person(Resource):
     @swagger.doc({
         'tags': ['people'],
@@ -992,6 +1036,7 @@ api.add_resource(MovieListByPersonActedIn, '/api/v0/movies/acted_in_by/<int:pers
 api.add_resource(MovieListByWrittenBy, '/api/v0/movies/written_by/<int:person_id>')
 api.add_resource(MovieListByDirectedBy, '/api/v0/movies/directed_by/<int:person_id>')
 api.add_resource(MovieListRatedByMe, '/api/v0/movies/rated')
+api.add_resource(MovieListRecommended, '/api/v0/movies/recommended')
 api.add_resource(Person, '/api/v0/people/<int:id>')
 api.add_resource(PersonList, '/api/v0/people')
 api.add_resource(PersonBacon, '/api/v0/people/bacon')
