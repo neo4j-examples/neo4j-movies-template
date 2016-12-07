@@ -1,0 +1,397 @@
+= Users in the Node / React Neo4j Movies Template
+:img: ./img
+
+== Introduction
+
+The https://github.com/neo4j-examples/neo4j-movies-template[Neo4j Movie App Template] provides an easy-to-use foundation for your next Neo4j project or experiment.
+This article will walk through the creation of users that can log in and interact with the app’s data.
+In the https://github.com/neo4j-examples/neo4j-movies-template[Neo4j Movie App Template] example, these users will be able to log in and out, rate movies, and receive movie recommendations.
+
+== The User Model
+
+Aside from creating themselves and authenticating with the app, `Users` (blue) can rate `Movies` (yellow) with the `:RATED` relationship, illustrated below. 
+
+image::{img}/image02_user_graph.png[]
+
+=== `User` Properties
+
+`password`: The hashed version of the user’s chosen password
+`api_key`: The user’s API key, which the user uses to authenticate requests
+`id`: The user’s unique ID 
+`username`: The user’s chosen username
+
+=== `:RATED` Properties 
+
+`rating`: an integer rating between `1` and `5`, with `5` being _love it_ and `1` being _hate it_.
+
+image::{img}/image04_my_rated_movie.png[]
+
+== Users can create accounts
+
+Before a `User` can rate a `Movie`, the the user has to exist - someone has to sign up for an account.
+Signup will create a node in the database with a `User` label along with properties necessary for logging in and maintaining a session. 
+
+.web/src/pages/Signup.jsx
+image::{img}/image03_create_account.png[]
+
+The registration endpoint is located at `/api/v0/register`.
+The app submits a request to the register endpoint when a user fills out the "Create an Account" form and taps "Create Account".
+
+Assuming you have the API running, you can test requests either by using the interactive docs at `3000/docs/`, or by using cURL.
+
+=== Use Case: Create New User
+
+==== Request
+
+[source,shell]
+----
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ "username": "Mary Jane", "password": "SuperPassword"}' 'http://localhost:3000/api/v0/register'
+----
+
+==== Response
+
+[source,json]
+----
+{  
+   "id":"e1e157a2-1fb5-416a-b819-eb75c480dfc6",
+   "username":"Mary333 Jane",
+   "avatar":{  
+      "full_size":"https://www.gravatar.com/avatar/b2a02b21db2222c472fc23ff78804687?d=retro"
+   }
+}
+----
+
+=== Use Case: Try to Create New User but Username is Already Taken
+
+==== Request
+
+[source,shell]
+----
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ "username": "Mary Jane", "password": "SuperPassword"}' 'http://localhost:3000/api/v0/register'
+----
+
+==== Response
+
+[source,json]
+----
+{  
+   "username":"username already in use"
+}
+----
+
+User registration logic is implemented in `/api/models/users.js`:
+
+[source,javascript]
+----
+var register = function(session, username, password) {
+    return session.run('MATCH (user:User {username: {username}}) RETURN user', {
+            username: username
+        })
+        .then(results => {
+            if (!_.isEmpty(results.records)) {
+                throw {
+                    username: 'username already in use',
+                    status: 400
+                }
+            }
+            else {
+                return session.run('CREATE (user:User {id: {id}, username: {username}, password: {password}, api_key: {api_key}}) RETURN user', {
+                    id: uuid.v4(),
+                    username: username,
+                    password: hashPassword(username, password),
+                    api_key: randomstring.generate({
+                        length: 20,
+                        charset: 'hex'
+                    })
+                }).then(results => {
+                    return new User(results.records[0].get('user'));
+                })
+            }
+        });
+};
+----
+
+== Users can log in
+
+Now that users are able to register for an account, we can define the view that allows them to login to the site and start a session. 
+
+./web/src/pages/Login.jsx
+image::{img}/image07_login.png[]
+
+The registration endpoint is located at `/api/v0/login`.
+The app submits a request to the login  endpoint when a user fills a username and password and taps "Create Account".
+
+Assuming you have the API running, you can test requests either by using the interactive docs at `3000/docs/`, or by using cURL.
+
+=== Use Case: Login
+
+==== Request
+
+[source,shell]
+----
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{"username": "Mary Jane", "password": "SuperPassword"}' 'http://localhost:3000/api/v0/login'
+----
+
+==== Response
+
+[source,json]
+----
+{  
+	"token":"5a85862fb28a316ea6a1"
+}
+----
+
+=== Use Case: Wrong Password
+
+==== Request
+
+[source,shell]
+----
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ "username": "Mary Jane", "password": "SuperPassword"}' 'http://localhost:3000/api/v0/register'
+----
+
+==== Response
+
+[source,json]
+----
+{  
+   "username":"username already in use"
+}
+----
+
+=== See Myself
+
+==== Request
+
+[source,shell]
+----
+curl -X GET --header 'Accept: application/json' --header 'Authorization: Token 5a85862fb28a316ea6a1' 'http://localhost:3000/api/v0/users/me'
+----
+
+==== Response
+
+[source,json]
+----
+{
+  "id": "94a604f7-3eab-4f28-88ab-12704c228936",
+  "username": "Mary Jane",
+  "avatar": {
+    "full_size": "https://www.gravatar.com/avatar/c2eab5611cabda1c87463d7d24d98026?d=retro"
+  }
+}
+----
+
+You can take a look at the implementation in `/api/models/users.js`:
+
+----
+var me = function(session, apiKey) {
+    return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {
+            api_key: apiKey
+        })
+        .then(results => {
+            if (_.isEmpty(results.records)) {
+                throw {
+                    message: 'invalid authorization key',
+                    status: 401
+                };
+            }
+            return new User(results.records[0].get('user'));
+        });
+};
+var login = function(session, username, password) {
+    return session.run('MATCH (user:User {username: {username}}) RETURN user', {
+            username: username
+        })
+        .then(results => {
+            if (_.isEmpty(results.records)) {
+                throw {
+                    username: 'username does not exist',
+                    status: 400
+                }
+            }
+            else {
+                var dbUser = _.get(results.records[0].get('user'), 'properties');
+                if (dbUser.password != hashPassword(username, password)) {
+                    throw {
+                        password: 'wrong password',
+                        status: 400
+                    }
+                }
+                return {
+                    token: _.get(dbUser, 'api_key')
+                };
+            }
+        });
+};
+----
+
+The code here should look similar to `/register`.
+There is a similar form to fill out, where a user types in their `username` and `password`.
+
+With the given username, a `User` is initialized.
+The password they filled out in the form is verified against the hashed password that was retrieved from the corresponding `:User` node in the database. 
+
+If the verification is successful it will return a token.
+The user is then directed to an authentication page, from which they can navigate through the app, view their user profile, and rate movies.
+Below is a rather empty user profile for a freshly created user:
+
+//TODO image
+./web/src/pages/Profile.jsx
+image::{img}/image00_empty_profile.png[]
+
+== Users can rate movies
+
+Once a user has logged in and navigated to a page that displays movies, the user can select a star rating for the movie or remove the rating of a movie he or she has already rated. 
+
+image::{img}/image03_my_rated_movie.png[]
+
+The user should be able to access their previous ratings (and the movies that were rated) both on their user profile and the movie detail page in question. 
+
+=== Use Case: Rate a Movie
+
+==== Request
+
+[source,shell]
+----
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Token 5a85862fb28a316ea6a1' -d '{"rating":4}' 'http://localhost:3000/api/v0/movies/683/rate'
+----
+
+==== Response
+
+[source,json]
+----
+{}
+----
+
+=== Use Case: See all of my ratings
+
+==== Request
+
+[source,shell]
+----
+curl -X GET --header 'Accept: application/json' --header 'Authorization: Token 5a85862fb28a316ea6a1' 'http://localhost:3000/api/v0/movies/rated'
+----
+
+==== Response
+
+[source,json]
+----
+[
+  {
+    "summary": "Six months after the events depicted in The Matrix, ...",
+    "duration": 138,
+    "rated": "R",
+    "tagline": "Free your mind.",
+    "id": 28,
+    "title": "The Matrix Reloaded",
+    "poster_image": "http://image.tmdb.org/t/p/w185/ezIurBz2fdUc68d98Fp9dRf5ihv.jpg",
+    "my_rating": 4
+  },
+  {
+    "summary": "Thomas A. Anderson is a man living two lives....",
+    "duration": 136,
+    "rated": "R",
+    "tagline": "Welcome to the Real World.",
+    "id": 1,
+    "title": "The Matrix",
+    "poster_image": "http://image.tmdb.org/t/p/w185/gynBNzwyaHKtXqlEKKLioNkjKgN.jpg",
+    "my_rating": 4
+  }
+]
+----
+
+=== Use Case: See my rating on a particular movie
+
+==== Request
+
+[source,shell]
+----
+curl -X GET --header 'Accept: application/json' --header 'Authorization: Token 5a85862fb28a316ea6a1' 'http://localhost:3000/api/v0/movies/1'
+----
+
+==== Response
+
+[source,json]
+----
+{  
+   "summary":"Thomas A. Anderson is a man living two lives. By day he is an average computer programmer and by night a malevolent hacker known as Neo, who finds himself targeted by the police when he is contacted by Morpheus, a legendary computer hacker, who reveals the shocking truth about our reality.",
+   "duration":136,
+   "rated":"R",
+   "tagline":"Welcome to the Real World.",
+   "id":1,
+   "title":"The Matrix",
+"poster_image":"http://image.tmdb.org/t/p/w185/gynBNzwyaHKtXqlEKKLioNkjKgN.jpg",
+   "my_rating":4,
+   "directors":[...],
+   "genres":[...],
+   "producers":[...],
+   "writers":[...],
+   "actors":[...],
+   "related":[...],
+   "keywords":[...]
+}
+----
+
+== User can be recommended movies based on their recommendations
+
+When a user visits their own profile, the user will see movie recommendations.
+There are many ways to build recommendations, and you might want to use one or a combination of the methods below to build the appropriate recommendation system for your particular use case.
+In the movie template, you can find the recommendation endpoint at `movies/recommended`.
+
+=== User-Centric, User-Based Recommendations
+
+[source,cypher]
+----
+MATCH (me:User {username:'Sherman'})-[my:RATED]->(m:Movie)
+MATCH (other:User)-[their:RATED]->(m)
+WHERE me <> other
+AND abs(my.rating - their.rating) < 2
+WITH other,m
+MATCH (other)-[otherRating:RATED]->(movie:Movie)
+WHERE movie <> m
+WITH avg(otherRating.rating) AS avgRating, movie
+RETURN movie
+ORDER BY avgRating desc
+LIMIT 25
+----
+
+=== Movie-Centric, Keyword-Based Recommendations
+
+Newer movies will have few or no ratings, so they will never be recommended to users if the application uses user-rating based recommendations.
+Since movies have keywords, the application can recommend movies with similar keywords for a particular movie.
+This case is useful when the user has made few or no ratings.
+For example, site visitors interested in movies like `Elysium` will likely be interested in movies with similar keywords as `Elysium`.
+
+[source,cypher]
+----
+MATCH (m:Movie {title:'Elysium'})
+MATCH (m)-[:HAS_KEYWORD]->(k:Keyword)
+MATCH (movie:Movie)-[r:HAS_KEYWORD]->(k)
+WHERE m <> movie
+WITH movie, count(DISTINCT r) AS commonKeywords
+RETURN movie
+ORDER BY commonKeywords DESC
+LIMIT 25
+----
+
+==== User-Centric, Keyword-Based Recommendations
+
+Users with established tastes may be interested in finding movies with similar characteristics as his or her highly-rated movies, while not necessarily caring about whether another user has or hasn’t already rated the movie. For example, `Sherman` has seen many movies, and is looking for new movies similar to the ones he has already watched. 
+
+[source,cypher]
+----
+MATCH (u:User {username:'Sherman'})-[:RATED]->(m:Movie)
+MATCH (m)-[:HAS_KEYWORD]->(k:Keyword)
+MATCH (movie:Movie)-[r:HAS_KEYWORD]->(k)
+WHERE m <> movie
+WITH movie, count(DISTINCT r) AS commonKeywords
+RETURN movie
+ORDER BY commonKeywords DESC
+LIMIT 25
+----
+
+== Next Steps
+
+* http://nicolewhite.github.io/neo4j-flask/[Take a look at neo4j-flask]
+* https://github.com/neo4j-examples/neo4j-movies-template/tree/master/flask-api[Take a look at the python version of the Neo4j Movies Template]
+

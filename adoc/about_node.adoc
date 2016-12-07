@@ -1,0 +1,377 @@
+= Node / React Neo4j Movies Template
+:img: ./img
+
+== Introduction
+
+Let’s jump right into it.
+You’re a JavaScript developer interested in Neo4j and want to build a web app, microservice, or mobile app.
+You’ve already read up on Neo4j, played around with some datasets, and know enough Cypher to get going.
+Now you’re looking for a demo app or template to get the ball rolling. 
+
+Enter the Neo4j Movies Template. 
+
+What comes with the Neo4j Movies Template:
+
+* Node - https://expressjs.com/[Express] / https://facebook.github.io/react/[React] app ready to be bent to your will
+* API Documentation
+** More time coding, less time Googling for examples on how to
+*** Use http://neo4j.com/docs/operations-manual/current/deployment/#import-tool-usage[neo4j-import] on Unix or Windows
+*** Use the new https://github.com/neo4j/neo4j-javascript-driver[JavaScript Bolt driver for Neo4j] 
+
+== Overview of the Model and the Implementation
+
+=== The Classic Movie Database
+
+This project uses a classic Neo4j dataset: the movie database. 
+It includes `Movie`, `Person`, `Genre`, and `Keyword` nodes, connected by relationships as described in the following image:
+
+//TODO replace with arrows tool image
+
+image::{img}/image00_model.png[]
+
+* `(:Movie)-[:HAS_GENRE]->(:Genre)`
+* `(:Movie)-[:HAS_KEYWORD]->(:Keyword)`
+* `(:Person)-[:ACTED_IN]->(:Movie)`
+* `(:Person)-[:WROTE]->(:Movie)`
+* `(:Person)-[:DIRECTED]->(:Movie)`
+* `(:Person)-[:PRODUCED]->(:Movie)`
+
+Additionally, users can add ratings to movies:
+
+image::{img}/user_ratings_graph.svg[]
+
+* `(:User)-[:RATED]->(:Movie)`
+
+Or, in table form:
+
+[cols="1,1,1,1,1" options="header"]
+|===
+|from
+|props_from
+|via
+|to
+|props_to
+
+|[User]
+|[api_key, username, password, id]
+|RATED
+|[Movie]
+|[id, title, tagline, summary, poster_image, duration, rated]
+
+|[Person]
+|[id,name,born,poster_image]
+|ACTED_IN
+|[Movie]
+|[id,title,tagline,summary,poster_image,duration,rated]
+
+|[Movie]
+|[id,title,tagline,summary,poster_image,duration,rated]
+|HAS_KEYWORD
+|[Keyword]
+|[id,name]
+
+|[Person]
+|[id,name,born,poster_image]
+|DIRECTED
+|[Movie]
+|[id,title,tagline,summary,poster_image,duration,rated]
+
+|[Person]
+|[id,name,born,poster_image]
+|PRODUCED
+|[Movie]
+|[id,title,tagline,summary,poster_image,duration,rated]
+
+|[Person]
+|[id,name,born,poster_image]
+|WRITER_OF
+|[Movie]
+|[id,title,tagline,summary,poster_image,duration,rated]
+
+|[Movie]
+|[id,title,tagline,summary,poster_image,duration,rated]
+|HAS_GENRE
+|[Genre]
+|[id,name]
+|===
+
+=== The API
+
+The Node portion of the application interfaces with the database and presents data to the React frontend via a RESTful API. 
+
+=== The Frontend
+
+The frontend, built in React, consumes the data presented by the Express API and presents some views to the end user, including:
+
+* Home page
+* Movie detail page
+* Person detail page
+* User detail page
+* Login
+
+== Setting Up
+
+To get the project running, https://github.com/neo4j-examples/neo4j-movies-template[clone the repo] then check the project’s https://github.com/neo4j-examples/neo4j-movies-template/blob/master/README.md[README] for environment-specific setup instructions. 
+
+The README covers how to:
+
+* download and install Neo4j
+* prepare the database 
+* import the nodes and relationships using `neo4j-import`
+* start the database
+
+=== Start the Node Backend
+
+The Neo4j-powered https://expressjs.com/[Express] API lives in the `api` directory.
+
+In order to run the API, you’ll need to open a new terminal tab and move to the `api` directory install dependencies using `npm install`:
+
+----
+cd api
+npm install
+----
+
+If you are new to node and your terminal does not know the command `npm`, make sure you have installed node, perhaps choosing https://github.com/creationix/nvm[`nvm`] to manage your version of node (I’m using node v6.2.1). 
+
+After you’ve installed your dependencies and have your database running, enter your database username and password into the appropriate place in the `api/config.js` file:
+
+----
+'use strict';
+
+var nconf = require('nconf');
+
+var USERNAME = 'neo4j';   // use your username
+var PASSWORD = '123123';    // use your password
+
+nconf.env(['PORT', 'NODE_ENV'])
+....
+----
+
+Start the API then navigate to http://localhost:3000/docs/ to see the projects' Swagger docs.
+
+----
+node app.js
+open http://localhost:3000/docs/
+----
+
+image::{img}/image06_swagger_genres.png[]
+
+== Start the React Frontend
+
+With the database and express backend running, open a new terminal tab or window and move to the project's `/web` subdirectory. 
+Install the bower and npm dependencies, then start the app by running gulp (read the “getting started” on [gulpjs.com]gulpjs.com if this is your first time using gulp). 
+
+----
+npm install
+bower install
+gulp
+----
+
+Over on http://localhost:4000/, you should see the homepage of the movie app, displaying three featured movies and other movies below.
+
+image::{img}/image04_homepage.png[]
+
+Click on a movie to see the movie detail page:
+
+image::{img}/image07_movie_detail.png[]
+
+Click on a person to see that person’s related persons and movies the person has acted in, directed, written, or produced:
+
+image::{img}/image03_person_detail.png[]
+
+== A Closer Look: Using the JavaScript Neo4j Bolt Driver
+
+Let’s take a closer look at what sort of responses we get from the bolt driver.
+In this app, calls to the database are handled by `/api/neo4j/dbUtils.js`, described piece by piece below. 
+
+Import dependencies, including the neo4j driver, and connect the driver to the database:
+
+[source,javascript]
+.Getting Ready
+----
+var nconf = require('../config');
+var neo4j = require('neo4j-driver').v1;
+var driver = neo4j.driver(nconf.get('neo4j-local'), neo4j.auth.basic(nconf.get('USERNAME'), nconf.get('PASSWORD')));
+----
+
+Let’s look at how we would ask the database to return all the genres in the database. 
+`getAll`, a function in `/api/models/genres.js` submits a Cypher query and passes the result from the database through the `_manyGenres` function, which maps the results into a usable form and deals with converting Neo4j Integers to JavaScript numbers. 
+
+[source,javascript]
+./api/models/genres.js
+----
+var _ = require('lodash');
+var Genre = require('../models/neo4j/genre');
+
+var getAll = function(session) {
+  return session.run('MATCH (genre:Genre) RETURN genre')
+    .then(_manyGenres);
+};
+
+var _manyGenres = function (result) {
+  return result.records.map(r => new Genre(r.get('genre')));
+};
+
+module.exports = {
+  getAll: getAll
+};
+----
+
+[source,javascript]
+./api/models/neo4j/genre.js
+----
+// extracts just the data from the query results
+
+var _ = require('lodash');
+
+var Genre = module.exports = function (_node) {
+  _.extend(this, _node.properties);
+  if (this.id) { 
+    this.id = this.id.toNumber();
+  };
+};
+;
+----
+
+=== What's going on with the Cypher?
+
+The bolt driver responses are different than what you might be used to if you've used a non-Bolt Neo4j driver.  
+
+In the "get all Genres" example described above, `MATCH (genre:Genre) RETURN genre` returns results quite different what you would see in the Neo4j browser upon clicking *code* in the result widget. 
+
+./api/models/genres.js
+----
+var getAll = function(session) {
+  return session.run('MATCH (genre:Genre) RETURN genre')
+    .then(_manyGenres);
+};
+----
+
+`records` (not `data`!) coming out:
+
+[source,json]
+.Response from the Bolt Driver
+----
+{  
+   records:Record   {  
+      keys:[  
+         'genre'
+      ],
+      length:1,
+      _fields:[  
+         Node         {  
+            identity:Integer            {  
+               low:737,
+               high:0
+            },
+            labels:[  
+               'Genre'
+            ],
+            properties:{  
+               name:'Suspense',
+               id:Integer               {  
+                  low:3270,
+                  high:0
+               }
+            }
+         ],
+         _fieldLookup:{  
+            genre:0
+         }
+      },
+      ... // more records
+   ],
+   summary:ResultSummary   {  
+      statement:{  
+         text:'MATCH (genre:Genre)\nRETURN genre',
+         parameters:{  
+
+         }
+      },
+      statementType:'r',
+      updateStatistics:StatementStatistics      {  
+         _stats:[  
+            Object
+         ]
+      },
+      plan:false,
+      profile:false,
+      notifications:[  
+
+      ]
+   }
+}
+----
+
+In order to grab the `genre` node(s), we could use something like `record.get('genre')` to pluck it out of the longer response:
+
+[source,json]
+.Response from the Bolt Driver
+----
+Node {  
+   identity:Integer   {  
+      low:735,
+      high:0
+   },
+   labels:[  
+      'Genre'
+   ],
+   properties:{  
+      name:'Family',
+      id:Integer	{  
+         low:1258,
+         high:0
+      }
+   }
+}
+----
+
+This is *much* better, but still not usable: the `id` property is not what we expected. 
+
+The return function, `_manyGenres` works with the `Genre` object to parse the messy results into the data we need to build a useful API:
+
+[source,javascript]
+----
+var _manyGenres = function (result) {
+  return result.records.map(r => new Genre(r.get('genre')));
+};
+----
+
+Viola!
+An array of genres appears at `/genres`.
+
+== Beyond the /Genres Endpoint
+
+Of course, an app that just shows movie genres isn’t very interesting.
+Take a look at the routes and models used to build the home page, movie detail page, and person detail page. 
+
+== Next Steps
+
+* https://github.com/neo4j-examples/neo4j-movies-template[Fork the repo] and hack away! Find directors that work with multiple genres, or find people who happen to work with each other often as writer-director pairs. 
+* Find a way to improve the template or the JS driver? Make a GitHub Issue and/or submit a pull request. 
+
+== Resources 
+
+=== Found a bug? Got stuck?
+
+* The https://neo4j-users.slack.com/[neo4j-users] *#help* channel will be happy to assist you
+* Make a github issue on the https://github.com/neo4j/neo4j-javascript-driver[driver] or https://github.com/neo4j-examples/neo4j-movies-template[app] repos
+
+=== Neo4j
+
+* https://github.com/neo4j/neo4j-javascript-driver[JavaScript Bolt Driver]
+* https://neo4j.com/developer/cypher/[Cypher Language]
+* https://neo4j.com/docs/operations-manual/current/deployment/#import-tool[neo4j-import Tool]
+
+=== Express
+
+* https://expressjs.com/[Express]
+* https://www.manning.com/books/express-in-action[Express in Action (free chapters)]
+* https://leanpub.com/b/nodejsbundle[The NodeJS Bundle]
+* http://scottksmith.com/blog/2014/05/02/building-restful-apis-with-node/[Building RESTful APIs with Node]
+
+=== React
+
+* https://facebook.github.io/react/docs/tutorial.html[Official Facebook Tutorial] and https://facebook.github.io/react/docs/top-level-api.html[Documentation]
+* http://jamesknelson.com/learn-raw-react-no-jsx-flux-es6-webpack/[Learn Raw React Tutorial]
+
