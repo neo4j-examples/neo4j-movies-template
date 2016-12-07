@@ -1,7 +1,6 @@
 = Node / React Neo4j Movies Template
 :img: ./img
 
-
 == Introduction
 
 Let’s jump right into it.
