@@ -29,7 +29,7 @@ Feel encouraged to fork and update this repo!
 
 * [Download Neo4j Community Edition: .tar Version](https://neo4j.com/download/other-releases/)
 * [video instructions start here](https://youtu.be/O71B2KcTD6A)
-* Set your `NEO4J_HOME` variable: `export NEO4J_HOME=/path/to/neo4j-community
+* Set your `NEO4J_HOME` variable: `export NEO4J_HOME=/path/to/neo4j-community`
 * From this project's root directory, run the import script:
 
 ```
