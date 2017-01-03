@@ -1,0 +1,11 @@
+default:
+    suites:
+        chunking_features:
+            paths:    [ %paths.base%/features/chunking-dechunking ]
+            contexts: [ ChunkingDechunkingContext ]
+        result_features:
+            paths:    [ %paths.base%/features/result ]
+            contexts: [ ResultMetadataContext ]
+        bolt_type_features:
+            paths:    [ %paths.base%/features/bolt_type_system ]
+            contexts: [ BoltTypeSystemContext ]

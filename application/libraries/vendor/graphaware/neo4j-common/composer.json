@@ -1,0 +1,31 @@
+{
+    "name": "graphaware/neo4j-common",
+    "description": "Common Utilities library for Neo4j",
+    "keywords": [
+      "graph", "neo4j", "database", "cypher", "statement"
+    ],
+    "type": "library",
+    "license": "ApacheV2",
+    "authors": [
+        {
+            "name": "Christophe Willemsen",
+            "email": "christophe@graphaware.com"
+        }
+    ],
+    "require": {
+        "myclabs/php-enum": "^1.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "GraphAware\\Common\\": "src/"
+        }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "GraphAware\\Common\\Tests\\": "tests/"
+      }
+    }
+}

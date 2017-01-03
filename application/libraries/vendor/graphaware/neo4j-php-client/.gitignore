@@ -1,0 +1,7 @@
+vendor/
+test.php
+bin/*
+tests/_reports
+tests/database_settings.yml
+cache/
+neoclient.yml
