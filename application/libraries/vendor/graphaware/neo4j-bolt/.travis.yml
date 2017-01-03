@@ -1,0 +1,20 @@
+language: php
+php:
+    - 5.6
+    - 7.0
+
+before_install:
+    - sudo apt-get update > /dev/null
+    # install Oracle JDK8
+    - sh -c ./build/install-jdk8.sh
+    # install and launch neo4j
+    - sh -c ./build/install-neo.sh
+    - composer install --prefer-source --no-interaction
+    - composer self-update
+
+script:
+    - vendor/bin/phpunit --exclude-group fail
+    - vendor/bin/behat
+
+notifications:
+    email: "christophe@graphaware.com"
