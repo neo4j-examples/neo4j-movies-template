@@ -1,3 +1,4 @@
+
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,9 @@
         <script src="/assets/js/d3.v3.min.js" type="text/javascript"></script>
     </head>
     <body>
-          <?php $this->load->view($content_view); ?>
+          <div id="contents"><?php echo $contents; ?></div>
     </body>
-    
+
     <header>
 
     </header>

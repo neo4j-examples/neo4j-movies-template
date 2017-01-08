@@ -16,16 +16,16 @@ class Neo4j{
     private $client;
 
     private function Config(){
-        $this->Host           = 'localhost';
-        $this->DBUser         = 'neo4j';
-        $this->DBPassword     = 'ubuntu';
-        $this->DBPort         = '7687';
+        $this->Host           = 'hobby-mnopchliojekgbkepnlkcmol.dbs.graphenedb.com';
+        $this->DBUser         = 'neo4jcodemove';
+        $this->DBPassword     = 'dWepszSOZt8hQwyY8l9I';
+        $this->DBPort         = '24789';
     }
   	private function Connect(){
         $this->Config();
     		try{
               $this->client = ClientBuilder::create()
-                ->addConnection('bolt', "bolt://$this->DBUser:$this->DBPassword@$this->Host:$this->DBPort") 
+                ->addConnection('http', "http://$this->DBUser:$this->DBPassword@$this->Host:$this->DBPort")
                 ->build();
     			    $this->bConnected = true;
     		}

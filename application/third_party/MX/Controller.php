@@ -54,6 +54,7 @@ class MX_Controller
 		$this->load->_autoloader($this->autoload);
 		$this->load->module("template_neo4j");
 		$this->load->library('Neo4j');
+
 	}
 
 	public function __get($class) {

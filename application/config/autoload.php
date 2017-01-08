@@ -26,6 +26,7 @@
 | 6. Models
 |
 */
+$autoload['libraries'] = array('template');
 
 /*
 | -------------------------------------------------------------------
@@ -106,7 +107,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array();
+$autoload['model'] = array('abstract_model');
 
 
 /* End of file autoload.php */
