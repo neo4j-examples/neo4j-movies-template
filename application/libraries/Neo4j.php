@@ -1,40 +1,35 @@
 <?php
-
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 require_once 'vendor/autoload.php';
-
 use GraphAware\Neo4j\Client\ClientBuilder;
-
 class Neo4j{
     private $Host;
-  	private $DBName;
-  	private $DBUser;
+    private $DBName;
+    private $DBUser;
     private $DBPort;
-  	private $DBPassword;
-  	private $bConnected;
+    private $DBPassword;
+    private $bConnected;
     private $client;
-
     private function Config(){
-        $this->Host           = 'hobby-mnopchliojekgbkepnlkcmol.dbs.graphenedb.com';
-        $this->DBUser         = 'neo4jcodemove';
-        $this->DBPassword     = 'dWepszSOZt8hQwyY8l9I';
-        $this->DBPort         = '24789';
+        $this->Host           = 'localhost';
+        $this->DBUser         = 'neo4j';
+        $this->DBPassword     = 'ubuntu';
+        $this->DBPort         = '7687';
     }
-  	private function Connect(){
+    private function Connect(){
         $this->Config();
-    		try{
+            try{
               $this->client = ClientBuilder::create()
-                ->addConnection('http', "http://$this->DBUser:$this->DBPassword@$this->Host:$this->DBPort")
+                ->addConnection('bolt', "bolt://$this->DBUser:$this->DBPassword@$this->Host:$this->DBPort") 
                 ->build();
-    			    $this->bConnected = true;
-    		}
-    		catch (PDOException $e) {
-    			echo $this->ExceptionLog($e->getMessage());
-    			die();
-    		}
-  	}
-
+                    $this->bConnected = true;
+            }
+            catch (PDOException $e) {
+                echo $this->ExceptionLog($e->getMessage());
+                die();
+            }
+    }
     public function get_db(){
         $this->Connect();
         return $this->client;
