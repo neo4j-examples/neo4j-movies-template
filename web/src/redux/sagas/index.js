@@ -14,5 +14,5 @@ export default function* root() {
     fork(signupFlow),
     fork(movieFlow),
     fork(personFlow)
-  ]
+  ];
 }

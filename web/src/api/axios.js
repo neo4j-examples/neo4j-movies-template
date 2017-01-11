@@ -1,6 +1,6 @@
 import axios from 'axios';
 import humps from 'humps';
-import UserSession from "../UserSession";
+import UserSession from '../UserSession';
 
 axios.interceptors.request.use(function (request) {
   var authToken = UserSession.getToken();

@@ -1,15 +1,15 @@
-import {call, put, take} from "redux-saga/effects";
-import {takeEvery} from "redux-saga";
-import AuthApi from "../../api/AuthApi";
-import * as Actions from "../actions/ProfileActions";
-import * as Types from "../actions/ProfileActionTypes";
-import * as AuthActions from "../actions/AuthActions";
-import {push} from "react-router-redux";
+import {call, put, take} from 'redux-saga/effects';
+import {takeEvery} from 'redux-saga';
+import AuthApi from '../../api/AuthApi';
+import * as Actions from '../actions/ProfileActions';
+import * as Types from '../actions/ProfileActionTypes';
+import * as AuthActions from '../actions/AuthActions';
+import {push} from 'react-router-redux';
 
 export default function* signupFlow() {
   yield [
     takeEvery(Types.PROFILE_CREATE, createProfile),
-  ]
+  ];
 }
 
 function* createProfile(action) {

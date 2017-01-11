@@ -1,12 +1,12 @@
-import React from "react";
-import AuthenticatedPage from "./AuthenticatedPage.jsx";
-import {Link} from "react-router";
-import UserRating from "../components/UserRating.jsx";
-import Carousel from "../components/Carousel.jsx";
-import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-import _ from "lodash";
-import * as ProfileActions from "../redux/actions/ProfileActions";
+import React from 'react';
+import AuthenticatedPage from './AuthenticatedPage.jsx';
+import {Link} from 'react-router';
+import UserRating from '../components/UserRating.jsx';
+import Carousel from '../components/Carousel.jsx';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import _ from 'lodash';
+import * as ProfileActions from '../redux/actions/ProfileActions';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -79,7 +79,7 @@ class Profile extends React.Component {
                                       onDeleteRating={profileDeleteMovieRating}/>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </Carousel>
                 :

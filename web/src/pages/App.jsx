@@ -2,11 +2,11 @@ import React, {PropTypes} from 'react';
 import { render } from 'react-dom';
 
 import Header from '../components/Header.jsx';
-import {getProfile} from "../redux/actions/ProfileActions";
-import UserSession from "../UserSession";
+import {getProfile} from '../redux/actions/ProfileActions';
+import UserSession from '../UserSession';
 import Footer from '../components/Footer.jsx';
 import Breadcrumbs from '../components/Breadcrumbs.jsx';
-import NotificationContainer from "../components/common/NotificationContainer.jsx";
+import NotificationContainer from '../components/common/NotificationContainer.jsx';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

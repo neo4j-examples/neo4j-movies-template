@@ -1,8 +1,8 @@
-import {call, put} from "redux-saga/effects";
-import {takeEvery} from "redux-saga";
-import PersonApi from "../../api/PersonApi";
-import * as Actions from "../actions/PersonActions";
-import * as Types from "../actions/PersonActionTypes";
+import {call, put} from 'redux-saga/effects';
+import {takeEvery} from 'redux-saga';
+import PersonApi from '../../api/PersonApi';
+import * as Actions from '../actions/PersonActions';
+import * as Types from '../actions/PersonActionTypes';
 
 export default function* movieFlow() {
   yield [

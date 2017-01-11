@@ -1,14 +1,14 @@
-import React, {PropTypes} from "react";
-import {render} from "react-dom";
-import {Router, Route, IndexRoute} from "react-router";
-import App from "../pages/App.jsx";
-import Home from "../pages/Home.jsx";
-import Movie from "../pages/Movie.jsx";
-import Person from "../pages/Person.jsx";
-import Login from "../pages/Login.jsx";
-import Signup from "../pages/Signup.jsx";
-import SignupStatus from "../pages/SignupStatus.jsx";
-import Profile from "../pages/Profile.jsx";
+import React, {PropTypes} from 'react';
+import {render} from 'react-dom';
+import {Router, Route, IndexRoute} from 'react-router';
+import App from '../pages/App.jsx';
+import Home from '../pages/Home.jsx';
+import Movie from '../pages/Movie.jsx';
+import Person from '../pages/Person.jsx';
+import Login from '../pages/Login.jsx';
+import Signup from '../pages/Signup.jsx';
+import SignupStatus from '../pages/SignupStatus.jsx';
+import Profile from '../pages/Profile.jsx';
 
 export default class Routes extends React.Component {
 

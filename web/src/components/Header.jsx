@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {logout} from "../redux/actions/AuthActions";
-import {connect} from "react-redux";
+import {logout} from '../redux/actions/AuthActions';
+import {connect} from 'react-redux';
 
 class Header extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class Header extends React.Component {
         <ul className="nt-app-header-links">
           <li>
             <a className="nt-app-header-link"
-               href="https://github.com/neo4j"
+               href="https://github.com/neo4j-examples/neo4j-movies-template"
                target="_blank">
               GitHub Project
             </a>
@@ -32,7 +32,7 @@ class Header extends React.Component {
             <a className="nt-app-header-link"
                href="http://neo4j.com/"
                target="_blank">
-              Neo4j 3.0.3
+              Neo4j 3.1.0
             </a>
           </li>
         </ul>
@@ -41,7 +41,7 @@ class Header extends React.Component {
             {
               profile ?
                 <div className="nt-app-header-avatar" style={this.getAvatarStyle(profile)}>
-                  <Link to="/profile" title={`profile: ${profile.username}`}></Link>
+                  <Link to="/profile" title={`profile: ${profile.username}`}/>
                 </div>
                 : null
             }

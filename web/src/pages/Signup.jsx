@@ -1,9 +1,9 @@
-import InputValidator from "../components/validation/InputValidator.jsx";
-import React, {PropTypes} from "react";
-import validatedComponent from "../components/validation/ValidatedComponent.jsx";
-import * as Actions from "../redux/actions/ProfileActions";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
+import InputValidator from '../components/validation/InputValidator.jsx';
+import React, {PropTypes} from 'react';
+import validatedComponent from '../components/validation/ValidatedComponent.jsx';
+import * as Actions from '../redux/actions/ProfileActions';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 class Signup extends React.Component {
   constructor() {
@@ -95,7 +95,7 @@ class Signup extends React.Component {
               <InputValidator fieldName="Password"
                               errors={errors.password}
                               shouldValidateOnBlur={true}
-                              customValidation={() => {return this.validateConfirmPassword()}}>
+                              customValidation={() => {return this.validateConfirmPassword();}}>
               <input type="password"
                      name="password-confirm"
                      placeholder="Confirm Password*"
@@ -131,7 +131,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
-  return {...state.signup,  auth: {...state.auth}}
+  return {...state.signup,  auth: {...state.auth}};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(validatedComponent(Signup));
