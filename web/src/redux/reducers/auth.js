@@ -1,6 +1,6 @@
-import * as Types from "../actions/AuthActionTypes";
-import UserSession from "../../UserSession";
-import ErrorUtils from "../../utils/ErrorUtils";
+import * as Types from '../actions/AuthActionTypes';
+import UserSession from '../../UserSession';
+import ErrorUtils from '../../utils/ErrorUtils';
 
 export default function auth(state = getInitialState(), action) {
   switch (action.type) {
@@ -36,6 +36,6 @@ function getInitialState() {
     isFetching: false,
     errors: {},
     token: UserSession.getToken()
-  }
+  };
 }
 

@@ -1,4 +1,4 @@
-import * as Types from "./MovieActionTypes";
+import * as Types from './MovieActionTypes';
 
 export function clearMovie() {
   return {type: Types.MOVIE_DETAIL_CLEAR};

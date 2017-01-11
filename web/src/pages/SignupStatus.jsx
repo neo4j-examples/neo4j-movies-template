@@ -1,8 +1,8 @@
-import _ from "lodash";
-import React, {PropTypes} from "react";
-import {Link} from "react-router";
-import {createProfileInit} from "../redux/actions/ProfileActions";
-import {connect} from "react-redux";
+import _ from 'lodash';
+import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
+import {createProfileInit} from '../redux/actions/ProfileActions';
+import {connect} from 'react-redux';
 
 class SignupStatus extends React.Component {
   constructor() {
@@ -59,7 +59,7 @@ SignupStatus.contextTypes = {
 function mapStateToProps(state) {
   return {
     profile: _.get(state.signup, 'savedProfile')
-  }
+  };
 }
 
 export default connect(mapStateToProps)(SignupStatus);

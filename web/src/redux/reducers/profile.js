@@ -1,5 +1,5 @@
-import * as Types from "../actions/ProfileActionTypes";
-import {LOGOUT} from "../actions/AuthActionTypes";
+import * as Types from '../actions/ProfileActionTypes';
+import {LOGOUT} from '../actions/AuthActionTypes';
 
 export default function profile(state = getInitialState(null), action) {
   switch (action.type) {
@@ -48,5 +48,5 @@ function getInitialState() {
     profile: null,
     ratedMovies: [],
     recommendedMovies: []
-  }
+  };
 }

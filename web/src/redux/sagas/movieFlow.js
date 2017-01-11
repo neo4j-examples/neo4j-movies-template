@@ -1,8 +1,8 @@
-import {call, put} from "redux-saga/effects";
-import {takeEvery} from "redux-saga";
-import MoviesApi from "../../api/MoviesApi";
-import * as Actions from "../actions/MovieActions";
-import * as Types from "../actions/MovieActionTypes";
+import {call, put} from 'redux-saga/effects';
+import {takeEvery} from 'redux-saga';
+import MoviesApi from '../../api/MoviesApi';
+import * as Actions from '../actions/MovieActions';
+import * as Types from '../actions/MovieActionTypes';
 
 export default function* movieFlow() {
 

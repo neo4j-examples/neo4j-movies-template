@@ -1,12 +1,12 @@
 import * as Types from '../actions/ProfileActionTypes';
-import ErrorUtils from "../../utils/ErrorUtils";
+import ErrorUtils from '../../utils/ErrorUtils';
 
 function getInitialState() {
   return {
     isSaving: false,
     savedProfile: null,
     errors: {}
-  }
+  };
 }
 
 export default function createProfile(state = getInitialState(), action) {

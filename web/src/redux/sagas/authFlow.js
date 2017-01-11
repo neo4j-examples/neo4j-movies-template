@@ -1,10 +1,10 @@
-import {call, put} from "redux-saga/effects";
-import {takeEvery} from "redux-saga";
-import AuthApi from "../../api/AuthApi";
-import * as Actions from "../actions/AuthActions";
-import * as ProfileActions from "../actions/ProfileActions";
-import * as Types from "../actions/AuthActionTypes";
-import UserSession from "../../UserSession";
+import {call, put} from 'redux-saga/effects';
+import {takeEvery} from 'redux-saga';
+import AuthApi from '../../api/AuthApi';
+import * as Actions from '../actions/AuthActions';
+import * as ProfileActions from '../actions/ProfileActions';
+import * as Types from '../actions/AuthActionTypes';
+import UserSession from '../../UserSession';
 
 export default function* authFlow() {
 

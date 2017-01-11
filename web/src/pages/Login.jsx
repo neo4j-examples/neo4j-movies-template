@@ -1,10 +1,10 @@
-import React, {PropTypes} from "react";
-import {Link} from "react-router";
-import InputValidator from "../components/validation/InputValidator.jsx";
-import validatedComponent from "../components/validation/ValidatedComponent.jsx";
-import * as Actions from "../redux/actions/AuthActions";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
+import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
+import InputValidator from '../components/validation/InputValidator.jsx';
+import validatedComponent from '../components/validation/ValidatedComponent.jsx';
+import * as Actions from '../redux/actions/AuthActions';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 class Login extends React.Component {
   constructor(props) {

@@ -1,4 +1,4 @@
-import React, {PropTypes} from "react";
+import React, {PropTypes} from 'react';
 
 const minRating = 1;
 const maxRating = 5;

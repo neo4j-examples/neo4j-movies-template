@@ -1,5 +1,5 @@
 import { takeEvery } from 'redux-saga';
-import { put } from 'redux-saga/effects'
+import { put } from 'redux-saga/effects';
 import * as NotificationActions from '../actions/NotificationActions';
 
 export default function* watchErrors(getState) {
@@ -8,7 +8,7 @@ export default function* watchErrors(getState) {
       var errorAction = createErrorNotification(action.error);
       yield put(errorAction);
     }
-  })
+  });
 }
 
 function createErrorNotification(err) {
@@ -29,7 +29,7 @@ function createErrorNotification(err) {
           errMessages.push(`${prop}: ${msg}`);
         }
       } catch (ex) {
-        console.error(ex);
+        Console.log(ex);
       }
     }
 

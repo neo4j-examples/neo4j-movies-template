@@ -1,12 +1,12 @@
-import React from "react";
-import _ from "lodash";
-import Loading from "../components/Loading.jsx";
-import Carousel from "../components/Carousel.jsx";
-import UserRating from "../components/UserRating.jsx";
-import {Link} from "react-router";
-import * as MovieActions from "../redux/actions/MovieActions";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
+import React from 'react';
+import _ from 'lodash';
+import Loading from '../components/Loading.jsx';
+import Carousel from '../components/Carousel.jsx';
+import UserRating from '../components/UserRating.jsx';
+import {Link} from 'react-router';
+import * as MovieActions from '../redux/actions/MovieActions';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 
 class Movie extends React.Component {
@@ -195,11 +195,11 @@ class Movie extends React.Component {
 
   renderGenre(genres) {
     return genres.map((g, i) => {
-      return <span key={g.id}>
+      return (<span key={g.id}>
         {g.name}
         {i < genres.length - 1 ? <span>, </span> : null}
-      </span>
-    })
+      </span>);
+    });
   }
 }
 Movie.displayName = 'Movie';
