@@ -26,4 +26,4 @@ class Home extends MX_Controller {
 }
 
 /* End of file users.php */
-/* Location: ./application/modules/home/controllers/home.php */
+/* Location: ./application/modules/home/controllers/Home.php */
