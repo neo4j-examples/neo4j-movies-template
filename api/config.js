@@ -2,9 +2,6 @@
 
 var nconf = require('nconf');
 
-var USERNAME = 'neo4j';   // use your username
-var PASSWORD = 'neo4j';    // use your password
-
 nconf.env(['PORT', 'NODE_ENV'])
   .argv({
     'e': {
@@ -27,8 +24,8 @@ nconf.env(['PORT', 'NODE_ENV'])
     }
   })
   .defaults({
-    'USERNAME': USERNAME,
-    'PASSWORD' : PASSWORD,
+    'USERNAME': process.env.MOVIE_DATABASE_USERNAME,
+    'PASSWORD' : process.env.MOVIE_DATABASE_PASSWORD,
     'neo4j': 'local',
     'neo4j-local': 'bolt://localhost:7687',
     'neo4j-remote': 'bolt:http://162.243.100.222:7687',
