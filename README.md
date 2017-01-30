@@ -36,14 +36,17 @@ $NEO4J_HOME/bin/neo4j-import --into $NEO4J_HOME/data/databases/graph.db --nodes:
 
 If you see `Input error: Directory 'neo4j-community-3.0.3/data/databases/graph.db' already contains a database`, delete the `graph.db` directory and try again.
 
-* Start the database: `$NEO4J_HOME/bin/neo4j console`
-* Add [constraints](https://neo4j.com/docs/developer-manual/current/cypher/#query-constraints) to your database: `$NEO4J_HOME/bin/neo4j-shell < setup.cql`
+* Add [constraints](https://neo4j.com/docs/developer-manual/current/cypher/#query-constraints) to your database: `$NEO4J_HOME/bin/neo4j-shell < setup.cql -path $NEO4J_HOME/databases/graph.db`
+* Start the database: `$NEO4J_HOME/bin/neo4j start`
+
 
 ### Windows
 
 [Download Neo4j Community Edition](https://neo4j.com/download/)
 
-`neo4j-import` does not come with Neo4j-Desktop (`.exe` on Windows, `.dmg` on OSX).  To get around this issue (especially for this small database) you can enter the cypther commands in the Neo4j [browser](http://localhost:7474/browser/).  The commands are provided in the [setupCypherCommands.txt](./setupCypherCommands.txt) file.
+`neo4j-import` does not come with Neo4j-Desktop (`.exe` on Windows, `.dmg` on OSX).
+To get around this issue (especially for this small database) you can enter the cypther commands in the Neo4j [browser](http://localhost:7474/browser/).
+The commands are provided in the [setupCypherCommands.txt](./setupCypherCommands.txt) file.
 
 * Use the GUI to select and start your database.
 * Run a test script to make sure everything is working:
@@ -53,7 +56,9 @@ LOAD CSV WITH HEADERS FROM "file:///person_node.csv" AS r FIELDTERMINATOR ';'
 WITH r LIMIT 10 WHERE r.`id:ID(Person)` IS NOT NULL
 RETURN r.`id:ID(Person)`, r.name, r.`born:int`, r.poster_image
 ```
-The most common error at this point is in finding the csv files.  A simple solution is to copy the csv files into the default /import location noted in the error message.  If everything runs corretly you should get the following:
+The most common error at this point is in finding the csv files.
+A simple solution is to copy the csv files into the default `/import` location noted in the error message.
+If everything runs corretly you should get the following:
 
   ![image of movie model](./img/neo4jBrowser_CypherCmd.png)
 
@@ -64,7 +69,10 @@ The most common error at this point is in finding the csv files.  A simple solut
 ### Start the Database!
 
 * Start Neo4j if you haven't already!
-* Set your username and password (you'll need these later to update the code)
+* Set your username and password (You'll run into less trouble if you don't use the defaults)
+* Set environment variables (Note, the following is for Unix, for Windows you will be using `set=...`)
+  * Export your neo4j database username `export MOVIE_DATABASE_USERNAME=myusername`
+  * Export your neo4j database password `export MOVIE_DATABASE_PASSWORD=mypassword`
 * You should see a database populated with `Movie`, `Genre`, `Keyword`, and `Person` nodes.
 
 ## Node API
@@ -73,7 +81,6 @@ From the root directory of this project:
 
 * `cd api`
 * `npm install`
-* in `config.js`, update the credentials for your database as needed
 * `node app.js` starts the API
 * Take a look at the docs at [http://localhost:3000/docs](http://localhost:3000/docs)
 
@@ -84,15 +91,14 @@ From the root directory of this project:
 * `cd flask-api`
 * `pip install -r requirements.txt` (you should be using a [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/))
 * set environment variables (Note, the following is for Unix, for Windows you will be using `set=...`)
-  * set your neo4j database username `export MOVIE_DATABASE_USERNAME=myusername`
-  * set your neo4j database password `export MOVIE_DATABASE_PASSWORD=mypassword`
   * `export FLASK_APP=app.py`
 * `flask run` starts the API
 * Take a look at the docs at [http://localhost:5000/docs](http://localhost:5000/docs)
 
 ## Frontend
 
-This step may present some problems on Windows becasue it requries both Bower and gulp to be installed.  A common problem with these npm installations is the path is not properly set to the script files are not found.  A simple fix for this is to manually set the `PATH` (in my case I also use nvm to manage node versions so the set script looks like the following):
+This step may present some problems on Windows becasue it requries both Bower and gulp to be installed.  A common problem with these npm installations is the path is not properly set to the script files are not found.
+A simple fix for this is to manually set the `PATH` (in my case I also use nvm to manage node versions so the set script looks like the following):
 
 ![image of PATH settings for NPM](./img/setNpmPath.png)
 
