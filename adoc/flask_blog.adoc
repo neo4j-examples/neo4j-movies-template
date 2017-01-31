@@ -645,6 +645,6 @@ def serialize_movie(movie, my_rating=None):
 
 === Neo4j
 
-* https://github.com/neo4j/neo4j-javascript-driver[JavaScript Bolt Driver]
+* https://github.com/neo4j/neo4j-python-driver[Python Bolt Driver]
 * https://neo4j.com/developer/cypher/[Cypher Language]
 * https://neo4j.com/docs/operations-manual/current/deployment/#import-tool[neo4j-import Tool]
