@@ -136,7 +136,7 @@ The Neo4j-powered Flask API lives in the `flask-api` directory.
 
 
 * `cd flask-api`
-* `pip install -r requirements.txt` (you should be using a [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/))
+* `pip install -r requirements.txt` (you should be using a http://docs.python-guide.org/en/latest/dev/virtualenvs/[virtualenv])
 * `export FLASK_APP=app.py`
 * `flask run` starts the API
 * Take a look at the docs at http://localhost:5000/docs
