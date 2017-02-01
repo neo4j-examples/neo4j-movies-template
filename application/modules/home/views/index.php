@@ -1,43 +1,43 @@
-		<div id="app">
-			<div data-reactroot="" class="nt-app">
-				<nav class="nt-app-header">
-					<div class="nt-app-header-logo">
-						<a href="http://localhost/">
-							<img src="/assets/img/logos/logo_index.png"></a>
-					</div>
-					<ul class="nt-app-header-links">
-						<li>
-							<a class="nt-app-header-link" href="https://github.com/neo4j-examples/neo4j-movies-template" target="_blank">GitHub Original Project</a>
-						</li>
-						<li>
-							<a class="nt-app-header-link" href="https://github.com/lucasjovencio/codeigniter-neo4j-movies-template" target="_blank">GitHub Fork Project</a>
-						</li>
-						<li>
-							<a class="nt-app-header-link" href="http://neo4j.com/" target="_blank">Neo4j 3.1.0</a>
-						</li>
-					</ul>
-					<div class="nt-app-header-profile-links">
-						<div class="right">
-							<div class="log-container">
-								<a href="#">
-									Log in
-								</a>
-							</div>
-							<div>
-								<a href="http://192.168.111.129:4000/signup">Sign up</a>
-							</div>
-							<div>
+		
 
-							</div>
-						</div>
-					</div>
-				</nav>
-				<ul class="breadcrumbs">
-					<li>
-						<a class="current" href="http://localhost/">Home</a>
-					</li>
-				</ul>
+		<div style="margin: 10%;" data-reactroot="" class="nt-app">
+		    <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+		      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+		        <span class="navbar-toggler-icon"></span>
+		      </button>
+		      <a class="navbar-brand" href="/">Neo4j Recommendations Movies</a>
 
+		      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+		        <ul class="navbar-nav mr-auto">
+		          <li class="nav-item">
+		            <a class="nav-link" href="https://github.com/neo4j-examples/neo4j-movies-template">GitHub Original Project</a>
+		          </li>
+		          <li class="nav-item">
+		            <a class="nav-link" href="https://github.com/lucasjovencio/codeigniter-neo4j-movies-template">GitHub Fork Project</a>
+		          </li>
+		          <li class="nav-item">
+		            <a class="nav-link" href="http://neo4j.com/">Neo4j 3.1.0</a>
+		          </li>
+		        </ul>
+
+		        <form class="form-inline my-2 my-lg-0" method="post" accept-charset="utf-8" action="/home/pesquisa/">
+		          <input class="form-control mr-sm-2" name="pesquisa" style="margin: 0%;" type="text" placeholder="Search">
+		          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+		        </form>
+	            <ul class="navbar-nav mr-auto">
+		          <li class="nav-item">
+		            <a class="nav-link" href="https://github.com/lucasjovencio/codeigniter-neo4j-movies-template">Log in</a>
+		          </li>
+		          <li class="nav-item">
+		            <a class="nav-link" href="http://neo4j.com/">Sign up</a>
+		          </li>
+	            </ul>
+				</div>
+		      </div>
+		    </nav>
+		</div>
+		<div style="margin: 10%;"></div>
+			<div id="app">
 				<!-- Aqui termina o header e inicia o corpo da pagina -->
 
 				<div class="nt-app-page">
@@ -98,7 +98,7 @@
 				<div class="notification-container">
 				</div>
 			</div>
-		</div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="/assets/js/lightslider.js"></script>
 <script src="/assets/js/script_jquery_lightSlider.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
