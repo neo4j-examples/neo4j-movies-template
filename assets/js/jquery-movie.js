@@ -1,7 +1,7 @@
     $(function () {
         function showMovie(title) {
             var broTitle = title.split(" ");
-            $.get("/home/movie/" + encodeURIComponent(broTitle),
+            $.get("/home/moviePesq/" + encodeURIComponent(broTitle),
                     function (data) {
                         if (!data) return;
                         $("#title").text(data.title);
@@ -16,7 +16,7 @@
         function search() {
             var query=$("#search").find("input[name=search]").val();
             var brokenstring = query.split(" ");
-            $.get("/home/search/" + encodeURIComponent(brokenstring),
+            $.get("/home/searchPesq/" + encodeURIComponent(brokenstring),
                     function (data) {
                         var t = $("table#results tbody").empty();
                         if (!data || data.length == 0) return;

@@ -4,7 +4,7 @@
     var svg = d3.select("#graph").append("svg")
             .attr("width", "100%").attr("height", "100%")
             .attr("pointer-events", "all");
-    d3.json("/home/graph", function(error, graph) {
+    d3.json("/home/graphPesq", function(error, graph) {
 		if (error) return;
 
         force.nodes(graph.nodes).links(graph.links).start();

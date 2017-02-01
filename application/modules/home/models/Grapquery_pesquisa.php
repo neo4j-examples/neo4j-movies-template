@@ -1,6 +1,6 @@
 <?php
 
-class Grapquery_model extends Abstract_model{
+class Grapquery_pesquisa extends Abstract_model{
     public function __construct() {
         parent::__construct();
     }
