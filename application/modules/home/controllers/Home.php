@@ -13,8 +13,12 @@ class Home extends MX_Controller{
     	$this->template->load("template/main","index",$arr);
     
     }
-    public function pesquisa() {
-			$this->template->load("template/main","pesquisa");
+    public function pesquisa($pesquisa = NULL){
+    	if($pesquisa === NULL){
+    		$pesquisa = $this->input->post('pesquisa', TRUE);
+    	}
+    	$arr['pesquisa'] = $pesquisa;
+		$this->template->load("template/main","pesquisa",$arr);
     }
 	public function moviePesq($title=NULL){
 		$this->load->model("Grapquery_pesquisa","queryModel");
