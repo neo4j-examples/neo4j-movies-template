@@ -7,7 +7,7 @@
                     <li>
                         <form role="search" class="navbar-form" id="search">
                             <div class="form-group">
-                                <input type="text" value="The Matrix" placeholder="Search for Movie Title" class="form-control" name="search">
+                                <input type="text" value="<?= isset ($pesquisa) ? $pesquisa:'The Matrix';?>" placeholder="Search for Movie Title" class="form-control" name="search">
                             </div>
                             <button class="btn btn-default" type="submit">Search</button>
                         </form>
