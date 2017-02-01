@@ -4,12 +4,8 @@ $(document).ready(function() {
         auto:true,
         loop:true,
         speed:1000,
-        pauseOnHover: true,
-        onBeforeSlide: function (el) {
-            $('#current').text(el.getCurrentSlideCount());
-        } 
+        pauseOnHover: true
     });
-    $('#total').text(autoplaySlider.getTotalSlideCount());
 });
 
 $(document).ready(function() {
@@ -18,12 +14,8 @@ $(document).ready(function() {
         auto:true,
         loop:true,
         speed:800,
-        pauseOnHover: true,
-        onBeforeSlide: function (el) {
-            $('#current').text(el.getCurrentSlideCount());
-        } 
+        pauseOnHover: true
     });
-    $('#total').text(autoplaySlider.getTotalSlideCount());
 });
 
 $(document).ready(function() {
@@ -32,10 +24,6 @@ $(document).ready(function() {
         auto:true,
         loop:true,
         speed:600,
-        pauseOnHover: true,
-        onBeforeSlide: function (el) {
-            $('#current').text(el.getCurrentSlideCount());
-        } 
+        pauseOnHover: true
     });
-    $('#total').text(autoplaySlider.getTotalSlideCount());
 });
