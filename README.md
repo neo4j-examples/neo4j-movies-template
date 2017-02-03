@@ -103,4 +103,6 @@ If you see `Input error: Directory 'neo4j-community-3.0.3/data/databases/graph.d
 * Start the database: `$NEO4J_HOME/bin/neo4j start`
 
 
-![Page](https://raw.githubusercontent.com/neo4j-examples/neo4j-movies-template/master/img/model.png)
+##Page
+
+![Page](https://github.com/lucasjovencio/codeigniter-neo4j-movies-template/blob/newsPagesMovie/assets/img/model-page.png)
