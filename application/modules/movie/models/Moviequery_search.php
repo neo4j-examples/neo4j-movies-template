@@ -87,7 +87,7 @@ class Moviequery_search extends Abstract_model{
         return $lis; 
     }
     public function movieDirected($param = NULL){
-        $query 	= "MATCH (m:Movie) where m.id = {param}  match (p:Person)-[di:DIRECTED]->(m) return  p.name as name, id(p) as id";
+        $query 	= "MATCH (m:Movie) where m.id = {param}  match (p:Person)-[di:DIRECTED]->(m) return  p.name as name, p.id as id";
         $params = ['param' => intval($param)];
         $result = $this->neo4j->get_db()->run($query,$params);
         $lis = '';
@@ -145,7 +145,7 @@ class Moviequery_search extends Abstract_model{
         return $lis; 
     }
     public function movieProduced($param = NULL){
-        $query  = "MATCH (m:Movie) where m.id = {param} match (m)-[r:PRODUCED]-(n:Person) return  n.name as name, id(n) as id";
+        $query  = "MATCH (m:Movie) where m.id = {param} match (m)-[r:PRODUCED]-(n:Person) return  n.name as name, n.id as id";
         $params = ['param' => intval($param)];
         $result = $this->neo4j->get_db()->run($query,$params);
         $lis = '';
