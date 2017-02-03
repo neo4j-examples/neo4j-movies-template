@@ -68,7 +68,3 @@
 		</div>
 	</div>
 </div>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="/assets/js/lightslider.js"></script>
-<script src="/assets/js/script_jquery_lightSlider.js"></script>
-<script src="/assets/js/bootstrap.min.js"></script>
