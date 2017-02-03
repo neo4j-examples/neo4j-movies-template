@@ -16,14 +16,6 @@
 									</div>
 									<div>
 										<div class="nt-carousel">
-											<button   class="nt-carousel-right">
-												<span class="nt-carousel-arrow">❱
-												</span>
-											</button>
-											<button class="nt-carousel-left">
-												<span class="nt-carousel-arrow">❰
-												</span>
-											</button>
 											<ul id="content-cast" class="content-slider">
 												<?php echo($cast); ?>
 											</ul>
@@ -37,14 +29,6 @@
 								<div class="nt-box-title">Related
 								</div>
 								<div class="nt-carousel">
-									<button   class="nt-carousel-right">
-										<span class="nt-carousel-arrow">❱
-										</span>
-									</button>
-									<button class="nt-carousel-left">
-										<span class="nt-carousel-arrow">❰
-										</span>
-									</button>
 									<ul id="content-related" class="content-slider">
 										<?php echo($related); ?>
 									</ul>

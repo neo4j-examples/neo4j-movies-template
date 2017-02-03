@@ -28,14 +28,6 @@
 							</div>
 							<div class="nt-box-row">
 								<div class="nt-carousel">
-									<button   class="nt-carousel-right">
-										<span class="nt-carousel-arrow">❱
-										</span>
-									</button>
-									<button class="nt-carousel-left">
-										<span class="nt-carousel-arrow">❰
-										</span>
-									</button>
 									<ul id="content-related" class="content-slider">
 										<?php echo($relatedPeople);?>
 									</ul>
@@ -50,14 +42,6 @@
 					<div class="nt-box">
 						<div class="nt-box-title">Acted In</div>
 						<div class="nt-carousel">
-							<button   class="nt-carousel-right">
-								<span class="nt-carousel-arrow">❱
-								</span>
-							</button>
-							<button class="nt-carousel-left">
-								<span class="nt-carousel-arrow">❰
-								</span>
-							</button>
 							<ul id="content-related" class="content-slider">
 								<?php echo($movieActed);?>
 							</ul>

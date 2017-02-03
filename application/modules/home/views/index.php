@@ -19,16 +19,7 @@
 											Action
 										</div>
 										<div class="nt-carousel">
-											<button   class="nt-carousel-right">
-												<span class="nt-carousel-arrow">❱
-												</span>
-											</button>
-											<button class="nt-carousel-left">
-												<span class="nt-carousel-arrow">❰
-												</span>
-											</button>
 											<ul id="content-action" class="content-slider">
-											</button>
 													<?php echo($action); ?>
 												<!-- Acrescentar novos LI para cada filme -->
 											</ul>
@@ -41,14 +32,6 @@
 											Drama
 										</div>
 										<div class="nt-carousel">
-											<button   class="nt-carousel-right">
-												<span class="nt-carousel-arrow">❱
-												</span>
-											</button>
-											<button class="nt-carousel-left">
-												<span class="nt-carousel-arrow">❰
-												</span>
-											</button>
 											<ul id="content-drama" class="content-slider">
 												<?php echo($drama);?>
 												<!-- Acrescentar novos LI para cada filme -->
@@ -62,14 +45,6 @@
 											Fantasy
 										</div>
 										<div class="nt-carousel">
-											<button   class="nt-carousel-right">
-												<span class="nt-carousel-arrow">❱
-												</span>
-											</button>
-											<button class="nt-carousel-left">
-												<span class="nt-carousel-arrow">❰
-												</span>
-											</button>
 											<ul id="content-fantasy" class="content-slider">
 												<?php echo($Fantasy) ?>
 												<!-- Acrescentar novos LI para cada filme -->
