@@ -19,17 +19,19 @@ frontend JavaScript code.
   + Assets  
   
 ##LightSlider API
-  From the root directory of this project:
+  +From the root directory of this project:
+ ```
     cd assets/
-      sudo apt-get install npm
-      npm install lightslider
+    sudo apt-get install npm
+    npm install lightslider
+ ```
   
 
 
 ##How to Install
   Clone this project and move files for /var/www/html
   + Example: From the Downloads directory
-  * execute, sudo mv name-project/ /var/www/html
+  + execute, sudo mv name-project/ /var/www/html
 ```   
           /var/www/html/    
                        application/..  
