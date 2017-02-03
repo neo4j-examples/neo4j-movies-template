@@ -14,13 +14,13 @@ class Homequery_movie extends Abstract_model{
 		foreach ($result->records() as $record) {
         	$lis .= '<li class="nt-carousel-item" style="display: inline-block; width: 20%; ";"><div>';
         	$lis .= "<img src='";
-        	$lis .= $record->value('img') . PHP_EOL;
+        	$lis .= $record->value('img');
         	$lis .= "'>";
         	$lis .= '</a><div class="nt-carousel-movie-title">
-			<a href="http://localhost/home/movie/';
-			$lis .= $record->value('id') . PHP_EOL;
+			<a href="http://localhost/movie/m/';
+			$lis .= $record->value('id');
 			$lis .= '">';
-			$lis .= $record->value('title') . PHP_EOL;
+			$lis .= $record->value('title');
 			$lis .= '</a></div></div></li>';
 		}
         return $lis;
@@ -34,13 +34,13 @@ class Homequery_movie extends Abstract_model{
 		foreach ($result->records() as $record) {
         	$lis .= '<li class="nt-carousel-item" style="display: inline-block; width: 20%;"><div>';
         	$lis .= "<img src='";
-        	$lis .= $record->value('img') . PHP_EOL;
+        	$lis .= $record->value('img');
         	$lis .= "'>";
         	$lis .= '</a><div class="nt-carousel-movie-title">
-			<a href="http://localhost/home/movie/';
-			$lis .= $record->value('id') . PHP_EOL;
+			<a href="http://localhost/movie/m/';
+			$lis .= $record->value('id');
 			$lis .= '">';
-			$lis .= $record->value('title') . PHP_EOL;
+			$lis .= $record->value('title');
 			$lis .= '</a></div></div></li>';
 		}
         return $lis;
