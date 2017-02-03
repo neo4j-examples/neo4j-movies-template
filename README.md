@@ -28,7 +28,8 @@ frontend JavaScript code.
 
 ##How to Install
   Clone this project and move files for /var/www/html
-  Example: From the Downloads directory, execute, sudo mv name-project/ /var/www/html
+  + Example: From the Downloads directory
+  * execute, sudo mv name-project/ /var/www/html
 ```   
           /var/www/html/    
                        application/..  
@@ -60,6 +61,7 @@ frontend JavaScript code.
 </Directory>
 
 ```
++ Replace All for None
 
 ## New password neo4j in    
         /var/www/html/application/libraries/Neo4j.php  
@@ -90,7 +92,8 @@ frontend JavaScript code.
 
 * [Download Neo4j Community Edition: .tar Version](https://neo4j.com/download/other-releases/)
 * [video instructions start here](https://youtu.be/O71B2KcTD6A)
-* Set your `NEO4J_HOME` variable: `export NEO4J_HOME=Your neo4j directory`
+* Watch the video until 1:57
+* Set your `NEO4J_HOME` variable: `export NEO4J_HOME=Your-Neo4j-Directory`
 * From this project's root directory, run the import script:
 
 ```
