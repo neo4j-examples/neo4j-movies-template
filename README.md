@@ -17,17 +17,8 @@ frontend JavaScript code.
   + HMVC  
   + Template  
   + Assets  
+  + LightSlider
   
-##LightSlider API
-  +From the root directory of this project:
- ```
-    cd assets/
-    sudo apt-get install npm
-    npm install lightslider
- ```
-  
-
-
 ##How to Install
   Clone this project and move files for /var/www/html
   + Example: From the Downloads directory
@@ -40,6 +31,14 @@ frontend JavaScript code.
                        user_guide/..  
                        ...  
 ```
+##LightSlider API
+  +From the root directory of this project:
+ ```
+    cd assets/
+    sudo apt-get install npm
+    npm install lightslider
+ ```
+ 
 ###
 ## Alert, necessary changes  
    + Enable rewrite htaccess -> sudo a2enmod rewrite  
@@ -96,6 +95,7 @@ frontend JavaScript code.
 * [video instructions start here](https://youtu.be/O71B2KcTD6A)
 * Watch the video until 1:57
 * Set your `NEO4J_HOME` variable: `export NEO4J_HOME=Your-Neo4j-Directory`
+* Usage: $NEO4J_HOME/
 * From this project's root directory, run the import script:
 
 ```
