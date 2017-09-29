@@ -34,10 +34,10 @@ This Neo4j-based node / react web app displays movie and person data in a manner
 $NEO4J_HOME/bin/neo4j-import --into $NEO4J_HOME/data/databases/graph.db --nodes:Person csv/person_node.csv --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
 ```
 
-If you see `Input error: Directory 'neo4j-community-3.0.3/data/databases/graph.db' already contains a database`, delete the `graph.db` directory and try again.
+If you see `Input error: Directory 'neo4j-community-3.2.5/data/databases/graph.db' already contains a database`, delete the `graph.db` directory and try again.
 
 * Add [constraints](https://neo4j.com/docs/developer-manual/current/cypher/#query-constraints) to your database: `$NEO4J_HOME/bin/neo4j-shell < setup.cql -path $NEO4J_HOME/databases/graph.db`
-* Start the database: `$NEO4J_HOME/bin/neo4j start`
+* Start the database: `$NEO4J_HOME/bin/neo4j console`
 
 
 ### Windows
@@ -90,8 +90,8 @@ From the root directory of this project:
 
 * `cd flask-api`
 * `pip install -r requirements.txt` (you should be using a [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/))
-* set environment variables (Note, the following is for Unix, for Windows you will be using `set=...`)
-  * `export FLASK_APP=app.py`
+* set environment variables (Note, the following is for Unix, for Windows you will be using `set=...`). For example, if your database username and password are `bob` / `12345`, run `export MOVIE_DATABASE_username=bob` and `export MOVIE_DATABASE_PASSWORD=12345`
+* `export FLASK_APP=app.py`
 * `flask run` starts the API
 * Take a look at the docs at [http://localhost:5000/docs](http://localhost:5000/docs)
 
