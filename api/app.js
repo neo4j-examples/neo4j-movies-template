@@ -6,7 +6,7 @@ var express = require('express')
   , methodOverride = require('method-override')
   , errorHandler = require('errorhandler')
   , bodyParser = require('body-parser')
-  , setAuthUser = require('./middlewares/setAuthUser')
+  // , setAuthUser = require('./middlewares/setAuthUser')
   , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup')
   , writeError = require('./helpers/response').writeError;
 
@@ -58,13 +58,11 @@ api.use(function(req, res, next) {
 });
 
 //api custom middlewares:
-api.use(setAuthUser);
+// api.use(setAuthUser);
 api.use(neo4jSessionCleanup);
 
 //api routes
 api.post('/register', routes.users.register);
-api.get('/users/me', routes.users.me);
-// api.post('/login', routes.users.login);
 // api.get('/movies', routes.movies.list);
 // api.get('/movies/recommended', routes.movies.getRecommendedMovies);
 // api.get('/movies/rated', routes.movies.findMoviesRatedByMe);

@@ -3,12 +3,11 @@ var Movies = require('../models/movies')
   , _ = require('lodash')
   , writeResponse = require('../helpers/response').writeResponse
   , writeError = require('../helpers/response').writeError
-  , loginRequired = require('../middlewares/loginRequired')
   , dbUtils = require('../neo4j/dbUtils');
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Movie:
  *     type: object
  *     properties:
@@ -310,16 +309,14 @@ exports.findMoviesByWriter = function (req, res, next) {
  *         description: invalid / missing authentication
  */
 exports.rateMovie = function (req, res, next) {
-  loginRequired(req, res, () => {
-    var rating = Number(_.get(req.body, 'rating'));
-    if (isNaN(rating) || rating < 0 || rating >= 6) {
-      throw {rating: 'Rating value is invalid', status: 400};
-    }
+  var rating = Number(_.get(req.body, 'rating'));
+  if (isNaN(rating) || rating < 0 || rating >= 6) {
+    throw {rating: 'Rating value is invalid', status: 400};
+  }
 
-    Movies.rate(dbUtils.getSession(req), req.params.id, req.user.id, rating)
-      .then(response => writeResponse(res, {}))
-      .catch(next);
-  });
+  Movies.rate(dbUtils.getSession(req), req.params.id, req.user.id, rating)
+    .then(response => writeResponse(res, {}))
+    .catch(next);
 };
 
 /**
@@ -356,11 +353,9 @@ exports.deleteMovieRating = function (req, res, next) {
     throw {message: 'Invalid movie id', status: 400};
   }
 
-  loginRequired(req, res, () => {
-    Movies.deleteRating(dbUtils.getSession(req), req.params.id, req.user.id)
-      .then(response => writeResponse(res, response, 204))
-      .catch(next);
-  })
+  Movies.deleteRating(dbUtils.getSession(req), req.params.id, req.user.id)
+    .then(response => writeResponse(res, response, 204))
+    .catch(next);
 };
 
 /**
@@ -390,11 +385,9 @@ exports.deleteMovieRating = function (req, res, next) {
  *         description: invalid / missing authentication
  */
 exports.findMoviesRatedByMe = function (req, res, next) {
-  loginRequired(req, res, () => {
-    Movies.getRatedByUser(dbUtils.getSession(req), req.user.id)
-      .then(response => writeResponse(res, response, 200))
-      .catch(next);
-  })
+  Movies.getRatedByUser(dbUtils.getSession(req), req.user.id)
+    .then(response => writeResponse(res, response, 200))
+    .catch(next);
 };
 
 /**
@@ -424,9 +417,7 @@ exports.findMoviesRatedByMe = function (req, res, next) {
  *         description: invalid / missing authentication
  */
 exports.getRecommendedMovies = function (req, res, next) {
-  loginRequired(req, res, () => {
-    Movies.getRecommended(dbUtils.getSession(req), req.user.id)
-      .then(response => writeResponse(res, response, 200))
-      .catch(next);
-  })
+  Movies.getRecommended(dbUtils.getSession(req), req.user.id)
+    .then(response => writeResponse(res, response, 200))
+    .catch(next);
 };

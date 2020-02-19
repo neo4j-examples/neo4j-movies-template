@@ -24,9 +24,9 @@ nconf.env(['PORT', 'NODE_ENV'])
     }
   })
   .defaults({
-    'USERNAME': process.env.MOVIE_DATABASE_USERNAME,
-    'PASSWORD' : process.env.MOVIE_DATABASE_PASSWORD,
-    'neo4j': 'local',
+    'USERNAME': 'neo4j',
+    'PASSWORD' : 'amity!',
+    'neo4j': 'amity',
     'neo4j-local': 'bolt://localhost:7687',
     'neo4j-remote': 'bolt:http://162.243.100.222:7687',
     'base_url': 'http://localhost:3000',

@@ -4,7 +4,7 @@ var Genres = require("../models/genres")
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Genre:
  *     type: object
  *     properties:

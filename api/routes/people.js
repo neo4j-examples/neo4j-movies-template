@@ -5,7 +5,7 @@ var People = require('../models/people')
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Person:
  *     type: object
  *     properties:
