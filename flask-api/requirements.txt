@@ -1,6 +1,0 @@
-Flask==0.11.1
-blinker==1.4
-Flask-RESTful==0.3.5
-Flask-Cors==3.0.0
-flask-restful-swagger-2==0.30
-neo4j-driver==1.0.2
