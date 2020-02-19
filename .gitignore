@@ -1,8 +1,4 @@
 .DS_Store
-web/config/settings.js
-web/build
-web/bower_components
-web/node_modules
 
 api/node_modules
 api/config/settings.json
