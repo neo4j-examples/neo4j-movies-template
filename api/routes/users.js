@@ -13,6 +13,10 @@ var Users = require('../models/users')
  *     properties:
  *       id:
  *         type: string
+ *       first_name:
+ *         type: string
+ *       last_name:
+ *         type: string
  *       username:
  *         type: string
  *       avatar:
@@ -36,7 +40,9 @@ var Users = require('../models/users')
  *           properties:
  *             username:
  *               type: string
- *             password:
+ *             first_name:
+ *               type: string
+ *             last_name:
  *               type: string
  *     responses:
  *       201:
@@ -48,13 +54,16 @@ var Users = require('../models/users')
  */
 exports.register = function (req, res, next) {
   var username = _.get(req.body, 'username');
-  console.log("My username", username);
+  var firstName = _.get(req.body, 'first_name');
+  var lastName = _.get(req.body, 'last_name');
+
+  var userData = {username, firstName, lastName};
 
   if (!username) {
     throw {username: 'This field is required.', status: 400};
   }
 
-  Users.register(dbUtils.getSession(req), username)
+  Users.register(dbUtils.getSession(req), userData)
     .then(response => writeResponse(res, response, 201))
     .catch(next);
 };

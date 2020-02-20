@@ -7,18 +7,20 @@ var dbUtils = require('../neo4j/dbUtils');
 var User = require('../models/neo4j/user');
 var crypto = require('crypto');
 
-var register = function (session, username) {
-  return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+var register = function (session, userData) {
+  return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: userData.username})
     .then(results => {
       if (!_.isEmpty(results.records)) {
         throw {username: 'username already in use', status: 400}
       }
       else {
-        console.log('DB HERE FOO',username)
-        return session.run('CREATE (user:User {id: {id}, username: {username}, api_key: {api_key}}) RETURN user',
+        console.log('DB HERE FOO',userData.username)
+        return session.run('CREATE (user:User {id: {id}, username: {username}, firstName: {firstName}, lastName: {lastName}, api_key: {api_key}}) RETURN user',
           {
             id: uuid.v4(),
-            username: username,
+            username: userData.username,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
             api_key: randomstring.generate({
               length: 20,
               charset: 'hex'
