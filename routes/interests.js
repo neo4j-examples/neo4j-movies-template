@@ -50,7 +50,7 @@ exports.addInterest = function (req, res, next) {
   if (!interestname) {
     throw {interestname: 'This field is required.', status: 400};
   }
-  console.log("I'm adding an interest!");
+  // console.log("I'm adding an interest!");
   Interests.addInterest(dbUtils.getSession(req), interestData)
     .then(response => writeResponse(res, response, 201))
     .catch(next);

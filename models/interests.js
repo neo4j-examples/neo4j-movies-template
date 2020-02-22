@@ -8,16 +8,16 @@ var Interest = require('../models/neo4j/interest');
 var crypto = require('crypto');
 
 var addInterest = function (session, interestData) {
-    console.log('DB... IM TRYING TO RUN A QUERY!');
-    console.log(interestData);
+    // console.log('DB... IM TRYING TO RUN A QUERY!');
+    // console.log(interestData);
   return session.run('MATCH (interest:Interest {interestname: {interestname}}) RETURN interest', {interestname: interestData.interestname})
     .then(results => {
-        console.log("DB!! Got past the results!");
+        // console.log("DB!! Got past the results!");
       if (!_.isEmpty(results.records)) {
         throw {interestName: 'This interest already exists', status: 400}
       }
       else {
-        console.log('DB HERE FOO',interestData.interestname)
+        // console.log('DB HERE FOO',interestData.interestname)
         return session.run('CREATE (interest:Interest {id: {id}, interestname: {interestname}, api_key: {api_key}}) RETURN interest',
           {
             id: uuid.v4(),
