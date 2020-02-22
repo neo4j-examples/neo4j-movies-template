@@ -14,7 +14,16 @@ var addInterest = function (session, interestData, userData) {
     .then(results => {
         // console.log("DB!! Got past the results!");
       if (!_.isEmpty(results.records)) {
-        throw {interestName: 'This interest already exists', status: 400}
+        return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
+        {
+            username: userData.username,
+            interestname: interestData.interestname,
+        }).then(otherResults =>{
+            throw {Message: 'This interest already exists, so we just added the user to it. No duplicates were created', status: 201}
+            // return new Interest(results.records[0].get('interest'))
+            }
+        );
+        // throw {interestName: 'This interest already exists', status: 400}
       }
       else {
         // console.log('DB HERE FOO',interestData.interestname)
