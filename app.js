@@ -63,6 +63,7 @@ api.use(neo4jSessionCleanup);
 
 //api routes
 api.post('/register', routes.users.register);
+api.post('/register/bulk', routes.users.registerBulk);
 api.get('/organizations', routes.organizations.list);
 api.post('/organizations', routes.organizations.create);
 // api.get('/movies', routes.movies.list);

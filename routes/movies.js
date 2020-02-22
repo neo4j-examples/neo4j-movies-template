@@ -33,7 +33,7 @@ var Movies = require('../models/movies')
 
 /**
  * @swagger
- * /api/v0/movies:
+ * /api/v1/movies:
  *   get:
  *     tags:
  *     - movies
@@ -57,7 +57,7 @@ exports.list = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/{id}:
+ * /api/v1/movies/{id}:
  *   get:
  *     tags:
  *     - movies
@@ -91,7 +91,7 @@ exports.findById = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/genre/{id}:
+ * /api/v1/movies/genre/{id}:
  *   get:
  *     tags:
  *     - movies
@@ -126,7 +126,7 @@ exports.findByGenre = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/daterange/{start}/{end}:
+ * /api/v1/movies/daterange/{start}/{end}:
  *   get:
  *     tags:
  *     - movies
@@ -169,7 +169,7 @@ exports.findMoviesByDateRange = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/directed_by/{id}:
+ * /api/v1/movies/directed_by/{id}:
  *   get:
  *     tags:
  *     - movies
@@ -204,7 +204,7 @@ exports.findMoviesByDirector = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/acted_in_by/{id}:
+ * /api/v1/movies/acted_in_by/{id}:
  *   get:
  *     tags:
  *     - movies
@@ -239,7 +239,7 @@ exports.findMoviesByActor = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/written_by/{id}:
+ * /api/v1/movies/written_by/{id}:
  *   get:
  *     tags:
  *     - movies
@@ -274,7 +274,7 @@ exports.findMoviesByWriter = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/{id}/rate:
+ * /api/v1/movies/{id}/rate:
  *   post:
  *     tags:
  *     - movies
@@ -321,7 +321,7 @@ exports.rateMovie = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/{id}/rate:
+ * /api/v1/movies/{id}/rate:
  *   delete:
  *     tags:
  *     - movies
@@ -360,7 +360,7 @@ exports.deleteMovieRating = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/rated:
+ * /api/v1/movies/rated:
  *   get:
  *     tags:
  *     - movies
@@ -392,7 +392,7 @@ exports.findMoviesRatedByMe = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/movies/recommended:
+ * /api/v1/movies/recommended:
  *   get:
  *     tags:
  *     - movies

@@ -12,19 +12,13 @@ var register = function (session, userData) {
     .then(results => {
       if (!_.isEmpty(results.records)) {
         throw {username: 'username already in use', status: 400}
-      }
-      else {
-        console.log('DB HERE FOO',userData.username)
+      } else {
         return session.run('CREATE (user:User {id: {id}, username: {username}, firstName: {firstName}, lastName: {lastName}, api_key: {api_key}}) RETURN user',
           {
             id: uuid.v4(),
             username: userData.username,
             firstName: userData.firstName,
             lastName: userData.lastName,
-            api_key: randomstring.generate({
-              length: 20,
-              charset: 'hex'
-            })
           }
         ).then(results => {
             return new User(results.records[0].get('user'));
@@ -32,6 +26,15 @@ var register = function (session, userData) {
         )
       }
     });
+};
+
+var registerBulk = function (session, users) {
+  return Promise.all(users.map(user => session.run(
+    `CREATE (user:User {id: '${uuid.v4()}', username: '${user.username}', firstName: '${user.first_name}', lastName: '${user.last_name}'}) RETURN user`
+  ).then(res => new User(res.records[0].get('user')))))
+  .then(function(values) {
+    return values;
+  });
 };
 
 // var me = function (session, apiKey) {
@@ -45,6 +48,7 @@ var register = function (session, userData) {
 // };
 
 module.exports = {
-  register: register,
+  register,
+  registerBulk,
   // me: me,
 };

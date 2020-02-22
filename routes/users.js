@@ -25,7 +25,7 @@ var Users = require('../models/users')
 
 /**
  * @swagger
- * /api/v0/register:
+ * /api/v1/register:
  *   post:
  *     tags:
  *     - users
@@ -57,13 +57,57 @@ exports.register = function (req, res, next) {
   var firstName = _.get(req.body, 'first_name');
   var lastName = _.get(req.body, 'last_name');
 
-  var userData = {username, firstName, lastName};
+  var userData = { username, firstName, lastName };
 
   if (!username) {
-    throw {username: 'This field is required.', status: 400};
+    throw { username: 'This field is required.', status: 400 };
   }
 
   Users.register(dbUtils.getSession(req), userData)
     .then(response => writeResponse(res, response, 201))
     .catch(next);
 };
+
+
+/**
+ * @swagger
+ * /api/v1/register/bulk:
+ *   post:
+ *     tags:
+ *     - users
+ *     description: Register new users in bulk
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         type: object
+ *         schema:
+ *           properties:
+ *             users:
+ *               type: array
+ *               items:
+ *                 $ref: '#/definitions/User'
+ *     responses:
+ *       201:
+ *         description: Your new user
+ *         schema:
+ *           type: array
+ *           items:
+ *              $ref: '#/definitions/User'
+ *       400:
+ *         description: Error message(s)
+ */
+exports.registerBulk = function (req, res, next) {
+  var users = _.get(req.body, 'users');
+
+  if (!users) {
+    throw { username: 'This field is required.', status: 400 };
+  }
+
+  Users.registerBulk(dbUtils.getSession(req), users)
+    .then(response => writeResponse(res, response, 201))
+    .catch(next);
+};
+
+
