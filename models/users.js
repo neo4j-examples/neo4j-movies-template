@@ -21,6 +21,7 @@ var register = function (session, userData) {
             lastName: userData.lastName,
           }
         ).then(results => {
+            console.log(results);
             return new User(results.records[0].get('user'));
           }
         )

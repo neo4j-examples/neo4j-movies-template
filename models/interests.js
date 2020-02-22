@@ -60,6 +60,16 @@ var addInterest = function (session, interestData, userData) {
     });
 }
 
+var getUsersInterestedIn = function (session, interestData){
+    return session.run('MATCH (u:User)-[r:INTERESTED_IN]->(i:Interest {interestname: {interestname} }) RETURN u',
+    {
+        interestname: interestData.interestname,
+    }).then(results =>{
+        console.log(results);
+    });
+    // MATCH (u:User)-[r:INTERESTED_IN]->(i:Interest{interestname: 'skiing'}) RETURN u
+}
+
 // var connectUserToInterest = function (session, userData, interestData){
 //     return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
 //     {
@@ -77,6 +87,7 @@ var addInterest = function (session, interestData, userData) {
 
 module.exports = {
     addInterest: addInterest,
+    getUsersInterestedIn: getUsersInterestedIn,
     // connectUserToInterest: connectUserToInterest,
   // me: me,
 };

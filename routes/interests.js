@@ -64,6 +64,47 @@ exports.addInterest = function (req, res, next) {
 };
 
 
+/**
+ * @swagger
+ * /api/v1/getUsersInterestedIn:
+ *   post:
+ *     tags:
+ *     - interests
+ *     description: add a Node containing an interest
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         type: object
+ *         schema:
+ *           properties:
+ *             interestname:
+ *               type: string
+ *             
+ *     responses:
+ *       201:
+ *         description: Add your new interest
+ *         schema:
+ *           $ref: '#/definitions/Interest'
+ *       400:
+ *         description: Error message(s)
+ */
+
+exports.getUsersInterestedIn = function (req, res, next) {
+  var interestname = _.get(req.body, 'interestname');
+  var interestData = {interestname};
+
+  if (!interestname) {
+    throw {interestname: 'This field is required.', status: 400};
+  }
+  // console.log("I'm adding an interest!");
+  Interests.getUsersInterestedIn(dbUtils.getSession(req), interestData)
+    .then(response => writeResponse(res, response, 201))
+    .catch(next);
+};
+
+
 // /**
 //  * @swagger
 //  * /api/v1/connectUserToExistingInterest:

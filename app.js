@@ -65,6 +65,7 @@ api.use(neo4jSessionCleanup);
 //api routes
 api.post('/register', routes.users.register);
 api.post('/addInterest', routes.interests.addInterest);
+api.post('/getUsersInterestedIn', routes.interests.getUsersInterestedIn);
 // api.post('/connectUserToExistingInterest', routes.interests.connectUserToInterest);
 api.post('/register/bulk', routes.users.registerBulk);
 api.get('/organizations', routes.organizations.list);
