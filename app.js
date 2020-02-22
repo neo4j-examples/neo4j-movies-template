@@ -71,8 +71,8 @@ api.post('/getUsersInterestedIn', routes.interests.getUsersInterestedIn);
 api.post('/register/bulk', routes.users.registerBulk);
 api.get('/organizations', routes.organizations.list);
 api.post('/organizations', routes.organizations.create);
-// api.post('/delete', routes.admin.delete);
-// api.post('/dummyData', routes.admin.createDummyData);
+api.post('/delete', routes.admin.deleteData);
+api.post('/dummyData', routes.admin.createDummyData);
 api.post('/slack', routes.slack.receive);
 
 // api.get('/movies/:id',  routes.movies.findById);
