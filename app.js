@@ -65,10 +65,14 @@ api.use(neo4jSessionCleanup);
 //api routes
 api.post('/register', routes.users.register);
 api.post('/addInterest', routes.interests.addInterest);
+api.post('/addInterest/bulk', routes.interests.addInterestBulk);
+api.post('/getUsersInterestedIn', routes.interests.getUsersInterestedIn);
 // api.post('/connectUserToExistingInterest', routes.interests.connectUserToInterest);
 api.post('/register/bulk', routes.users.registerBulk);
 api.get('/organizations', routes.organizations.list);
 api.post('/organizations', routes.organizations.create);
+api.post('/delete', routes.admin.deleteData);
+api.post('/dummyData', routes.admin.createDummyData);
 api.post('/slack', routes.slack.receive);
 
 // api.get('/movies/:id',  routes.movies.findById);

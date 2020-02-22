@@ -4,3 +4,4 @@ exports.interests = require('./interests');
 exports.movies = require('./movies');
 exports.organizations = require('./organizations');
 exports.slack = require('./slack');
+exports.admin = require('./admin');
