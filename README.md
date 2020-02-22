@@ -34,16 +34,16 @@ amity!
 
 Cloning via SSH
 ```bash
-git clone git@github.com:natehood96/AmityApp.git
+git clone git@github.com:natehood96/Amity_Api.git
 ```
 Cloning via HTTP
 <br>
 ```bash
-git clone https://github.com/natehood96/AmityApp.git
+git clone https://github.com/natehood96/Amity_Api.git
 ```
 After cloning
 ```bash
-cd AmityApp
+cd Amity_Api
 ```
 
 ### 3. Install the required Node dependencies
