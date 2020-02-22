@@ -1,26 +1,16 @@
 {
-  "name": "neo4j-movies-api",
-  "version": "0.0.20",
+  "name": "Amity",
+  "version": "0.0.01",
   "author": {
     "name": "Amity",
-    "email": "info@tsl.io",
-    "url": "tsl.io"
+    "email": "",
+    "url": ""
   },
-  "description": "API for Amity",
+  "description": "The brains behind Amity's workspace inclusion",
   "repository": {
     "type": "git",
-    "url": "tbd"
+    "url": "https://github.com/natehood96/Amity_Api"
   },
-  "keywords": [
-    "node",
-    "neo4j",
-    "express",
-    "api",
-    "http",
-    "rest",
-    "swagger",
-    "server"
-  ],
   "scripts": {
     "dev": "DEBUG=app,app:* nodemon ./app",
     "start": "node ./app"
