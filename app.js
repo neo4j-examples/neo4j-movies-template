@@ -69,6 +69,7 @@ api.post('/addInterest', routes.interests.addInterest);
 api.post('/register/bulk', routes.users.registerBulk);
 api.get('/organizations', routes.organizations.list);
 api.post('/organizations', routes.organizations.create);
+api.post('/slack', routes.slack.receive);
 
 // api.get('/movies/:id',  routes.movies.findById);
 
