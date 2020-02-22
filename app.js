@@ -15,6 +15,7 @@ var app = express()
 
 app.use(nconf.get('api_path'), api);
 
+/* -- -- SWAGGER -- -- */
 var swaggerDefinition = {
   info: {
     title: 'Neo4j Movie Demo API (Node/Express)',
@@ -63,23 +64,12 @@ api.use(neo4jSessionCleanup);
 
 //api routes
 api.post('/register', routes.users.register);
+api.post('/addInterest', routes.interests.addInterest);
 api.get('/organizations', routes.organizations.list);
 api.post('/organizations', routes.organizations.create);
-// api.get('/movies', routes.movies.list);
-// api.get('/movies/recommended', routes.movies.getRecommendedMovies);
-// api.get('/movies/rated', routes.movies.findMoviesRatedByMe);
+
 // api.get('/movies/:id',  routes.movies.findById);
-// api.get('/movies/genre/:id',  routes.movies.findByGenre);
-// api.get('/movies/daterange/:start/:end', routes.movies.findMoviesByDateRange);
-// api.get('/movies/directed_by/:id', routes.movies.findMoviesByDirector);
-// api.get('/movies/acted_in_by/:id', routes.movies.findMoviesByActor);
-// api.get('/movies/written_by/:id', routes.movies.findMoviesByWriter);
-// api.post('/movies/:id/rate', routes.movies.rateMovie);
-// api.delete('/movies/:id/rate', routes.movies.deleteMovieRating);
-// api.get('/people', routes.people.list);
-// api.get('/people/:id', routes.people.findById);
-// api.get('/people/bacon', routes.people.getBaconPeople);
-// api.get('/genres', routes.genres.list);
+
 
 //api error handler
 api.use(function(err, req, res, next) {
