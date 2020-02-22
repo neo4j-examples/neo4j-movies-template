@@ -13,7 +13,7 @@ var register = function (session, userData) {
       if (!_.isEmpty(results.records)) {
         throw {username: 'username already in use', status: 400}
       } else {
-        return session.run('CREATE (user:User {id: {id}, username: {username}, firstName: {firstName}, lastName: {lastName}, api_key: {api_key}}) RETURN user',
+        return session.run('CREATE (user:User {id: {id}, username: {username}, firstName: {firstName}, lastName: {lastName} }) RETURN user',
           {
             id: uuid.v4(),
             username: userData.username,
@@ -21,7 +21,7 @@ var register = function (session, userData) {
             lastName: userData.lastName,
           }
         ).then(results => {
-            console.log(results);
+            console.log(results.records);
             return new User(results.records[0].get('user'));
           }
         )

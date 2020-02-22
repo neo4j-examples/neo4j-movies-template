@@ -5,6 +5,7 @@ var randomstring = require("randomstring");
 var _ = require('lodash');
 var dbUtils = require('../neo4j/dbUtils');
 var Interest = require('../models/neo4j/interest');
+var User = require('../models/neo4j/user');
 var crypto = require('crypto');
 
 var addInterest = function (session, interestData, userData) {
@@ -61,11 +62,19 @@ var addInterest = function (session, interestData, userData) {
 }
 
 var getUsersInterestedIn = function (session, interestData){
-    return session.run('MATCH (u:User)-[r:INTERESTED_IN]->(i:Interest {interestname: {interestname} }) RETURN u',
+    return session.run('MATCH (user:User)-[r:INTERESTED_IN]->(i:Interest {interestname: {interestname} }) RETURN user',
     {
         interestname: interestData.interestname,
     }).then(results =>{
-        console.log(results);
+        var myListOfUsers = results.records;
+        var arr = [];
+        for(var i = 0; i < myListOfUsers.length; i++){
+            var u = new User(results.records[i].get('user'));
+            arr.push(u);
+        }
+        return arr;
+        
+        // return new User(results.records[0].get('users'));
     });
     // MATCH (u:User)-[r:INTERESTED_IN]->(i:Interest{interestname: 'skiing'}) RETURN u
 }
