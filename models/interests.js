@@ -5,10 +5,9 @@ var randomstring = require("randomstring");
 var _ = require('lodash');
 var dbUtils = require('../neo4j/dbUtils');
 var Interest = require('../models/neo4j/interest');
-var Connection = require('../models/neo4j/connection');
 var crypto = require('crypto');
 
-var addInterest = function (session, interestData) {
+var addInterest = function (session, interestData, userData) {
     // console.log('DB... IM TRYING TO RUN A QUERY!');
     // console.log(interestData);
   return session.run('MATCH (interest:Interest {interestname: {interestname}}) RETURN interest', {interestname: interestData.interestname})
@@ -29,7 +28,15 @@ var addInterest = function (session, interestData) {
             })
           }
         ).then(results => {
-            return new Interest(results.records[0].get('interest'));
+            return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
+            {
+                username: userData.username,
+                interestname: interestData.interestname,
+            }).then(otherResults =>{
+                return new Interest(results.records[0].get('interest'))
+                }
+            );
+            // return new Interest(results.records[0].get('interest'));
           }
         )
       }

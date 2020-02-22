@@ -31,12 +31,14 @@ var Interests = require('../models/interests')
  *         type: object
  *         schema:
  *           properties:
+ *             username:
+ *               type: string
  *             interestname:
  *               type: string
  *             
  *     responses:
  *       201:
- *         description: Your new user
+ *         description: Add your new interest
  *         schema:
  *           $ref: '#/definitions/Interest'
  *       400:
@@ -46,12 +48,17 @@ var Interests = require('../models/interests')
 exports.addInterest = function (req, res, next) {
   var interestname = _.get(req.body, 'interestname');
   var interestData = {interestname};
+  var username = _.get(req.body, 'username');
+  var userData = {username};
 
   if (!interestname) {
     throw {interestname: 'This field is required.', status: 400};
   }
+  if (!username) {
+    throw {username: 'This field is required.', status: 400};
+  }
   // console.log("I'm adding an interest!");
-  Interests.addInterest(dbUtils.getSession(req), interestData)
+  Interests.addInterest(dbUtils.getSession(req), interestData, userData)
     .then(response => writeResponse(res, response, 201))
     .catch(next);
 };
@@ -59,7 +66,7 @@ exports.addInterest = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v1/connectUserToInterest:
+ * /api/v1/connectUserToExistingInterest:
  *   post:
  *     tags:
  *     - interests
@@ -73,9 +80,9 @@ exports.addInterest = function (req, res, next) {
  *         type: object
  *         schema:
  *           properties:
- *             interestname:
- *               type: string
  *             username:
+ *               type: string
+ *             interestname:
  *               type: string
  * 
  *     responses:
