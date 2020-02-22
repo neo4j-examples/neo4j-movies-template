@@ -61,6 +61,21 @@ var addInterest = function (session, interestData, userData) {
     });
 }
 
+var addInterestBulk = function (session, interests, userData) {
+    return Promise.all(interests.map(interest =>  addInterest(session, interest, userData)));
+}
+    //     session.run(
+    //   `CREATE (user:User {id: '${uuid.v4()}', username: '${user.username}', firstName: '${user.first_name}', lastName: '${user.last_name}'}) RETURN user`
+    // ).then(res => new User(res.records[0].get('user')))))
+    // .then(function(values) {
+    //   return values;
+    // });
+//   };
+
+
+// MATCH (u:User{username:'string1'})
+// MATCH (i:Interest{interestname:'Basketball'})
+// MERGE (u)-[:INTERESTED_IN]->(i)
 var getUsersInterestedIn = function (session, interestData){
     return session.run('MATCH (user:User)-[r:INTERESTED_IN]->(i:Interest {interestname: {interestname} }) RETURN user',
     {
@@ -79,24 +94,10 @@ var getUsersInterestedIn = function (session, interestData){
     // MATCH (u:User)-[r:INTERESTED_IN]->(i:Interest{interestname: 'skiing'}) RETURN u
 }
 
-// var connectUserToInterest = function (session, userData, interestData){
-//     return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
-//     {
-//         username: userData.username,
-//         interestname: interestData.interestname,
-//     }).then(results =>{
-//         // returning no response.
-//         }
-//     );
-// }
-
-// MATCH (u:User{username:'string1'})
-// MATCH (i:Interest{interestname:'Basketball'})
-// MERGE (u)-[:INTERESTED_IN]->(i)
-
 module.exports = {
     addInterest: addInterest,
     getUsersInterestedIn: getUsersInterestedIn,
+    addInterestBulk: addInterestBulk,
     // connectUserToInterest: connectUserToInterest,
   // me: me,
 };
