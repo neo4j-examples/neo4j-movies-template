@@ -15,6 +15,7 @@ var app = express()
 
 app.use(nconf.get('api_path'), api);
 
+/* -- -- SWAGGER -- -- */
 var swaggerDefinition = {
   info: {
     title: 'Neo4j Movie Demo API (Node/Express)',
@@ -63,10 +64,15 @@ api.use(neo4jSessionCleanup);
 
 //api routes
 api.post('/register', routes.users.register);
+api.post('/addInterest', routes.interests.addInterest);
+// api.post('/connectUserToExistingInterest', routes.interests.connectUserToInterest);
 api.post('/register/bulk', routes.users.registerBulk);
 api.get('/organizations', routes.organizations.list);
 api.post('/organizations', routes.organizations.create);
 api.post('/slack', routes.slack.receive);
+
+// api.get('/movies/:id',  routes.movies.findById);
+
 
 //api error handler
 api.use(function(err, req, res, next) {

@@ -52,6 +52,7 @@ var Users = require('../models/users')
  *       400:
  *         description: Error message(s)
  */
+
 exports.register = function (req, res, next) {
   var username = _.get(req.body, 'username');
   var firstName = _.get(req.body, 'first_name');
