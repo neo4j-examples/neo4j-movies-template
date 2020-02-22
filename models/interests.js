@@ -8,31 +8,33 @@ var Interest = require('../models/neo4j/interest');
 var crypto = require('crypto');
 
 var addInterest = function (session, interestData, userData) {
+    // CHECK TO SEE IF THE USER EXISTS
     return session.run('MATCH (u:User{username: {username} }) return u',
     {
         username: userData.username,
     }).then(userResults =>{
         if(_.isEmpty(userResults.records)){
-            throw {Username: 'This user does not exist', status: 400}
+            // Return a message saying the user they tried to use has not been registered
+            throw {Username: 'This user has not been registered.', status: 400}
         }
         else{
         // CHECK TO SEE IF THE INTERST IS ALREADY CREATED
             return session.run('MATCH (interest:Interest {interestname: {interestname}}) RETURN interest', {interestname: interestData.interestname})
             .then(results => {
                 if (!_.isEmpty(results.records)) {
-                    //   IF IT IS CREATED, TRY TO ADD THE USER TO IT!
+                    //  IF THE INTEREST IS ALREADY CREATED, TRY TO ADD THE USER TO IT!
                     return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
                     {
                         username: userData.username,
                         interestname: interestData.interestname,
                     }).then(otherResults =>{    
-                        console.log(results.records);
+                        // Return a message saying we added the user to the existing interest
                         throw {Message: 'This interest already exists, so we just added the user to it. No duplicates were created', status: 201}
                         }            
                     );
                     }
                 else {
-                // console.log('DB HERE FOO',interestData.interestname)
+                // IF THE INTEREST HAS NOT BEEN CREATED, CREATE IT! 
                     return session.run('CREATE (interest:Interest {id: {id}, interestname: {interestname}, api_key: {api_key}}) RETURN interest',
                     {
                         id: uuid.v4(),
@@ -43,14 +45,13 @@ var addInterest = function (session, interestData, userData) {
                         })
                     }
                     ).then(results => {
+                        // NOW THAT THE INTEREST HAS BEEN CREATED, ADD THE USER TO IT!
                         return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
                     {
                         username: userData.username,
                         interestname: interestData.interestname,
                     }).then(otherResults =>{
-                            console.log("tried adding a user to a new interest");
-                            console.log(otherResults);
-                            return new Interest(results.records[0].get('interest'))
+                            return new Interest(results.records[0].get('interest')) // Return the ID of the newly created interest
                         });
                     });
                 }
