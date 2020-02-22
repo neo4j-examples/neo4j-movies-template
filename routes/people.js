@@ -21,7 +21,7 @@ var People = require('../models/people')
 
 /**
  * @swagger
- * /api/v0/people:
+ * /api/v1/people:
  *   get:
  *     tags:
  *     - people
@@ -45,7 +45,7 @@ exports.list = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/people/bacon:
+ * /api/v1/people/bacon:
  *   get:
  *     tags:
  *     - people
@@ -83,7 +83,7 @@ exports.getBaconPeople = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/people/{id}:
+ * /api/v1/people/{id}:
  *   get:
  *     tags:
  *     - people

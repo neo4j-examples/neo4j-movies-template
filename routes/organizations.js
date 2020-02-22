@@ -17,7 +17,7 @@ var Organizations = require("../models/organizations")
 
 /**
  * @swagger
- * /api/v0/organizations:
+ * /api/v1/organizations:
  *   get:
  *     tags:
  *     - organizations
@@ -41,7 +41,7 @@ exports.list = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/organizations:
+ * /api/v1/organizations:
  *   post:
  *     tags:
  *     - organizations

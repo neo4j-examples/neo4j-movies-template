@@ -16,7 +16,7 @@ var Genres = require("../models/genres")
 
 /**
  * @swagger
- * /api/v0/genres:
+ * /api/v1/genres:
  *   get:
  *     tags:
  *     - genres

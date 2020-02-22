@@ -4,7 +4,6 @@ var Interests = require('../models/interests')
   , dbUtils = require('../neo4j/dbUtils')
   , _ = require('lodash');
 
-
 /**
  * @swagger
  * definitions:
@@ -19,7 +18,7 @@ var Interests = require('../models/interests')
 
 /**
  * @swagger
- * /api/v0/addInterest:
+ * /api/v1/addInterest:
  *   post:
  *     tags:
  *     - interests
