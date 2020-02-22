@@ -8,17 +8,20 @@ var Interest = require('../models/neo4j/interest');
 var crypto = require('crypto');
 
 var addInterest = function (session, interestData) {
-  return session.run('MATCH (interest:Interest {interestName: {interestName}}) RETURN interest', {interestName: interestData.interestName})
+    console.log('DB... IM TRYING TO RUN A QUERY!');
+    console.log(interestData);
+  return session.run('MATCH (interest:Interest {interestname: {interestname}}) RETURN interest', {interestname: interestData.interestname})
     .then(results => {
+        console.log("DB!! Got past the results!");
       if (!_.isEmpty(results.records)) {
         throw {interestName: 'This interest already exists', status: 400}
       }
       else {
-        console.log('DB HERE FOO',interestData.interestName)
-        return session.run('CREATE (interest:Interest {id: {id}, interestName: {interestName}, api_key: {api_key}}) RETURN interest',
+        console.log('DB HERE FOO',interestData.interestname)
+        return session.run('CREATE (interest:Interest {id: {id}, interestname: {interestname}, api_key: {api_key}}) RETURN interest',
           {
             id: uuid.v4(),
-            interestName: interestData.interestName,
+            interestname: interestData.interestname,
             api_key: randomstring.generate({
               length: 20,
               charset: 'hex'

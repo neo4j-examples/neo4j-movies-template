@@ -31,7 +31,7 @@ var Interests = require('../models/interests')
  *         type: object
  *         schema:
  *           properties:
- *             interestName:
+ *             interestname:
  *               type: string
  *             
  *     responses:
@@ -44,7 +44,7 @@ var Interests = require('../models/interests')
  */
 
 exports.addInterest = function (req, res, next) {
-  var interestname = _.get(req.body, 'interestName');
+  var interestname = _.get(req.body, 'interestname');
   var interestData = {interestname};
 
   if (!interestname) {
