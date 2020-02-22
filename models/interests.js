@@ -5,6 +5,7 @@ var randomstring = require("randomstring");
 var _ = require('lodash');
 var dbUtils = require('../neo4j/dbUtils');
 var Interest = require('../models/neo4j/interest');
+var Connection = require('../models/neo4j/connection');
 var crypto = require('crypto');
 
 var addInterest = function (session, interestData) {
@@ -35,17 +36,23 @@ var addInterest = function (session, interestData) {
     });
 };
 
-// var me = function (session, apiKey) {
-//   return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {api_key: apiKey})
-//     .then(results => {
-//       if (_.isEmpty(results.records)) {
-//         throw {message: 'invalid authorization key', status: 401};
-//       }
-//       return new User(results.records[0].get('user'));
-//     });
-// };
+var connectUserToInterest = function (session, userData, interestData){
+    return session.run('MATCH (u:User{username: {username} }) MATCH (i:Interest {interestname: {interestname} }) MERGE (u)-[:INTERESTED_IN]->(i)',
+    {
+        username: userData.username,
+        interestname: interestData.interestname,
+    }).then(results =>{
+        // returning no response.
+        }
+    );
+}
+
+// MATCH (u:User{username:'string1'})
+// MATCH (i:Interest{interestname:'Basketball'})
+// MERGE (u)-[:INTERESTED_IN]->(i)
 
 module.exports = {
     addInterest: addInterest,
+    connectUserToInterest: connectUserToInterest,
   // me: me,
 };
