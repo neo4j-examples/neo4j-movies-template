@@ -47,7 +47,7 @@ var _getByWriter = function (params, options, callback) {
   };
 
   var query = [
-    'MATCH (:Person {id:{id}})-[:WRITER_OF]->(movie:Movie)',
+    'MATCH (:Person {id: $id})-[:WRITER_OF]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
 
@@ -68,8 +68,8 @@ var getAll = function (session) {
 // get a single movie by id
 var getById = function (session, movieId, userId) {
   var query = [
-    'MATCH (movie:Movie {id: {movieId}})',
-    'OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: {userId}})',
+    'MATCH (movie:Movie {id: $movieId})',
+    'OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $userId})',
     'OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)',
     'OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie',
     'OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)',
@@ -109,7 +109,7 @@ var getById = function (session, movieId, userId) {
 var getByDateRange = function (session, start, end) {
   var query = [
     'MATCH (movie:Movie)',
-    'WHERE movie.released > {start} AND movie.released < {end}',
+    'WHERE movie.released > $start AND movie.released < $end',
     'RETURN movie'
   ].join('\n');
 
@@ -122,7 +122,7 @@ var getByDateRange = function (session, start, end) {
 // Get by date range
 var getByActor = function (session, id) {
   var query = [
-    'MATCH (actor:Person {id:{id}})-[:ACTED_IN]->(movie:Movie)',
+    'MATCH (actor:Person {id: $id})-[:ACTED_IN]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
 
@@ -135,7 +135,7 @@ var getByActor = function (session, id) {
 var getByGenre = function(session, genreId) {
   var query = [
     'MATCH (movie:Movie)-[:HAS_GENRE]->(genre)',
-    'WHERE genre.id = {genreId}',
+    'WHERE genre.id = $genreId',
     'RETURN movie'
   ].join('\n');
 
@@ -147,7 +147,7 @@ var getByGenre = function(session, genreId) {
 // Get many movies directed by a person
 var getByDirector = function(session, personId) {
   var query = [
-    'MATCH (:Person {id:{personId}})-[:DIRECTED]->(movie:Movie)',
+    'MATCH (:Person {id: $personId})-[:DIRECTED]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
 
@@ -159,7 +159,7 @@ var getByDirector = function(session, personId) {
 // Get many movies written by a person
 var getByWriter = function(session, personId) {
   var query = [
-    'MATCH (:Person {id:{personId}})-[:WRITER_OF]->(movie:Movie)',
+    'MATCH (:Person {id: $personId})-[:WRITER_OF]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
 
@@ -170,9 +170,9 @@ var getByWriter = function(session, personId) {
 
 var rate = function (session, movieId, userId, rating) {
   return session.run(
-    'MATCH (u:User {id: {userId}}),(m:Movie {id: {movieId}}) \
+    'MATCH (u:User {id: $userId}),(m:Movie {id: $movieId}) \
     MERGE (u)-[r:RATED]->(m) \
-    SET r.rating = {rating} \
+    SET r.rating = $rating \
     RETURN m',
     {
       userId: userId,
@@ -184,14 +184,14 @@ var rate = function (session, movieId, userId, rating) {
 
 var deleteRating = function (session, movieId, userId) {
   return session.run(
-    'MATCH (u:User {id: {userId}})-[r:RATED]->(m:Movie {id: {movieId}}) DELETE r',
+    'MATCH (u:User {id: $userId})-[r:RATED]->(m:Movie {id: $movieId}) DELETE r',
     {userId: userId, movieId: parseInt(movieId)}
   );
 };
 
 var getRatedByUser = function (session, userId) {
   return session.run(
-    'MATCH (:User {id: {userId}})-[rated:RATED]->(movie:Movie) \
+    'MATCH (:User {id: $userId})-[rated:RATED]->(movie:Movie) \
      RETURN DISTINCT movie, rated.rating as my_rating',
     {userId: userId}
   ).then(result => {
@@ -201,7 +201,7 @@ var getRatedByUser = function (session, userId) {
 
 var getRecommended = function (session, userId) {
   return session.run(
-    'MATCH (me:User {id: {userId}})-[my:RATED]->(m:Movie) \
+    'MATCH (me:User {id: $userId})-[my:RATED]->(m:Movie) \
   MATCH (other:User)-[their:RATED]->(m) \
   WHERE me <> other \
   AND abs(my.rating - their.rating) < 2 \
