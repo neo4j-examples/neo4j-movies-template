@@ -11,7 +11,8 @@ from flask_cors import CORS
 from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import Api, swagger, Schema
 
-from neo4j.v1 import GraphDatabase, basic_auth, ResultError
+from neo4j import GraphDatabase, basic_auth
+from neo4j.exceptions import Neo4jError
 
 from . import config
 
@@ -22,7 +23,7 @@ api = Api(app, title='Neo4j Movie Demo API', api_version='0.0.10')
 CORS(app)
 
 
-driver = GraphDatabase.driver('bolt://localhost', auth=basic_auth(config.DATABASE_USERNAME, str(config.DATABASE_PASSWORD)))
+driver = GraphDatabase.driver(config.DATABASE_URL, auth=basic_auth(config.DATABASE_USERNAME, str(config.DATABASE_PASSWORD)))
 
 
 def get_db():
@@ -51,12 +52,12 @@ def set_user(sender, **extra):
     db = get_db()
     results = db.run(
         '''
-            MATCH (user:User {api_key: {api_key}}) RETURN user
+            MATCH (user:User {api_key: $api_key}) RETURN user
             ''', {'api_key': token}
     )
     try:
         g.user = results.single()['user']
-    except ResultError:
+    except Neo4jError:
         abort(401, 'invalid authorization key')
         return
 request_started.connect(set_user, app)
@@ -265,8 +266,8 @@ class Movie(Resource):
         db = get_db()
         result = db.run(
             '''
-            MATCH (movie:Movie {id: {id}})
-            OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: {user_id}})
+            MATCH (movie:Movie {id: $id})
+            OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $user_id})
             OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
             OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
             OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)
@@ -371,7 +372,7 @@ class MovieListByGenre(Resource):
         result = db.run(
             '''
             MATCH (movie:Movie)-[:HAS_GENRE]->(genre)
-            WHERE genre.id = {genre_id}
+            WHERE genre.id = $genre_id
             RETURN movie
             ''', {'genre_id': genre_id}
         )
@@ -418,7 +419,7 @@ class MovieListByDateRange(Resource):
         result = db.run(
             '''
             MATCH (movie:Movie)
-            WHERE movie.released > {start} AND movie.released < {end}
+            WHERE movie.released > $start AND movie.released < $end
             RETURN movie
             ''', params
         )
@@ -453,7 +454,7 @@ class MovieListByPersonActedIn(Resource):
         db = get_db()
         result = db.run(
             '''
-            MATCH (actor:Person {id: {person_id}})-[:ACTED_IN]->(movie:Movie)
+            MATCH (actor:Person {id: $person_id})-[:ACTED_IN]->(movie:Movie)
             RETURN DISTINCT movie
             ''', {'person_id': person_id}
         )
@@ -488,7 +489,7 @@ class MovieListByWrittenBy(Resource):
         db = get_db()
         result = db.run(
             '''
-            MATCH (actor:Person {id: {person_id}})-[:WRITER_OF]->(movie:Movie)
+            MATCH (actor:Person {id: $person_id})-[:WRITER_OF]->(movie:Movie)
             RETURN DISTINCT movie
             ''', {'person_id': person_id}
         )
@@ -523,7 +524,7 @@ class MovieListByDirectedBy(Resource):
         db = get_db()
         result = db.run(
             '''
-            MATCH (actor:Person {id: {person_id}})-[:DIRECTED]->(movie:Movie)
+            MATCH (actor:Person {id: $person_id})-[:DIRECTED]->(movie:Movie)
             RETURN DISTINCT movie
             ''', {'person_id': person_id}
         )
@@ -559,7 +560,7 @@ class MovieListRatedByMe(Resource):
         db = get_db()
         result = db.run(
             '''
-            MATCH (:User {id: {user_id}})-[rated:RATED]->(movie:Movie)
+            MATCH (:User {id: $user_id})-[rated:RATED]->(movie:Movie)
             RETURN DISTINCT movie, rated.rating as my_rating
             ''', {'user_id': g.user['id']}
         )
@@ -595,7 +596,7 @@ class MovieListRecommended(Resource):
         db = get_db()
         result = db.run(
             '''
-            MATCH (me:User {id: {user_id}})-[my:RATED]->(m:Movie)
+            MATCH (me:User {id: $user_id})-[my:RATED]->(m:Movie)
             MATCH (other:User)-[their:RATED]->(m)
             WHERE me <> other
             AND abs(my.rating - their.rating) < 2
@@ -638,7 +639,7 @@ class Person(Resource):
         db = get_db()
         results = db.run(
             '''
-            MATCH (person:Person {id: {id}})
+            MATCH (person:Person {id: $id})
             OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)
             OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)
             OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)
@@ -761,7 +762,7 @@ class PersonBacon(Resource):
         db = get_db()
         results = db.run(
             '''
-            MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )
+            MATCH p = shortestPath( (p1:Person {name: $name1})-[:ACTED_IN*]-(target:Person {name: $name2}) )
             WITH extract(n in nodes(p)|n) AS coll
             WITH filter(thing in coll where length(thing.name)> 0) AS bacon
             UNWIND(bacon) AS person
@@ -816,19 +817,18 @@ class Register(Resource):
 
         results = db.run(
             '''
-            MATCH (user:User {username: {username}}) RETURN user
+            MATCH (user:User {username: $username}) RETURN user
             ''', {'username': username}
         )
         try:
-            results.single()
-        except ResultError:
+            if results.single():
+                return {'username': 'username already in use'}, 400
+        except Neo4jError:
             pass
-        else:
-            return {'username': 'username already in use'}, 400
 
         results = db.run(
             '''
-            CREATE (user:User {id: {id}, username: {username}, password: {password}, api_key: {api_key}}) RETURN user
+            CREATE (user:User {id: $id, username: $username, password: $password, api_key: $api_key}) RETURN user
             ''',
             {
                 'id': str(uuid.uuid4()),
@@ -884,12 +884,12 @@ class Login(Resource):
         db = get_db()
         results = db.run(
             '''
-            MATCH (user:User {username: {username}}) RETURN user
+            MATCH (user:User {username: $username}) RETURN user
             ''', {'username': username}
         )
         try:
             user = results.single()['user']
-        except ResultError:
+        except Neo4jError:
             return {'username': 'username does not exist'}, 400
 
         expected_password = hash_password(user['username'], password)
@@ -978,9 +978,9 @@ class RateMovie(Resource):
         db = get_db()
         results = db.run(
             '''
-            MATCH (u:User {id: {user_id}}),(m:Movie {id: {movie_id}})
+            MATCH (u:User {id: $user_id}),(m:Movie {id: $movie_id})
             MERGE (u)-[r:RATED]->(m)
-            SET r.rating = {rating}
+            SET r.rating = $rating
             RETURN m
             ''', {'user_id': g.user['id'], 'movie_id': id, 'rating': rating}
         )
@@ -1019,7 +1019,7 @@ class RateMovie(Resource):
         db = get_db()
         db.run(
             '''
-            MATCH (u:User {id: {user_id}})-[r:RATED]->(m:Movie {id: {movie_id}}) DELETE r
+            MATCH (u:User {id: $user_id})-[r:RATED]->(m:Movie {id: $movie_id}) DELETE r
             ''', {'movie_id': id, 'user_id': g.user['id']}
         )
         return {}, 204
