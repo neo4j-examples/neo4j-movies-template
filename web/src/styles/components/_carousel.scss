@@ -1,3 +1,5 @@
+
+
 .nt-carousel {
   position: relative;
 
@@ -24,6 +26,10 @@
     padding: 1rem;
     z-index: 2;
     background: rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
   }
 
   &-right {
@@ -34,6 +40,10 @@
     padding: 1rem;
     z-index: 2;
     background: rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
   }
 }
 

@@ -1,9 +1,10 @@
-import React, {PropTypes} from 'react';
-import { Link } from 'react-router';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 export default class Breadcrumbs extends React.Component {
   render() {
-    var {routes, movie, person, params} = this.props;
+    var {movie, person} = this.props;
 
     return (
       <ul className="breadcrumbs">
@@ -25,8 +26,6 @@ export default class Breadcrumbs extends React.Component {
 
 Breadcrumbs.displayName = 'Breadcrumbs';
 Breadcrumbs.propTypes = {
-  routes: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired,
   movie: PropTypes.object,
   person: PropTypes.object
 };

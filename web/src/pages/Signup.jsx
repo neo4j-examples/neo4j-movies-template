@@ -1,6 +1,7 @@
-import InputValidator from '../components/validation/InputValidator.jsx';
-import React, {PropTypes} from 'react';
+import React from 'react';
+import { withRouter } from 'react-router';
 import validatedComponent from '../components/validation/ValidatedComponent.jsx';
+import InputValidator from '../components/validation/InputValidator.jsx';
 import * as Actions from '../redux/actions/ProfileActions';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -28,30 +29,28 @@ class Signup extends React.Component {
   }
 
   redirectIfAuthed(props) {
-    var {location, auth} = props;
+    var {match, history, auth} = props;
     if (auth.token) {
-      if (location.query.redirectTo) {
-        this.context.router.push(location.query.redirectTo);
+      if (match.params.redirectTo) {
+        history.push(match.params.redirectTo);
       }
       else {
-        this.context.router.push('/');
+        history.push('/');
       }
     }
   }
 
   createUser(event) {
     event.preventDefault();
-    var {context} = this;
     var {username, password} = this.state;
 
-    if (context.isComponentValid()) {
+    if (this.props.isComponentValid()) {
       this.props.createProfile({username, password});
     }
   }
 
   onChange(fieldName, e) {
-    this.state[fieldName] = e.target.value;
-    this.setState(this.state);
+    this.setState({[fieldName]: e.target.value});
   }
 
   validateConfirmPassword() {
@@ -122,10 +121,6 @@ class Signup extends React.Component {
 
 Signup.displayName = 'Signup';
 
-Signup.contextTypes = {
-  router: PropTypes.object.isRequired
-};
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
@@ -134,4 +129,4 @@ function mapStateToProps(state) {
   return {...state.signup,  auth: {...state.auth}};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(validatedComponent(Signup));
+export default connect(mapStateToProps, mapDispatchToProps)(validatedComponent(withRouter(Signup)));

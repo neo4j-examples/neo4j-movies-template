@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const minRating = 1;
 const maxRating = 5;
@@ -17,11 +18,11 @@ export default class UserRating extends React.Component {
         {stars}
         {
           savedRating ?
-            <a href="#"
+            <button
                onClick={this.onDeleteRatingClick.bind(this, movieId)}
-               className="nt-user-rating-delete">
+               className="buttonLink nt-user-rating-delete">
               Unrate
-            </a>
+            </button>
             :
             null
         }
@@ -31,12 +32,11 @@ export default class UserRating extends React.Component {
 
   renderStar(isEmpty, movieId, rating) {
     return (
-      <a key={rating}
-         className="nt-user-rating-star"
-         href="#"
+      <button key={rating}
+         className="buttonLink nt-user-rating-star"
          onClick={this.onRateClick.bind(this, movieId, rating)}>
         {isEmpty ? '\u2606' : '\u2605'}
-      </a>);
+      </button>);
   }
 
   onRateClick(movieId, rating, e) {

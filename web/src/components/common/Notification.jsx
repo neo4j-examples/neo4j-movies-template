@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {NotificationType} from '../../redux/actions/NotificationActionTypes';
 
 export default class Notification extends Component {
@@ -34,7 +35,7 @@ export default class Notification extends Component {
     return (
       <div data-alert className={'alert-box ' + classes}>
         {notification.message}
-        <a href="#" className="close" onClick={this.dismiss}>&times;</a>
+        <button className="buttonLink close" onClick={this.dismiss}>&times;</button>
       </div>
     );
   }

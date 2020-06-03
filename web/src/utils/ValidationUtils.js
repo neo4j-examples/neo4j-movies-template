@@ -7,7 +7,7 @@ export default class ValidationUtils {
   }
 
   static checkUrl(url, message) {
-    var regex = /^(http)s?(:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/igm;
+    var regex = /^(http)s?(:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/igm;  // eslint-disable-line no-useless-escape
     if (url && !regex.test(url)) {
       return message || 'Please enter a valid URL. (ex. http(s)://domain.com)';
     }

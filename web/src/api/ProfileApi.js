@@ -1,4 +1,4 @@
-import settings from '../../config/settings';
+import settings from '../config/settings';
 import axios from './axios';
 
 const {apiBaseURL} = settings;

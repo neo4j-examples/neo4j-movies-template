@@ -1,19 +1,17 @@
-import {call, put} from 'redux-saga/effects';
-import {takeEvery} from 'redux-saga';
+import {all, call, put, takeEvery} from 'redux-saga/effects';
 import MoviesApi from '../../api/MoviesApi';
 import * as Actions from '../actions/MovieActions';
 import * as Types from '../actions/MovieActionTypes';
 
 export default function* movieFlow() {
-
-  yield [
+  yield all([
     takeEvery(Types.MOVIE_GENRES_GET_REQUEST, getGenres),
     takeEvery(Types.MOVIES_BY_GENRES_GET_REQUEST, getMoviesByGenre),
     takeEvery(Types.MOVIES_FEATURED_GET_REQUEST, getFeaturedMovies),
     takeEvery(Types.MOVIE_DETAIL_GET_REQUEST, getMovie),
     takeEvery(Types.MOVIE_RATE, rateMovie),
     takeEvery(Types.MOVIE_DELETE_RATING, deleteRating),
-  ];
+  ]);
 }
 
 function* getGenres() {

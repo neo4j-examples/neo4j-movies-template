@@ -2,24 +2,20 @@ import React from 'react';
 import _ from 'lodash';
 import Loading from '../components/Loading.jsx';
 import Carousel from '../components/Carousel.jsx';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as PersonActions from '../redux/actions/PersonActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 class Person extends React.Component {
-  constructor() {
-    super();
-  }
-
   componentWillMount() {
-    var {id} = this.props.params;
+    var {id} = this.props.match.params;
     this.props.getPerson(id);
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.params.id != this.props.params.id) {
-      var {id} = nextProps.params;
+    if(nextProps.match.params.id !== this.props.match.params.id) {
+      var {id} = nextProps.match.params;
       this.props.getPerson(id);
     }
   }
@@ -45,7 +41,8 @@ class Person extends React.Component {
             <div className="row">
               <div className="small-12 medium-3 columns nt-person-aside">
                 <img className="nt-person-poster"
-                     src={detail.posterImage}/>
+                  src={detail.posterImage}
+                  alt="" />
               </div>
               <div className="small-12 medium-9 columns nt-person-main">
                 <div>
@@ -89,7 +86,7 @@ class Person extends React.Component {
             return (
               <div key={a.id}>
                 <Link to={`/person/${a.id}`}>
-                  <img src={a.posterImage}/>
+                  <img src={a.posterImage} alt="" />
                 </Link>
                 <div className="nt-carousel-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
                 <div className="nt-carousel-actor-role">{a.role}</div>
@@ -123,7 +120,7 @@ class Person extends React.Component {
                   return (
                     <div key={m.id}>
                       <Link to={`/movie/${m.id}`}>
-                        <img src={m.posterImage}/>
+                        <img src={m.posterImage} alt="" />
                       </Link>
                       <div className="nt-carousel-movie-title"><Link to={`/movie/${m.id}`}>{m.name}</Link></div>
                       {m.role ?

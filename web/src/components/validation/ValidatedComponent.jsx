@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+import _ from 'lodash'
 
 /**
  * A higher ordered component containing boilerplate code for handling validation of internal input fields.
@@ -7,71 +8,74 @@ import React from 'react';
  * It's a way of implementing mixin-like enhancements for React components (mixins are not possible with ES6 and they have other issues)
  * Check here for more: https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750
  */
-var ValidatedComponent = (ComposedComponent) => {
+export const ValidatorContext = React.createContext({
+  registerValidator: () => {},
+  unregisterValidator: () => {},
+})
 
-  ComposedComponent.contextTypes = ComposedComponent.contextTypes || {};
-  ComposedComponent.contextTypes.isComponentValid = React.PropTypes.func;
-  ComposedComponent.contextTypes.getValidationMessages = React.PropTypes.func;
-
+const ValidatedComponent = ComposedComponent => {
   class ValidatedComponent extends React.Component {
     constructor() {
-      super();
-      this.validators = [];
+      super()
+      this.validators = []
     }
 
-    getChildContext() {
+    getValidationFormProps() {
       return {
         isComponentValid: this.isValid.bind(this),
         getValidationMessages: this.getValidationMessages.bind(this),
+      }
+    }
+
+    getFieldValidatorContext() {
+      return {
         registerValidator: this.onRegisterValidator.bind(this),
-        unregisterValidator: this.onUnregisterValidator.bind(this)
-      };
+        unregisterValidator: this.onUnregisterValidator.bind(this),
+      }
     }
 
     onRegisterValidator(validator) {
-      this.validators.push(validator);
+      this.validators.push(validator)
     }
 
     onUnregisterValidator(owner) {
-      _.remove(this.validators, {owner});
+      _.remove(this.validators, {owner})
     }
 
     isValid() {
-      var isValid = true;
+      let isValid = true
       this.validators.forEach(v => {
-        v.owner.validate();
-        isValid = isValid && v.owner.isValid();
-      });
-      return isValid;
+        v.owner.validate()
+        isValid = isValid && v.owner.isValid()
+      })
+      return isValid
     }
 
     getValidationMessages() {
-      var results = [];
+      const results = []
       this.validators.forEach(v => {
-        var message = v.owner.getValidationMessage();
+        const message = v.owner.getValidationMessage()
         if (message) {
-          results.push(message);
+          results.push(message)
         }
-      });
+      })
 
-      return results;
+      return results
     }
 
     render() {
-      return <ComposedComponent ref="composedComponent" {...this.props}/>;
+      const newProps = {...this.props, ...this.getValidationFormProps()}
+      return (
+        <ValidatorContext.Provider value={this.getFieldValidatorContext()}>
+          <ComposedComponent {...newProps} />
+        </ValidatorContext.Provider>
+      )
     }
   }
 
-  ValidatedComponent.childContextTypes = {
-    isComponentValid: React.PropTypes.func.isRequired,
-    getValidationMessages: React.PropTypes.func.isRequired,
-    registerValidator: React.PropTypes.func.isRequired,
-    unregisterValidator: React.PropTypes.func.isRequired
-  };
+  ValidatedComponent.displayName = 'ValidatedComponent'
 
-  ValidatedComponent.displayName = 'ValidatedComponent';
+  return ValidatedComponent
+}
 
-  return ValidatedComponent;
-};
-
-export default ValidatedComponent;
+export default ValidatedComponent
