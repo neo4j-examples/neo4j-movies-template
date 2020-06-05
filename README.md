@@ -80,6 +80,7 @@ If everything runs corretly you should get the following:
 From the root directory of this project:
 
 * `cd api`
+* `nvm use`
 * `npm install`
 * `node app.js` starts the API
 * Take a look at the docs at [http://localhost:3000/docs](http://localhost:3000/docs)
@@ -97,20 +98,15 @@ From the root directory of this project:
 
 ## Frontend
 
-This step may present some problems on Windows becasue it requries both Bower and gulp to be installed.  A common problem with these npm installations is the path is not properly set to the script files are not found.
-A simple fix for this is to manually set the `PATH` (in my case I also use nvm to manage node versions so the set script looks like the following):
-
-![image of PATH settings for NPM](./img/setNpmPath.png)
-
 From the root directory of this project, set up and start the frontend with:
 
 * `cd web`
+* `nvm use`
 * `npm install` (if `package.json` changed)
-* `bower install` to install the styles
 * update config.settings.js file
-  * if you are using the Node API: `copy config/settings.example.js config/settings.js`
-  * if you are using the flask api then edit `config/settings.js` and change the `apiBaseURL` to `http://localhost:5000/api/v0`
-* `gulp` starts the app on [http://localhost:4000/](http://localhost:4000/)
+  * if you are using the Node API: `copy src/config/settings.example.js src/config/settings.js`
+  * if you are using the flask api then edit `src/config/settings.js` and change the `apiBaseURL` to `http://localhost:5000/api/v0`
+* `npm start` starts the app on [http://localhost:3000/](http://localhost:3000/)
 
   ![image of PATH settings for NPM](./img/webUX.png)
 
