@@ -1,6 +1,5 @@
-import settings from '../../config/settings';
+import settings from '../config/settings';
 import axios from './axios';
-import _ from 'lodash';
 
 const {apiBaseURL} = settings;
 

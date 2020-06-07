@@ -1,14 +1,11 @@
 import _ from 'lodash';
-import React, {PropTypes} from 'react';
-import {Link} from 'react-router';
+import React from 'react';
+import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 import {createProfileInit} from '../redux/actions/ProfileActions';
 import {connect} from 'react-redux';
 
 class SignupStatus extends React.Component {
-  constructor() {
-    super();
-  }
-
   componentWillMount() {
     var {profile} = this.props;
 

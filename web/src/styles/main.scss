@@ -1,6 +1,8 @@
+@import "components/buttonLink";
+
 @import '_variables.scss';
-@import '../../bower_components/foundation/scss/normalize';
-@import '../../bower_components/foundation/scss/foundation';
+@import './foundation/scss/normalize';
+@import './foundation/scss/foundation';
 
 @import "components/notificationContainer";
 @import "components/header";

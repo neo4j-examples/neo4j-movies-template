@@ -8,13 +8,13 @@ var User = require('../models/neo4j/user');
 var crypto = require('crypto');
 
 var register = function (session, username, password) {
-  return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+  return session.run('MATCH (user:User {username: $username}) RETURN user', {username: username})
     .then(results => {
       if (!_.isEmpty(results.records)) {
         throw {username: 'username already in use', status: 400}
       }
       else {
-        return session.run('CREATE (user:User {id: {id}, username: {username}, password: {password}, api_key: {api_key}}) RETURN user',
+        return session.run('CREATE (user:User {id: $id, username: $username, password: $password, api_key: $api_key}) RETURN user',
           {
             id: uuid.v4(),
             username: username,
@@ -33,7 +33,7 @@ var register = function (session, username, password) {
 };
 
 var me = function (session, apiKey) {
-  return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {api_key: apiKey})
+  return session.run('MATCH (user:User {api_key: $api_key}) RETURN user', {api_key: apiKey})
     .then(results => {
       if (_.isEmpty(results.records)) {
         throw {message: 'invalid authorization key', status: 401};
@@ -43,7 +43,7 @@ var me = function (session, apiKey) {
 };
 
 var login = function (session, username, password) {
-  return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+  return session.run('MATCH (user:User {username: $username}) RETURN user', {username: username})
     .then(results => {
         if (_.isEmpty(results.records)) {
           throw {username: 'username does not exist', status: 400}

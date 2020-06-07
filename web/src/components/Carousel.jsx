@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 
 export default class Carousel extends React.Component {
   constructor() {
@@ -35,12 +34,12 @@ export default class Carousel extends React.Component {
 
     return (
       <div className="nt-carousel" ref="root">
-        <a href="#"
-           className="nt-carousel-right"
-           onClick={this.onRightClick.bind(this)}><span className="nt-carousel-arrow">&#10097;</span></a>
-        <a href="#"
-           className="nt-carousel-left"
-           onClick={this.onLeftClick.bind(this)}><span className="nt-carousel-arrow">&#10096;</span></a>
+        <button
+          className="buttonLink nt-carousel-right"
+          onClick={this.onRightClick.bind(this)}><span className="nt-carousel-arrow">&#10097;</span></button>
+        <button
+          className="buttonLink nt-carousel-left"
+          onClick={this.onLeftClick.bind(this)}><span className="nt-carousel-arrow">&#10096;</span></button>
         <ul className="nt-carousel-list" ref="list">
           {
             React.Children.map(children, (c, i) => {

@@ -20,3 +20,4 @@ def env(key, default=None, required=True):
 
 DATABASE_USERNAME = env('MOVIE_DATABASE_USERNAME')
 DATABASE_PASSWORD = env('MOVIE_DATABASE_PASSWORD')
+DATABASE_URL = env('MOVIE_DATABASE_URL', 'bolt://localhost')

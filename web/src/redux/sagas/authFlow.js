@@ -1,5 +1,4 @@
-import {call, put} from 'redux-saga/effects';
-import {takeEvery} from 'redux-saga';
+import {all, call, put, takeEvery} from 'redux-saga/effects';
 import AuthApi from '../../api/AuthApi';
 import * as Actions from '../actions/AuthActions';
 import * as ProfileActions from '../actions/ProfileActions';
@@ -7,11 +6,10 @@ import * as Types from '../actions/AuthActionTypes';
 import UserSession from '../../UserSession';
 
 export default function* authFlow() {
-
-  yield [
+  yield all([
     takeEvery(Types.LOGIN, login),
     takeEvery(Types.LOGOUT, logout)
-  ];
+  ]);
 }
 
 function* login(action) {
@@ -29,5 +27,5 @@ function* login(action) {
 }
 
 function* logout() {
-  UserSession.setToken(null);
+  yield UserSession.setToken(null);
 }

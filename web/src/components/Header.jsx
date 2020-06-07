@@ -1,13 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {logout} from '../redux/actions/AuthActions';
 import {connect} from 'react-redux';
+import _ from 'lodash';
+import logoImg from '../assets/logo.png';
 
 class Header extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     var {props} = this;
     var profile = _.get(props, 'profile');
@@ -17,21 +15,23 @@ class Header extends React.Component {
       <nav className="nt-app-header">
         <div className="nt-app-header-logo">
           <Link to="/">
-            <img src="/logo.png"/>
+            <img src={logoImg} alt="" />
           </Link>
         </div>
         <ul className="nt-app-header-links">
           <li>
             <a className="nt-app-header-link"
                href="https://github.com/neo4j-examples/neo4j-movies-template"
-               target="_blank">
+               target="_blank"
+               rel="noopener noreferrer">
               GitHub Project
             </a>
           </li>
           <li>
             <a className="nt-app-header-link"
                href="http://neo4j.com/"
-               target="_blank">
+               target="_blank"
+               rel="noopener noreferrer">
               Neo4j 3.1.0
             </a>
           </li>
@@ -46,7 +46,7 @@ class Header extends React.Component {
                 : null
             }
             <div className="log-container">
-              {isLoggedIn ? <a onClick={this.logout.bind(this)} className="logout">Log out</a> : <Link to="/login">Log in</Link>}
+              {isLoggedIn ? <button onClick={this.logout.bind(this)} className="buttonLink logout">Log out</button> : <Link to="/login">Log in</Link>}
             </div>
             <div>
               {isLoggedIn ? null : <Link to="/signup">Sign up</Link>}

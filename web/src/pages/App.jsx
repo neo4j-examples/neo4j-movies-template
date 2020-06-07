@@ -1,38 +1,32 @@
-import React, {PropTypes} from 'react';
-import { render } from 'react-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import Header from '../components/Header.jsx';
 import {getProfile} from '../redux/actions/ProfileActions';
 import UserSession from '../UserSession';
-import Footer from '../components/Footer.jsx';
+// import Footer from '../components/Footer.jsx';
 import Breadcrumbs from '../components/Breadcrumbs.jsx';
 import NotificationContainer from '../components/common/NotificationContainer.jsx';
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import {getGenres} from '../redux/actions/MovieActions';
+import "../styles/main.scss";
 
 class App extends React.Component {
-  constructor() {
-    super();
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     if (UserSession.getToken() && !this.props.profile) {
       this.props.dispatch(getProfile());
     }
   }
 
   render() {
-    var {auth, profile, routes, movie, person, params} = this.props;
+    var {auth, profile, movie, person} = this.props;
 
     return (
       <div className="nt-app">
         <Header auth={auth}
                 profile={profile}/>
-        <Breadcrumbs routes={routes}
-                     params={params}
-                     movie={movie}
+        <Breadcrumbs movie={movie}
                      person={person}/>
         <div className="nt-app-page">
           {this.props.children}
@@ -43,11 +37,9 @@ class App extends React.Component {
     );
   }
 }
+
 App.displayName = 'App';
 App.propTypes = {
-  routes: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired,
-  children: PropTypes.object,
   movie: PropTypes.object,
   person: PropTypes.object
 };

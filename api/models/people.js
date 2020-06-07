@@ -51,7 +51,7 @@ function _manyPeople(neo4jResult) {
 // get a single person by id
 var getById = function (session, id) {
   var query = [
-    'MATCH (person:Person {id:{id}})',
+    'MATCH (person:Person {id: $id})',
     'OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)',
     'OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)',
     'OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)',
@@ -87,7 +87,7 @@ var getAll = function (session) {
 var getBaconPeople = function (session, name1, name2) {
 //needs to be optimized
   var query = [
-    'MATCH p = shortestPath( (p1:Person {name:{name1} })-[:ACTED_IN*]-(target:Person {name:{name2} }) )',
+    'MATCH p = shortestPath( (p1:Person {name: $name1 })-[:ACTED_IN*]-(target:Person {name: $name2 }) )',
     'WITH extract(n in nodes(p)|n) AS coll',
     'WITH filter(thing in coll where length(thing.name)> 0) AS bacon',
     'UNWIND(bacon) AS person',

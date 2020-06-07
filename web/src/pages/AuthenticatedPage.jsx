@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import {connect} from 'react-redux';
 
 /**
@@ -15,11 +17,11 @@ var AuthenticatedPage = (PageComponent) => {
     }
 
     componentWillMount() {
-      var {auth, location} = this.props;
+      var {auth, location, history} = this.props;
 
       if (!auth.token) {
         var query = {redirectTo: (location.pathname + location.search)};
-        this.context.router.push({pathname: '/login', query});
+        history.push({pathname: '/login', query});
       }
     }
 
@@ -28,10 +30,10 @@ var AuthenticatedPage = (PageComponent) => {
     }
 
     redirectOnLogout(props) {
-      var {auth, location} = props;
+      var {auth, location, history} = props;
 
       if (!auth.token && location.pathname !== '/login') {
-        this.context.router.push('/login');
+        history.push('/login');
       }
     }
 
@@ -47,7 +49,7 @@ var AuthenticatedPage = (PageComponent) => {
 
   AuthenticatedPage.displayName = 'AuthenticatedPage';
   AuthenticatedPage.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   };
 
   function mapStateToProps(state) {
@@ -57,7 +59,7 @@ var AuthenticatedPage = (PageComponent) => {
   }
 
   // Wrap the component to inject dispatch and state into it
-  return connect(mapStateToProps)(AuthenticatedPage);
+  return connect(mapStateToProps)(withRouter(AuthenticatedPage));
 };
 
 export default AuthenticatedPage;

@@ -1,7 +1,9 @@
-import React, {PropTypes} from 'react';
-import {Link} from 'react-router';
+import React from 'react';
+import PropTypes from 'prop-types';
+import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
 import InputValidator from '../components/validation/InputValidator.jsx';
-import validatedComponent from '../components/validation/ValidatedComponent.jsx';
+import ValidatedComponent from '../components/validation/ValidatedComponent.jsx';
 import * as Actions from '../redux/actions/AuthActions';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -27,7 +29,7 @@ class Login extends React.Component {
   login(e) {
     e.preventDefault();
 
-    if (this.context.isComponentValid()) {
+    if (this.props.isComponentValid()) {
       this.props.login(this.state.username, this.state.password);
     }
   }
@@ -41,13 +43,13 @@ class Login extends React.Component {
   }
 
   redirectIfAuthed(props) {
-    var {location, token} = props;
+    var {token, match, history} = props;
     if (token) {
-      if (location.query.redirectTo) {
-        this.context.router.push(location.query.redirectTo);
+      if (match.params.redirectTo) {
+        history.push(match.params.redirectTo);
       }
       else {
-        this.context.router.push('/');
+        history.push('/');
       }
     }
   }
@@ -127,10 +129,6 @@ Login.propTypes = {
   query: PropTypes.object
 };
 
-Login.contextTypes = {
-  router: PropTypes.object.isRequired
-};
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
@@ -139,4 +137,4 @@ function mapStateToProps(state) {
   return {...state.auth};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(validatedComponent(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(ValidatedComponent(withRouter(Login)));

@@ -1,8 +1,8 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import Loading from '../components/Loading.jsx';
 import Carousel from '../components/Carousel.jsx';
+import _ from 'lodash';
 
 import * as MovieActions from '../redux/actions/MovieActions';
 import { bindActionCreators } from 'redux';
@@ -50,7 +50,7 @@ class Home extends React.Component {
             return (
               <li key={f.id}>
                 <Link to={`/movie/${f.id}`}>
-                  <img src={f.posterImage}/>
+                  <img src={f.posterImage} alt="" />
                 </Link>
               </li>
             );
@@ -79,7 +79,7 @@ class Home extends React.Component {
               return (
                 <div key={m.id}>
                   <Link to={`/movie/${m.id}`}>
-                    <img src={m.posterImage}/>
+                    <img src={m.posterImage} alt="" />
                   </Link>
                   <div className="nt-carousel-movie-title">
                     <Link to={`/movie/${m.id}`}>{m.title}</Link>

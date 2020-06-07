@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthenticatedPage from './AuthenticatedPage.jsx';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import UserRating from '../components/UserRating.jsx';
 import Carousel from '../components/Carousel.jsx';
 import {connect} from 'react-redux';
@@ -9,17 +9,13 @@ import _ from 'lodash';
 import * as ProfileActions from '../redux/actions/ProfileActions';
 
 class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.getProfileRatings();
     this.props.getProfileRecommendations();
   }
 
   render() {
-    var {profile, isFetching, ratedMovies, recommendedMovies} = this.props.profile;
+    var {profile, ratedMovies, recommendedMovies} = this.props.profile;
     var {profileRateMovie, profileDeleteMovieRating} = this.props;
 
     if (!profile) {
@@ -39,7 +35,7 @@ class Profile extends React.Component {
                 <div className="row">
                   <div className="small-12 medium-2 large-2 columns">
                     <div className="nt-profile-gravatar">
-                      <img src={_.get(profile, 'avatar.fullSize')}/>
+                      <img src={_.get(profile, 'avatar.fullSize')} alt="" />
                     </div>
                   </div>
                   <div className="small-12 medium-10 large-10 columns">
@@ -65,7 +61,7 @@ class Profile extends React.Component {
                     return (
                       <div key={movie.id}>
                         <Link to={`/movie/${movie.id}`}>
-                          <img src={movie.posterImage} className="nt-profile-movie-cover"/>
+                          <img src={movie.posterImage} className="nt-profile-movie-cover" alt=""/>
                         </Link>
                         <div className="nt-profile-movie-title">
                           <Link to={`/movie/${movie.id}`}>
@@ -102,7 +98,7 @@ class Profile extends React.Component {
                       return (
                         <div key={m.id}>
                           <Link to={`/movie/${m.id}`}>
-                            <img src={m.posterImage}/>
+                            <img src={m.posterImage} alt="" />
                           </Link>
                           <div className="nt-carousel-movie-title">
                             <Link to={`/movie/${m.id}`}>{m.title}</Link>

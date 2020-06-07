@@ -3,27 +3,23 @@ import _ from 'lodash';
 import Loading from '../components/Loading.jsx';
 import Carousel from '../components/Carousel.jsx';
 import UserRating from '../components/UserRating.jsx';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import * as MovieActions from '../redux/actions/MovieActions';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 
 class Movie extends React.Component {
-  constructor() {
-    super();
-  }
-
-  componentWillMount() {
-    var {id} = this.props.params;
+  componentDidMount() {
+    var {id} = this.props.match.params;
     this.props.getMovie(id);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id != this.props.params.id) {
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
       this.props.clearMovie();
 
-      var {id} = nextProps.params;
+      var {id} = this.props.match.params;
       this.props.getMovie(id);
     }
   }
@@ -31,7 +27,6 @@ class Movie extends React.Component {
   componentWillUnmount() {
     this.props.clearMovie();
   }
-
 
   render() {
     var {isFetching, movie, rateMovie, deleteMovieRating, profile} = this.props;
@@ -49,7 +44,8 @@ class Movie extends React.Component {
             <div className="row">
               <div className="small-12 medium-4 columns nt-movie-aside">
                 <img className="nt-movie-poster"
-                     src={movie.posterImage}/>
+                     src={movie.posterImage}
+                     alt="" />
                 <div className="nt-box">
                   <div className="nt-box-title">
                     Storyline
@@ -148,7 +144,7 @@ class Movie extends React.Component {
             return (
               <div key={a.id}>
                 <Link to={`/person/${a.id}`}>
-                  <img src={a.posterImage}/>
+                  <img src={a.posterImage} alt="" />
                 </Link>
                 <div className="nt-carousel-actor-name"><Link to={`/person/${a.id}`}>{a.name}</Link></div>
                 <div className="nt-carousel-actor-role">{a.role}</div>
@@ -171,7 +167,7 @@ class Movie extends React.Component {
             return (
               <div key={m.id}>
                 <Link to={`/movie/${m.id}`}>
-                  <img src={m.posterImage}/>
+                  <img src={m.posterImage} alt="" />
                 </Link>
                 <div className="nt-carousel-movie-title">
                   <Link to={`/movie/${m.id}`}>{m.title}</Link>

@@ -1,19 +1,17 @@
-import {call, put, take} from 'redux-saga/effects';
-import {takeEvery} from 'redux-saga';
+import {all, call, put, takeEvery} from 'redux-saga/effects';
 import ProfileApi from '../../api/ProfileApi';
 import MoviesApi from '../../api/MoviesApi';
 import * as Actions from '../actions/ProfileActions';
 import * as Types from '../actions/ProfileActionTypes';
 
 export default function* profileFlow() {
-
-  yield [
+  yield all([
     takeEvery(Types.PROFILE_GET, getProfile),
     takeEvery(Types.PROFILE_GET_RATINGS, getProfileRatings),
     takeEvery(Types.PROFILE_MOVIE_RATE, profileRateMovie),
     takeEvery(Types.PROFILE_MOVIE_DELETE_RATING, profileDeleteRating),
     takeEvery(Types.PROFILE_GET_RECOMMENDATIONS, getProfileRecommendations)
-  ];
+  ]);
 }
 
 function* getProfile() {

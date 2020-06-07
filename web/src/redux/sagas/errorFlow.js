@@ -1,9 +1,9 @@
-import { takeEvery } from 'redux-saga';
-import { put } from 'redux-saga/effects';
+import { takeEvery, put } from 'redux-saga/effects';
 import * as NotificationActions from '../actions/NotificationActions';
+import _ from 'lodash';
 
 export default function* watchErrors(getState) {
-  yield* takeEvery('*', function* logger(action) {
+  yield takeEvery('*', function* logger(action) {
     if(action.error) {
       var errorAction = createErrorNotification(action.error);
       yield put(errorAction);
@@ -12,11 +12,11 @@ export default function* watchErrors(getState) {
 }
 
 function createErrorNotification(err) {
-  if(err.status == 500) {
+  if(err.status === 500) {
     return NotificationActions.createError(err.statusText || 'Internal Server Error');
   }
 
-  if (err.status != 401) {
+  if (err.status !== 401) {
     var errMessages = [];
     if (err.data) {
       try {
@@ -29,7 +29,7 @@ function createErrorNotification(err) {
           errMessages.push(`${prop}: ${msg}`);
         }
       } catch (ex) {
-        Console.log(ex);
+        console.error(ex);
       }
     }
 
