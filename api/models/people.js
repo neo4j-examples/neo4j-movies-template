@@ -65,9 +65,9 @@ var getById = function (session, id) {
     'collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.id, poster_image:relatedPerson.poster_image, role:relatedRole.role}) AS related'
   ].join('\n');
 
-  return session
-    .run(query, {id: parseInt(id)})
-    .then(result => {
+  return session.readTransaction(txc =>
+      txc.run(query, {id: parseInt(id)})
+    ).then(result => {
       if (!_.isEmpty(result.records)) {
         return _singlePersonWithDetails(result.records[0]);
       }
@@ -79,8 +79,9 @@ var getById = function (session, id) {
 
 // get all people
 var getAll = function (session) {
-  return session.run('MATCH (person:Person) RETURN person')
-    .then(result => _manyPeople(result));
+  return session.readTransaction(txc =>
+      txc.run('MATCH (person:Person) RETURN person')
+    ).then(result => _manyPeople(result));
 };
 
 // get people in Bacon path, return many persons 
@@ -94,10 +95,12 @@ var getBaconPeople = function (session, name1, name2) {
     'RETURN DISTINCT person'
   ].join('\n');
 
-  return session.run(query, {
-    name1: name1,
-    name2: name2
-  }).then(result => _manyPeople(result))
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        name1: name1,
+        name2: name2
+      })
+    ).then(result => _manyPeople(result))
 };
 
 module.exports = {

@@ -49,17 +49,20 @@ def set_user(sender, **extra):
         return
     token = match.group(1)
 
-    db = get_db()
-    results = db.run(
-        '''
+    def get_user_by_token(tx, token):
+        return tx.run(
+            '''
             MATCH (user:User {api_key: $api_key}) RETURN user
             ''', {'api_key': token}
-    )
+        ).single()
+
+    db = get_db()
+    result = db.read_transaction(get_user_by_token, token)
     try:
-        g.user = results.single()['user']
-    except Neo4jError:
+        g.user = result['user']
+    except KeyError:
         abort(401, 'invalid authorization key')
-        return
+    return
 request_started.connect(set_user, app)
 
 
@@ -227,8 +230,10 @@ class GenreList(Resource):
         }
     })
     def get(self):
+        def get_genres(tx):
+            return list(tx.run('MATCH (genre:Genre) RETURN genre'))
         db = get_db()
-        result = db.run('MATCH (genre:Genre) RETURN genre')
+        result = db.read_transaction(get_genres)
         return [serialize_genre(record['genre']) for record in result]
 
 
@@ -263,33 +268,35 @@ class Movie(Resource):
         }
     })
     def get(self, id):
+        def get_movie(tx, movie_id, user_id):
+            return list(tx.run(
+                '''
+                MATCH (movie:Movie {id: $id})
+                OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $user_id})
+                OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
+                OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
+                OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)
+                OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)
+                OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)
+                OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)
+                OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)
+                WITH DISTINCT movie,
+                my_rated,
+                genre, keyword, d, p, w, a, r, related, count(related) AS countRelated
+                ORDER BY countRelated DESC
+                RETURN DISTINCT movie,
+                my_rated.rating AS my_rating,
+                collect(DISTINCT keyword) AS keywords,
+                collect(DISTINCT d) AS directors,
+                collect(DISTINCT p) AS producers,
+                collect(DISTINCT w) AS writers,
+                collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,
+                collect(DISTINCT related) AS related,
+                collect(DISTINCT genre) AS genres
+                ''', {'id': id, 'user_id': user_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (movie:Movie {id: $id})
-            OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $user_id})
-            OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
-            OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
-            OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)
-            OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)
-            OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)
-            OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)
-            OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)
-            WITH DISTINCT movie,
-            my_rated,
-            genre, keyword, d, p, w, a, r, related, count(related) AS countRelated
-            ORDER BY countRelated DESC
-            RETURN DISTINCT movie,
-            my_rated.rating AS my_rating,
-            collect(DISTINCT keyword) AS keywords,
-            collect(DISTINCT d) AS directors,
-            collect(DISTINCT p) AS producers,
-            collect(DISTINCT w) AS writers,
-            collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,
-            collect(DISTINCT related) AS related,
-            collect(DISTINCT genre) AS genres
-            ''', {'id': id, 'user_id': g.user['id']}
-        )
+        result = db.read_transaction(get_movie, id, g.user['id'])
         for record in result:
             return {
                 'id': record['movie']['id'],
@@ -334,12 +341,14 @@ class MovieList(Resource):
         }
     })
     def get(self):
+        def get_movies(tx):
+            return list(tx.run(
+                '''
+                MATCH (movie:Movie) RETURN movie
+                '''
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (movie:Movie) RETURN movie
-            '''
-        )
+        result = db.read_transaction(get_movies)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -368,14 +377,16 @@ class MovieListByGenre(Resource):
         }
     })
     def get(self, genre_id):
+        def get_movies_by_genre(tx, genre_id):
+            return list(tx.run(
+                '''
+                MATCH (movie:Movie)-[:HAS_GENRE]->(genre)
+                WHERE genre.id = $genre_id
+                RETURN movie
+                ''', {'genre_id': genre_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (movie:Movie)-[:HAS_GENRE]->(genre)
-            WHERE genre.id = $genre_id
-            RETURN movie
-            ''', {'genre_id': genre_id}
-        )
+        result = db.read_transaction(get_movies_by_genre, genre_id)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -411,18 +422,22 @@ class MovieListByDateRange(Resource):
         }
     })
     def get(self, start, end):
-        db = get_db()
         try:
             params = {'start': long(start), 'end': long(end)}
         except ValueError:
             return {'description': 'invalid year format'}, 400
-        result = db.run(
-            '''
-            MATCH (movie:Movie)
-            WHERE movie.released > $start AND movie.released < $end
-            RETURN movie
-            ''', params
-        )
+
+        def get_movies_list_by_date_range(tx, params):
+            return list(tx.run(
+                '''
+                MATCH (movie:Movie)
+                WHERE movie.released > $start AND movie.released < $end
+                RETURN movie
+                ''', params
+            ))
+
+        db = get_db()
+        result = db.read_transaction(get_movies_list_by_date_range, params)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -451,13 +466,15 @@ class MovieListByPersonActedIn(Resource):
         }
     })
     def get(self, person_id):
+        def get_movies_by_acted_in(tx, person_id):
+            return list(tx.run(
+                '''
+                MATCH (actor:Person {id: $person_id})-[:ACTED_IN]->(movie:Movie)
+                RETURN DISTINCT movie
+                ''', {'person_id': person_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (actor:Person {id: $person_id})-[:ACTED_IN]->(movie:Movie)
-            RETURN DISTINCT movie
-            ''', {'person_id': person_id}
-        )
+        result = db.read_transaction(get_movies_by_acted_in, person_id)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -486,13 +503,15 @@ class MovieListByWrittenBy(Resource):
         }
     })
     def get(self, person_id):
+        def get_movies_list_written_by(tx, person_id):
+            return list(tx.run(
+                '''
+                MATCH (actor:Person {id: $person_id})-[:WRITER_OF]->(movie:Movie)
+                RETURN DISTINCT movie
+                ''', {'person_id': person_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (actor:Person {id: $person_id})-[:WRITER_OF]->(movie:Movie)
-            RETURN DISTINCT movie
-            ''', {'person_id': person_id}
-        )
+        result = db.read_transaction(get_movies_list_written_by, person_id)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -521,13 +540,15 @@ class MovieListByDirectedBy(Resource):
         }
     })
     def get(self, person_id):
+        def get_mmovies_list_directed_by(tx, person_id):
+            return list(tx.run(
+                '''
+                MATCH (actor:Person {id: $person_id})-[:DIRECTED]->(movie:Movie)
+                RETURN DISTINCT movie
+                ''', {'person_id': person_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (actor:Person {id: $person_id})-[:DIRECTED]->(movie:Movie)
-            RETURN DISTINCT movie
-            ''', {'person_id': person_id}
-        )
+        result = db.read_transaction(get_mmovies_list_directed_by, person_id)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -557,13 +578,15 @@ class MovieListRatedByMe(Resource):
     })
     @login_required
     def get(self):
+        def get_movies_rated_by_me(tx, user_id):
+            return list(tx.run(
+                '''
+                MATCH (:User {id: $user_id})-[rated:RATED]->(movie:Movie)
+                RETURN DISTINCT movie, rated.rating as my_rating
+                ''', {'user_id': user_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (:User {id: $user_id})-[rated:RATED]->(movie:Movie)
-            RETURN DISTINCT movie, rated.rating as my_rating
-            ''', {'user_id': g.user['id']}
-        )
+        result = db.read_transaction(get_movies_rated_by_me, g.user['id'])
         return [serialize_movie(record['movie'], record['my_rating']) for record in result]
 
 
@@ -593,22 +616,24 @@ class MovieListRecommended(Resource):
     })
     @login_required
     def get(self):
+        def get_movies_list_recommended(tx, user_id):
+            return list(tx.run(
+                '''
+                MATCH (me:User {id: $user_id})-[my:RATED]->(m:Movie)
+                MATCH (other:User)-[their:RATED]->(m)
+                WHERE me <> other
+                AND abs(my.rating - their.rating) < 2
+                WITH other,m
+                MATCH (other)-[otherRating:RATED]->(movie:Movie)
+                WHERE movie <> m 
+                WITH avg(otherRating.rating) AS avgRating, movie
+                RETURN movie
+                ORDER BY avgRating desc
+                LIMIT 25
+                ''', {'user_id': user_id}
+            ))
         db = get_db()
-        result = db.run(
-            '''
-            MATCH (me:User {id: $user_id})-[my:RATED]->(m:Movie)
-            MATCH (other:User)-[their:RATED]->(m)
-            WHERE me <> other
-            AND abs(my.rating - their.rating) < 2
-            WITH other,m
-            MATCH (other)-[otherRating:RATED]->(movie:Movie)
-            WHERE movie <> m 
-            WITH avg(otherRating.rating) AS avgRating, movie
-            RETURN movie
-            ORDER BY avgRating desc
-            LIMIT 25
-            ''', {'user_id': g.user['id']}
-        )
+        result = db.read_transaction(get_movies_list_recommended, g.user['id'])
         return [serialize_movie(record['movie']) for record in result]
 
 class Person(Resource):
@@ -636,23 +661,25 @@ class Person(Resource):
         }
     })
     def get(self, id):
+        def get_person_by_id(tx, user_id):
+            return list(tx.run(
+                '''
+                MATCH (person:Person {id: $id})
+                OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)
+                OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)
+                OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)
+                OPTIONAL MATCH (person)<-[r:ACTED_IN]->(a:Movie)
+                OPTIONAL MATCH (person)-->(movies)<-[relatedRole:ACTED_IN]-(relatedPerson)
+                RETURN DISTINCT person,
+                collect(DISTINCT { name:d.title, id:d.id, poster_image:d.poster_image}) AS directed,
+                collect(DISTINCT { name:p.title, id:p.id, poster_image:p.poster_image}) AS produced,
+                collect(DISTINCT { name:w.title, id:w.id, poster_image:w.poster_image}) AS wrote,
+                collect(DISTINCT{ name:a.title, id:a.id, poster_image:a.poster_image, role:r.role}) AS actedIn,
+                collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.id, poster_image:relatedPerson.poster_image, role:relatedRole.role}) AS related
+                ''', {'id': user_id}
+            ))
         db = get_db()
-        results = db.run(
-            '''
-            MATCH (person:Person {id: $id})
-            OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)
-            OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)
-            OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)
-            OPTIONAL MATCH (person)<-[r:ACTED_IN]->(a:Movie)
-            OPTIONAL MATCH (person)-->(movies)<-[relatedRole:ACTED_IN]-(relatedPerson)
-            RETURN DISTINCT person,
-            collect(DISTINCT { name:d.title, id:d.id, poster_image:d.poster_image}) AS directed,
-            collect(DISTINCT { name:p.title, id:p.id, poster_image:p.poster_image}) AS produced,
-            collect(DISTINCT { name:w.title, id:w.id, poster_image:w.poster_image}) AS wrote,
-            collect(DISTINCT{ name:a.title, id:a.id, poster_image:a.poster_image, role:r.role}) AS actedIn,
-            collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.id, poster_image:relatedPerson.poster_image, role:relatedRole.role}) AS related
-            ''', {'id': id}
-        )
+        results = db.read_transaction(get_person_by_id, id)
         for record in results:
             return {
                 'id': record['person']['id'],
@@ -716,12 +743,14 @@ class PersonList(Resource):
         }
     })
     def get(self):
+        def get_persons_list(tx):
+            return list(tx.run(
+                '''
+                MATCH (person:Person) RETURN person
+                '''
+            ))
         db = get_db()
-        results = db.run(
-            '''
-            MATCH (person:Person) RETURN person
-            '''
-        )
+        results = db.read_transaction(get_persons_list)
         return [serialize_person(record['person']) for record in results]
 
 
@@ -759,16 +788,18 @@ class PersonBacon(Resource):
     def get(self):
         name1 = request.args['name1']
         name2 = request.args['name2']
+        def get_bacon(tx, name1, name2):
+            return list(tx.run(
+                '''
+                MATCH p = shortestPath( (p1:Person {name: $name1})-[:ACTED_IN*]-(target:Person {name: $name2}) )
+                WITH extract(n in nodes(p)|n) AS coll
+                WITH filter(thing in coll where length(thing.name)> 0) AS bacon
+                UNWIND(bacon) AS person
+                RETURN DISTINCT person
+                ''', {'name1': name1, 'name2': name2}
+            ))
         db = get_db()
-        results = db.run(
-            '''
-            MATCH p = shortestPath( (p1:Person {name: $name1})-[:ACTED_IN*]-(target:Person {name: $name2}) )
-            WITH extract(n in nodes(p)|n) AS coll
-            WITH filter(thing in coll where length(thing.name)> 0) AS bacon
-            UNWIND(bacon) AS person
-            RETURN DISTINCT person
-            ''', {'name1': name1, 'name2': name2}
-        )
+        results = db.read_transaction(get_bacon, name1, name2)
         return [serialize_person(record['person']) for record in results]
 
 
@@ -813,31 +844,33 @@ class Register(Resource):
         if not password:
             return {'password': 'This field is required.'}, 400
 
+        def get_user_by_username(tx, username):
+            return tx.run(
+                '''
+                MATCH (user:User {username: $username}) RETURN user
+                ''', {'username': username}
+            ).single()
+
         db = get_db()
+        result = db.read_transaction(get_user_by_username, username)
+        if result and result.get('user'):
+            return {'username': 'username already in use'}, 400
 
-        results = db.run(
-            '''
-            MATCH (user:User {username: $username}) RETURN user
-            ''', {'username': username}
-        )
-        try:
-            if results.single():
-                return {'username': 'username already in use'}, 400
-        except Neo4jError:
-            pass
+        def create_user(tx, username, password):
+            return tx.run(
+                '''
+                CREATE (user:User {id: $id, username: $username, password: $password, api_key: $api_key}) RETURN user
+                ''',
+                {
+                    'id': str(uuid.uuid4()),
+                    'username': username,
+                    'password': hash_password(username, password),
+                    'api_key': binascii.hexlify(os.urandom(20)).decode()
+                }
+            ).single()
 
-        results = db.run(
-            '''
-            CREATE (user:User {id: $id, username: $username, password: $password, api_key: $api_key}) RETURN user
-            ''',
-            {
-                'id': str(uuid.uuid4()),
-                'username': username,
-                'password': hash_password(username, password),
-                'api_key': binascii.hexlify(os.urandom(20)).decode()
-            }
-        )
-        user = results.single()['user']
+        results = db.write_transaction(create_user, username, password)
+        user = results['user']
         return serialize_user(user), 201
 
 
@@ -881,15 +914,18 @@ class Login(Resource):
         if not password:
             return {'password': 'This field is required.'}, 400
 
+        def get_user_by_username(tx, username):
+            return tx.run(
+                '''
+                MATCH (user:User {username: $username}) RETURN user
+                ''', {'username': username}
+            ).single()
+
         db = get_db()
-        results = db.run(
-            '''
-            MATCH (user:User {username: $username}) RETURN user
-            ''', {'username': username}
-        )
+        result = db.read_transaction(get_user_by_username, username)
         try:
-            user = results.single()['user']
-        except Neo4jError:
+            user = result['user']
+        except KeyError:
             return {'username': 'username does not exist'}, 400
 
         expected_password = hash_password(user['username'], password)
@@ -975,15 +1011,18 @@ class RateMovie(Resource):
         args = parser.parse_args()
         rating = args['rating']
 
+        def rate_movie(tx, user_id, movie_id, rating):
+            return tx.run(
+                '''
+                MATCH (u:User {id: $user_id}),(m:Movie {id: $movie_id})
+                MERGE (u)-[r:RATED]->(m)
+                SET r.rating = $rating
+                RETURN m
+                ''', {'user_id': user_id, 'movie_id': movie_id, 'rating': rating}
+            )
+
         db = get_db()
-        results = db.run(
-            '''
-            MATCH (u:User {id: $user_id}),(m:Movie {id: $movie_id})
-            MERGE (u)-[r:RATED]->(m)
-            SET r.rating = $rating
-            RETURN m
-            ''', {'user_id': g.user['id'], 'movie_id': id, 'rating': rating}
-        )
+        results = db.write_transaction(rate_movie, g.user['id'], id, rating)
         return {}
 
     @swagger.doc({
@@ -1016,12 +1055,14 @@ class RateMovie(Resource):
     })
     @login_required
     def delete(self, id):
+        def delete_rating(tx, user_id, movie_id):
+            return tx.run(
+                '''
+                MATCH (u:User {id: $user_id})-[r:RATED]->(m:Movie {id: $movie_id}) DELETE r
+                ''', {'movie_id': movie_id, 'user_id': user_id}
+            )
         db = get_db()
-        db.run(
-            '''
-            MATCH (u:User {id: $user_id})-[r:RATED]->(m:Movie {id: $movie_id}) DELETE r
-            ''', {'movie_id': id, 'user_id': g.user['id']}
-        )
+        db.write_transaction(delete_rating, g.user['id'], id)
         return {}, 204
 
 

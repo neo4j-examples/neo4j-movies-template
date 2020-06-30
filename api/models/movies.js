@@ -60,8 +60,9 @@ function manyMovies(neo4jResult) {
 
 // get all movies
 var getAll = function (session) {
-  return session
-    .run('MATCH (movie:Movie) RETURN movie')
+  return session.readTransaction(txc => (
+      txc.run('MATCH (movie:Movie) RETURN movie')
+    ))
     .then(r => manyMovies(r));
 };
 
@@ -92,17 +93,20 @@ var getById = function (session, movieId, userId) {
     'collect(DISTINCT genre) AS genres',
   ].join('\n');
 
-  return session.run(query, {
-    movieId: parseInt(movieId),
-    userId: userId
-  }).then(result => {
-    if (!_.isEmpty(result.records)) {
-      return _singleMovieWithDetails(result.records[0]);
-    }
-    else {
-      throw {message: 'movie not found', status: 404}
-    }
-  });
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        movieId: parseInt(movieId),
+        userId: userId
+      })
+    )
+    .then(result => {
+      if (!_.isEmpty(result.records)) {
+        return _singleMovieWithDetails(result.records[0]);
+      }
+      else {
+        throw {message: 'movie not found', status: 404}
+      }
+    });
 };
 
 // Get by date range
@@ -113,10 +117,13 @@ var getByDateRange = function (session, start, end) {
     'RETURN movie'
   ].join('\n');
 
-  return session.run(query, {
-    start: parseInt(start || 0),
-    end: parseInt(end || 0)
-  }).then(result => manyMovies(result))
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        start: parseInt(start || 0),
+        end: parseInt(end || 0)
+      })
+    )
+    .then(result => manyMovies(result))
 };
 
 // Get by date range
@@ -126,9 +133,11 @@ var getByActor = function (session, id) {
     'RETURN DISTINCT movie'
   ].join('\n');
 
-  return session.run(query, {
-    id: parseInt(id)
-  }).then(result => manyMovies(result))
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        id: parseInt(id)
+      })
+    ).then(result => manyMovies(result))
 };
 
 // get a movie by genre
@@ -139,9 +148,11 @@ var getByGenre = function(session, genreId) {
     'RETURN movie'
   ].join('\n');
 
-  return session.run(query, {
-    genreId: parseInt(genreId)
-  }).then(result => manyMovies(result));
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        genreId: parseInt(genreId)
+      })
+    ).then(result => manyMovies(result));
 };
 
 // Get many movies directed by a person
@@ -151,9 +162,11 @@ var getByDirector = function(session, personId) {
     'RETURN DISTINCT movie'
   ].join('\n');
 
-  return session.run(query, {
-    personId: parseInt(personId)
-  }).then(result => manyMovies(result));
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        personId: parseInt(personId)
+      })
+    ).then(result => manyMovies(result));
 };
 
 // Get many movies written by a person
@@ -163,58 +176,67 @@ var getByWriter = function(session, personId) {
     'RETURN DISTINCT movie'
   ].join('\n');
 
-  return session.run(query, {
-    personId: parseInt(personId)
-  }).then(result => manyMovies(result));
+  return session.readTransaction(txc =>
+      txc.run(query, {
+        personId: parseInt(personId)
+      })
+    ).then(result => manyMovies(result));
 };
 
 var rate = function (session, movieId, userId, rating) {
-  return session.run(
-    'MATCH (u:User {id: $userId}),(m:Movie {id: $movieId}) \
-    MERGE (u)-[r:RATED]->(m) \
-    SET r.rating = $rating \
-    RETURN m',
-    {
-      userId: userId,
-      movieId: parseInt(movieId),
-      rating: parseInt(rating)
-    }
+  return session.writeTransaction(txc =>
+    txc.run(
+      'MATCH (u:User {id: $userId}),(m:Movie {id: $movieId}) \
+      MERGE (u)-[r:RATED]->(m) \
+      SET r.rating = $rating \
+      RETURN m',
+      {
+        userId: userId,
+        movieId: parseInt(movieId),
+        rating: parseInt(rating)
+      }
+    )
   );
 };
 
 var deleteRating = function (session, movieId, userId) {
-  return session.run(
-    'MATCH (u:User {id: $userId})-[r:RATED]->(m:Movie {id: $movieId}) DELETE r',
-    {userId: userId, movieId: parseInt(movieId)}
+  return session.writeTransaction(txc =>
+    txc.run(
+      'MATCH (u:User {id: $userId})-[r:RATED]->(m:Movie {id: $movieId}) DELETE r',
+      {userId: userId, movieId: parseInt(movieId)}
+    )
   );
 };
 
 var getRatedByUser = function (session, userId) {
-  return session.run(
-    'MATCH (:User {id: $userId})-[rated:RATED]->(movie:Movie) \
-     RETURN DISTINCT movie, rated.rating as my_rating',
-    {userId: userId}
+  return session.readTransaction(txc =>
+    txc.run(
+      'MATCH (:User {id: $userId})-[rated:RATED]->(movie:Movie) \
+       RETURN DISTINCT movie, rated.rating as my_rating',
+      {userId: userId}
+    )
   ).then(result => {
     return result.records.map(r => new Movie(r.get('movie'), r.get('my_rating')))
   });
 };
 
 var getRecommended = function (session, userId) {
-  return session.run(
-    'MATCH (me:User {id: $userId})-[my:RATED]->(m:Movie) \
-  MATCH (other:User)-[their:RATED]->(m) \
-  WHERE me <> other \
-  AND abs(my.rating - their.rating) < 2 \
-  WITH other,m \
-  MATCH (other)-[otherRating:RATED]->(movie:Movie) \
-  WHERE movie <> m \
-  WITH avg(otherRating.rating) AS avgRating, movie \
-  RETURN movie \
-  ORDER BY avgRating desc \
-  LIMIT 25',
-    {userId: userId}
-  ).then(result => manyMovies(result)
-  );
+  return session.readTransaction(txc =>
+    txc.run(
+      'MATCH (me:User {id: $userId})-[my:RATED]->(m:Movie) \
+      MATCH (other:User)-[their:RATED]->(m) \
+      WHERE me <> other \
+      AND abs(my.rating - their.rating) < 2 \
+      WITH other,m \
+      MATCH (other)-[otherRating:RATED]->(movie:Movie) \
+      WHERE movie <> m \
+      WITH avg(otherRating.rating) AS avgRating, movie \
+      RETURN movie \
+      ORDER BY avgRating desc \
+      LIMIT 25',
+      {userId: userId}
+    )
+  ).then(result => manyMovies(result));
 };
 
 // export exposed functions

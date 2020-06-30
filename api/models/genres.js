@@ -2,8 +2,9 @@ var _ = require('lodash');
 var Genre = require('../models/neo4j/genre');
 
 var getAll = function(session) {
-  return session.run('MATCH (genre:Genre) RETURN genre')
-    .then(_manyGenres);
+  return session.readTransaction(txc =>
+      txc.run('MATCH (genre:Genre) RETURN genre')
+    ).then(_manyGenres);
 };
 
 var _manyGenres = function (result) {
