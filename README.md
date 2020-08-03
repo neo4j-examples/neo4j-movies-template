@@ -27,17 +27,31 @@ This Neo4j-based node / react web app displays movie and person data in a manner
 
 * [Download Neo4j Community Edition: .tar Version](https://neo4j.com/download/other-releases/)
 * [video instructions start here](https://youtu.be/O71B2KcTD6A)
-* Set your `NEO4J_HOME` variable: `export NEO4J_HOME=/path/to/neo4j-community`
+* Set your `NEO4J_HOME` variable to the path of the database (check the logs tab in Neo4j Desktop): `export NEO4J_HOME=/path/to/neo4j`
 * From this project's root directory, run the import script:
 
 ```
-$NEO4J_HOME/bin/neo4j-import --into $NEO4J_HOME/data/databases/graph.db --nodes:Person csv/person_node.csv --nodes:Movie csv/movie_node.csv --nodes:Genre csv/genre_node.csv --nodes:Keyword csv/keyword_node.csv --relationships:ACTED_IN csv/acted_in_rels.csv --relationships:DIRECTED csv/directed_rels.csv --relationships:HAS_GENRE csv/has_genre_rels.csv --relationships:HAS_KEYWORD csv/has_keyword_rels.csv --relationships:PRODUCED csv/produced_rels.csv --relationships:WRITER_OF csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
+$NEO4J_HOME/bin/neo4j-admin import --nodes=Person=csv/person_node.csv --nodes=Movie=csv/movie_node.csv --nodes=Genre=csv/genre_node.csv --nodes=Keyword=csv/keyword_node.csv --relationships=ACTED_IN=csv/acted_in_rels.csv --relationships=DIRECTED=csv/directed_rels.csv --relationships=HAS_GENRE=csv/has_genre_rels.csv --relationships=HAS_KEYWORD=csv/has_keyword_rels.csv --relationships=PRODUCED=csv/produced_rels.csv --relationships=WRITER_OF=csv/writer_of_rels.csv --delimiter ";" --array-delimiter "|" --id-type INTEGER
 ```
 
-If you see `Input error: Directory 'neo4j-community-3.0.3/data/databases/graph.db' already contains a database`, delete the `graph.db` directory and try again.
+Note that you can use batch import only into an empty database. 
+Start the database and add constraints:
 
-* Add [constraints](https://neo4j.com/docs/developer-manual/current/cypher/#query-constraints) to your database: `$NEO4J_HOME/bin/neo4j-shell < setup.cql -path $NEO4J_HOME/databases/graph.db`
-* Start the database: `$NEO4J_HOME/bin/neo4j start`
+```
+CREATE CONSTRAINT ON (n:Movie) ASSERT n.id IS UNIQUE;
+
+CREATE CONSTRAINT ON (n:Person) ASSERT n.id IS UNIQUE;
+
+CREATE CONSTRAINT ON (n:Keyword) ASSERT n.id IS UNIQUE;
+
+CREATE CONSTRAINT ON (n:User) ASSERT n.id IS UNIQUE;
+
+CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE;
+
+CREATE CONSTRAINT ON (n:Genre) ASSERT n.id IS UNIQUE;
+
+CREATE CONSTRAINT ON ()-[r:RATED]-() ASSERT exists(r.rating);
+```
 
 
 ### Windows
@@ -69,7 +83,7 @@ If everything runs corretly you should get the following:
 ### Start the Database!
 
 * Start Neo4j if you haven't already!
-* Set your username and password (You'll run into less trouble if you don't use the defaults)
+* Set your username and password if you haven't already
 * Set environment variables (Note, the following is for Unix, for Windows you will be using `set=...`)
   * Export your neo4j database username `export MOVIE_DATABASE_USERNAME=myusername`
   * Export your neo4j database password `export MOVIE_DATABASE_PASSWORD=mypassword`
