@@ -167,7 +167,7 @@ def serialize_genre(genre):
 
 def serialize_movie(movie, my_rating=None):
     return {
-        'id': movie['imdbId'],
+        'id': int(movie['imdbId']),
         'title': movie['title'],
         'summary': movie['plot'],
         'released': movie['year'],
@@ -280,7 +280,7 @@ class Movie(Resource):
                 OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
                 OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
                 OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)
-                OPTIONAL MATCH (movie)-[:HAS_GENRE]->(genre:Genre)
+                OPTIONAL MATCH (movie)-[:IN_GENRE]->(genre:Genre)
                 OPTIONAL MATCH (movie)<-[:DIRECTED]-(d:Person)
                 OPTIONAL MATCH (movie)<-[:PRODUCED]-(p:Person)
                 OPTIONAL MATCH (movie)<-[:WRITER_OF]-(w:Person)
@@ -384,7 +384,7 @@ class MovieListByGenre(Resource):
         def get_movies_by_genre(tx, genre_id):
             return list(tx.run(
                 '''
-                MATCH (movie:Movie)-[:HAS_GENRE]->(genre)
+                MATCH (movie:Movie)-[:IN_GENRE]->(genre)
                 WHERE genre.id = $genre_id
                 RETURN movie
                 ''', {'genre_id': genre_id}
