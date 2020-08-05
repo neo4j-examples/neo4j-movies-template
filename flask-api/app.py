@@ -14,7 +14,11 @@ from flask_restful_swagger_2 import Api, swagger, Schema
 from neo4j import GraphDatabase, basic_auth
 from neo4j.exceptions import Neo4jError
 
-from . import config
+# replace with your credentials and move to a config file, these are sandbox credentials
+
+DATABASE_USERNAME = 'neo4j'
+DATABASE_PASSWORD = 'knock-cape-reserve'
+DATABASE_URL = 'bolt://52.72.13.205:47929'
 
 
 app = Flask(__name__)
@@ -23,8 +27,7 @@ api = Api(app, title='Neo4j Movie Demo API', api_version='0.0.10')
 CORS(app)
 
 
-driver = GraphDatabase.driver(config.DATABASE_URL, auth=basic_auth(config.DATABASE_USERNAME, str(config.DATABASE_PASSWORD)))
-
+driver = GraphDatabase.driver(DATABASE_URL, auth=basic_auth(DATABASE_USERNAME, DATABASE_PASSWORD))
 
 def get_db():
     if not hasattr(g, 'neo4j_db'):
@@ -155,6 +158,7 @@ class UserModel(Schema):
 
 
 def serialize_genre(genre):
+    print(genre)
     return {
         'id': genre['id'],
         'name': genre['name'],
@@ -163,14 +167,14 @@ def serialize_genre(genre):
 
 def serialize_movie(movie, my_rating=None):
     return {
-        'id': movie['id'],
+        'id': movie['imdbId'],
         'title': movie['title'],
-        'summary': movie['summary'],
-        'released': movie['released'],
-        'duration': movie['duration'],
-        'rated': movie['rated'],
+        'summary': movie['plot'],
+        'released': movie['year'],
+        'duration': movie['runtime'],
+        'rated': movie['imdbRating'],
         'tagline': movie['tagline'],
-        'poster_image': movie['poster_image'],
+        'poster_image': movie['poster'],
         'my_rating': my_rating,
     }
 
@@ -231,7 +235,7 @@ class GenreList(Resource):
     })
     def get(self):
         def get_genres(tx):
-            return list(tx.run('MATCH (genre:Genre) RETURN genre'))
+            return list(tx.run('MATCH (genre:Genre) SET genre.id=id(genre) RETURN genre'))
         db = get_db()
         result = db.read_transaction(get_genres)
         return [serialize_genre(record['genre']) for record in result]
@@ -389,7 +393,7 @@ class MovieListByGenre(Resource):
         result = db.read_transaction(get_movies_by_genre, genre_id)
         return [serialize_movie(record['movie']) for record in result]
 
-
+# Not sure this is useful anymore
 class MovieListByDateRange(Resource):
     @swagger.doc({
         'tags': ['movies'],
@@ -400,14 +404,14 @@ class MovieListByDateRange(Resource):
                 'name': 'start',
                 'description': 'start year',
                 'in': 'path',
-                'type': 'string',
+                'type': 'integer',
                 'required': 'true'
             },
             {
                 'name': 'end',
                 'description': 'end year',
                 'in': 'path',
-                'type': 'string',
+                'type': 'integer',
                 'required': 'true'
             }
         ],
@@ -423,15 +427,16 @@ class MovieListByDateRange(Resource):
     })
     def get(self, start, end):
         try:
-            params = {'start': long(start), 'end': long(end)}
+            params = {'start': start, 'end': end}
         except ValueError:
             return {'description': 'invalid year format'}, 400
+        print(params)
 
         def get_movies_list_by_date_range(tx, params):
             return list(tx.run(
                 '''
                 MATCH (movie:Movie)
-                WHERE movie.released > $start AND movie.released < $end
+                WHERE movie.year > $start AND movie.year < $end
                 RETURN movie
                 ''', params
             ))
@@ -467,14 +472,16 @@ class MovieListByPersonActedIn(Resource):
     })
     def get(self, person_id):
         def get_movies_by_acted_in(tx, person_id):
+            print(params)
             return list(tx.run(
                 '''
-                MATCH (actor:Person {id: $person_id})-[:ACTED_IN]->(movie:Movie)
+                MATCH (actor:Actor {id: $person_id})-[:ACTED_IN]->(movie:Movie)
                 RETURN DISTINCT movie
                 ''', {'person_id': person_id}
             ))
         db = get_db()
         result = db.read_transaction(get_movies_by_acted_in, person_id)
+        print(result)
         return [serialize_movie(record['movie']) for record in result]
 
 
@@ -506,7 +513,7 @@ class MovieListByWrittenBy(Resource):
         def get_movies_list_written_by(tx, person_id):
             return list(tx.run(
                 '''
-                MATCH (actor:Person {id: $person_id})-[:WRITER_OF]->(movie:Movie)
+                MATCH (actor:Writer {id: $person_id})-[:WRITER_OF]->(movie:Movie)
                 RETURN DISTINCT movie
                 ''', {'person_id': person_id}
             ))
@@ -543,7 +550,7 @@ class MovieListByDirectedBy(Resource):
         def get_mmovies_list_directed_by(tx, person_id):
             return list(tx.run(
                 '''
-                MATCH (actor:Person {id: $person_id})-[:DIRECTED]->(movie:Movie)
+                MATCH (actor:Director {id: $person_id})-[:DIRECTED]->(movie:Movie)
                 RETURN DISTINCT movie
                 ''', {'person_id': person_id}
             ))
@@ -1072,7 +1079,7 @@ api.add_resource(Movie, '/api/v0/movies/<int:id>')
 api.add_resource(RateMovie, '/api/v0/movies/<int:id>/rate')
 api.add_resource(MovieList, '/api/v0/movies')
 api.add_resource(MovieListByGenre, '/api/v0/movies/genre/<int:genre_id>/')
-api.add_resource(MovieListByDateRange, '/api/v0/movies/daterange/<string:start>/<string:end>')
+api.add_resource(MovieListByDateRange, '/api/v0/movies/daterange/<int:start>/<int:end>')
 api.add_resource(MovieListByPersonActedIn, '/api/v0/movies/acted_in_by/<int:person_id>')
 api.add_resource(MovieListByWrittenBy, '/api/v0/movies/written_by/<int:person_id>')
 api.add_resource(MovieListByDirectedBy, '/api/v0/movies/directed_by/<int:person_id>')
