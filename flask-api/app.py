@@ -248,12 +248,6 @@ class Movie(Resource):
         'description': 'Returns a movie',
         'parameters': [
             {
-                'name': 'Authorization',
-                'in': 'header',
-                'type': 'string',
-                'default': 'Token <token goes here>',
-            },
-            {
                 'name': 'id',
                 'description': 'movie id',
                 'in': 'path',
@@ -272,11 +266,12 @@ class Movie(Resource):
         }
     })
     def get(self, id):
-        def get_movie(tx, movie_id, user_id):
+        print(id)
+        def get_movie(tx, movie_id):
             return list(tx.run(
                 '''
                 MATCH (movie:Movie {id: $id})
-                OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $user_id})
+                OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User)
                 OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
                 OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
                 OPTIONAL MATCH (movie)-[:HAS_KEYWORD]->(keyword:Keyword)
@@ -297,20 +292,20 @@ class Movie(Resource):
                 collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,
                 collect(DISTINCT related) AS related,
                 collect(DISTINCT genre) AS genres
-                ''', {'id': id, 'user_id': user_id}
+                ''', {'id': id}
             ))
         db = get_db()
-        result = db.read_transaction(get_movie, id, g.user['id'])
+        result = db.read_transaction(get_movie, id)
         for record in result:
             return {
                 'id': record['movie']['id'],
                 'title': record['movie']['title'],
-                'summary': record['movie']['summary'],
-                'released': record['movie']['released'],
-                'duration': record['movie']['duration'],
+                'summary': record['movie']['plot'],
+                'released': record['movie']['year'],
+                'duration': record['movie']['runtime'],
                 'rated': record['movie']['rated'],
                 'tagline': record['movie']['tagline'],
-                'poster_image': record['movie']['poster_image'],
+                'poster_image': record['movie']['poster'],
                 'my_rating': record['my_rating'],
                 'genres': [serialize_genre(genre) for genre in record['genres']],
                 'directors': [serialize_person(director)for director in record['directors']],
