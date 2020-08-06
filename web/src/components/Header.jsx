@@ -27,14 +27,6 @@ class Header extends React.Component {
               GitHub Project
             </a>
           </li>
-          <li>
-            <a className="nt-app-header-link"
-               href="http://neo4j.com/"
-               target="_blank"
-               rel="noopener noreferrer">
-              Neo4j 3.1.0
-            </a>
-          </li>
         </ul>
         <div className="nt-app-header-profile-links">
           <div className="right">

@@ -51,10 +51,7 @@ class Movie extends React.Component {
                     Storyline
                   </div>
                   <p className="nt-box-row">
-                    <strong>Tagline: </strong><span>{movie.tagline}</span>
-                  </p>
-                  <p className="nt-box-row">
-                    <strong>Keywords: </strong><span>{this.getKeywordsText(movie)}</span>
+                    <span>{movie.tagline}</span>
                   </p>
                 </div>
               </div>
@@ -78,7 +75,7 @@ class Movie extends React.Component {
                       Movie Details
                     </div>
                     <p className="nt-box-row">
-                      <strong>Rated: </strong><span>{movie.rated}</span>
+                      <strong>Year: </strong><span>{movie.released}</span>
                     </p>
                     <p className="nt-box-row">
                       <strong>Duration: </strong><span>{`${movie.duration} mins`}</span>
@@ -90,14 +87,6 @@ class Movie extends React.Component {
                     <p className="nt-box-row">
                       <strong>Directed By: </strong>
                       <span>{this.renderPeople(movie.directors)}</span>
-                    </p>
-                    <p className="nt-box-row">
-                      <strong>Written By: </strong>
-                      <span>{this.renderPeople(movie.writers)}</span>
-                    </p>
-                    <p className="nt-box-row">
-                      <strong>Produced By: </strong>
-                      <span>{this.renderPeople(movie.producers)}</span>
                     </p>
                   </div>
                   <div className="nt-box">

@@ -34,9 +34,9 @@ export default class MoviesApi {
 
   static getFeaturedMovies() {
     return Promise.all([
-      axios.get(`${apiBaseURL}/movies/1`),
-      axios.get(`${apiBaseURL}/movies/28`),
-      axios.get(`${apiBaseURL}/movies/68`)
+      axios.get(`${apiBaseURL}/movies/0114709`),
+      axios.get(`${apiBaseURL}/movies/0113497`),
+      axios.get(`${apiBaseURL}/movies/7210`)
     ]);
   }
 
