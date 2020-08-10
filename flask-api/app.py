@@ -16,13 +16,13 @@ from neo4j.exceptions import Neo4jError
 
 # replace with your credentials and move to a config file, these are sandbox credentials
 
-# DATABASE_USERNAME = 'neo4j'
-# DATABASE_PASSWORD = 'outboards-ideals-messengers'
-# DATABASE_URL = 'bolt://52.3.253.48:46488'
-
 DATABASE_USERNAME = 'neo4j'
 DATABASE_PASSWORD = 'outboards-ideals-messengers'
-DATABASE_URL = 'bolt://localhost:7687'
+DATABASE_URL = 'bolt://52.3.253.48:46488'
+
+# DATABASE_USERNAME = 'neo4j'
+# DATABASE_PASSWORD = 'outboards-ideals-messengers'
+# DATABASE_URL = 'bolt://localhost:7687'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super secret guy'
@@ -161,7 +161,6 @@ class UserModel(Schema):
 
 
 def serialize_genre(genre):
-    print(genre)
     return {
         'id': genre['id'],
         'name': genre['name'],
@@ -241,6 +240,7 @@ class GenreList(Resource):
             return list(tx.run('MATCH (genre:Genre) SET genre.id=id(genre) RETURN genre'))
         db = get_db()
         result = db.read_transaction(get_genres)
+        print(result)
         return [serialize_genre(record['genre']) for record in result]
 
 
@@ -255,7 +255,7 @@ class Movie(Resource):
                 'in': 'header',
                 'type': 'string',
                 'default': 'Token <token goes here>',
-                'required': True
+                'required': False
             },
             {
                 'name': 'id',
