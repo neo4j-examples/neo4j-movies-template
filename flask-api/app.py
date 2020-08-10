@@ -16,10 +16,13 @@ from neo4j.exceptions import Neo4jError
 
 # replace with your credentials and move to a config file, these are sandbox credentials
 
-DATABASE_USERNAME = 'neo4j'
-DATABASE_PASSWORD = 'knock-cape-reserve'
-DATABASE_URL = 'bolt://52.72.13.205:47929'
+# DATABASE_USERNAME = 'neo4j'
+# DATABASE_PASSWORD = 'outboards-ideals-messengers'
+# DATABASE_URL = 'bolt://52.3.253.48:46488'
 
+DATABASE_USERNAME = 'neo4j'
+DATABASE_PASSWORD = 'outboards-ideals-messengers'
+DATABASE_URL = 'bolt://localhost:7687'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super secret guy'
@@ -95,7 +98,7 @@ class MovieModel(Schema):
     type = 'object'
     properties = {
         'id': {
-            'type': 'integer',
+            'type': 'string',
         },
         'title': {
             'type': 'string',
@@ -167,7 +170,7 @@ def serialize_genre(genre):
 
 def serialize_movie(movie, my_rating=None):
     return {
-        'id': movie['imdbId'],
+        'id': movie['tmdbId'],
         'title': movie['title'],
         'summary': movie['plot'],
         'released': movie['year'],
@@ -181,7 +184,7 @@ def serialize_movie(movie, my_rating=None):
 
 def serialize_person(person):
     return {
-        'id': person['id'],
+        'id': person['tmdbId'],
         'name': person['name'],
         'born': person['born'],
         'poster_image': person['poster_image'],
@@ -256,7 +259,7 @@ class Movie(Resource):
             },
             {
                 'name': 'id',
-                'description': 'movie imdbId, a string',
+                'description': 'movie tmdbId, a string',
                 'in': 'path',
                 'type': 'string',
                 'required': True,
@@ -277,7 +280,7 @@ class Movie(Resource):
         def get_movie(tx, user_id, id):
             return list(tx.run(
                 '''
-                MATCH (movie:Movie {imdbId: $id})
+                MATCH (movie:Movie {tmdbId: $id})
                 OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $user_id})
                 OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)
                 OPTIONAL MATCH (related:Movie)<--(a:Person) WHERE related <> movie
@@ -294,7 +297,7 @@ class Movie(Resource):
                 collect(DISTINCT d) AS directors,
                 collect(DISTINCT p) AS producers,
                 collect(DISTINCT w) AS writers,
-                collect(DISTINCT{ name:a.name, id:a.id, poster_image:a.poster_image, role:r.role}) AS actors,
+                collect(DISTINCT{ name:a.name, id:a.tmdbId, poster_image:a.poster_image, role:r.role}) AS actors,
                 collect(DISTINCT related) AS related,
                 collect(DISTINCT genre) AS genres
                 ''', {'user_id': user_id , 'id': id}
@@ -304,7 +307,7 @@ class Movie(Resource):
         result = db.read_transaction(get_movie, g.user['id'], id)
         for record in result:
             return {
-                'id': record['movie']['imdbId'],
+                'id': record['movie']['tmdbId'],
                 'title': record['movie']['title'],
                 'summary': record['movie']['plot'],
                 'released': record['movie']['year'],
@@ -459,7 +462,7 @@ class MovieListByPersonActedIn(Resource):
                 'name': 'person_id',
                 'description': 'person id',
                 'in': 'path',
-                'type': 'integer',
+                'type': 'string',
                 'required': 'true'
             },
         ],
@@ -475,10 +478,9 @@ class MovieListByPersonActedIn(Resource):
     })
     def get(self, person_id):
         def get_movies_by_acted_in(tx, person_id):
-            print(params)
             return list(tx.run(
                 '''
-                MATCH (actor:Actor {id: $person_id})-[:ACTED_IN]->(movie:Movie)
+                MATCH (actor:Actor {tmdbId: $person_id})-[:ACTED_IN]->(movie:Movie)
                 RETURN DISTINCT movie
                 ''', {'person_id': person_id}
             ))
@@ -498,7 +500,7 @@ class MovieListByWrittenBy(Resource):
                 'name': 'person_id',
                 'description': 'person id',
                 'in': 'path',
-                'type': 'integer',
+                'type': 'string',
                 'required': 'true'
             },
         ],
@@ -516,7 +518,7 @@ class MovieListByWrittenBy(Resource):
         def get_movies_list_written_by(tx, person_id):
             return list(tx.run(
                 '''
-                MATCH (actor:Writer {id: $person_id})-[:WRITER_OF]->(movie:Movie)
+                MATCH (actor:Writer {tmdbId: $person_id})-[:WRITER_OF]->(movie:Movie)
                 RETURN DISTINCT movie
                 ''', {'person_id': person_id}
             ))
@@ -535,7 +537,7 @@ class MovieListByDirectedBy(Resource):
                 'name': 'person_id',
                 'description': 'person id',
                 'in': 'path',
-                'type': 'integer',
+                'type': 'string',
                 'required': 'true'
             },
         ],
@@ -553,7 +555,7 @@ class MovieListByDirectedBy(Resource):
         def get_mmovies_list_directed_by(tx, person_id):
             return list(tx.run(
                 '''
-                MATCH (actor:Director {id: $person_id})-[:DIRECTED]->(movie:Movie)
+                MATCH (actor:Director {tmdbId: $person_id})-[:DIRECTED]->(movie:Movie)
                 RETURN DISTINCT movie
                 ''', {'person_id': person_id}
             ))
@@ -674,18 +676,18 @@ class Person(Resource):
         def get_person_by_id(tx, user_id):
             return list(tx.run(
                 '''
-                MATCH (person:Person {id: $id})
+                MATCH (person:Person {tmdbId: $id})
                 OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)
                 OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)
                 OPTIONAL MATCH (person)<-[:WRITER_OF]->(w:Movie)
                 OPTIONAL MATCH (person)<-[r:ACTED_IN]->(a:Movie)
                 OPTIONAL MATCH (person)-->(movies)<-[relatedRole:ACTED_IN]-(relatedPerson)
                 RETURN DISTINCT person,
-                collect(DISTINCT { name:d.title, id:d.imdbId, poster_image:d.poster}) AS directed,
-                collect(DISTINCT { name:p.title, id:p.imdbId, poster_image:p.poster}) AS produced,
-                collect(DISTINCT { name:w.title, id:w.imdbId, poster_image:w.poster}) AS wrote,
-                collect(DISTINCT{ name:a.title, id:a.imdbId, poster_image:a.poster, role:r.role}) AS actedIn,
-                collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.id, poster_image:relatedPerson.poster, role:relatedRole.role}) AS related
+                collect(DISTINCT { name:d.title, id:d.tmdbId, poster_image:d.poster}) AS directed,
+                collect(DISTINCT { name:p.title, id:p.tmdbId, poster_image:p.poster}) AS produced,
+                collect(DISTINCT { name:w.title, id:w.tmdbId, poster_image:w.poster}) AS wrote,
+                collect(DISTINCT{ name:a.title, id:a.tmdbId, poster_image:a.poster, role:r.role}) AS actedIn,
+                collect(DISTINCT{ name:relatedPerson.name, id:relatedPerson.tmdbId, poster_image:relatedPerson.poster, role:relatedRole.role}) AS related
                 ''', {'id': user_id}
             ))
         db = get_db()
@@ -988,7 +990,7 @@ class RateMovie(Resource):
             },
             {
                 'name': 'id',
-                'description': 'movie imdbId',
+                'description': 'movie tmdbId',
                 'in': 'path',
                 'type': 'string',
             },
@@ -1024,7 +1026,7 @@ class RateMovie(Resource):
         def rate_movie(tx, user_id, movie_id, rating):
             return tx.run(
                 '''
-                MATCH (u:User {id: $user_id}),(m:Movie {imdbId: $movie_id})
+                MATCH (u:User {id: $user_id}),(m:Movie {tmdbId: $movie_id})
                 MERGE (u)-[r:RATED]->(m)
                 SET r.rating = $rating
                 RETURN m
@@ -1049,7 +1051,7 @@ class RateMovie(Resource):
             },
             {
                 'name': 'id',
-                'description': 'movie imdbId',
+                'description': 'movie tmdbId',
                 'in': 'path',
                 'type': 'string',
             },
@@ -1068,7 +1070,7 @@ class RateMovie(Resource):
         def delete_rating(tx, user_id, movie_id):
             return tx.run(
                 '''
-                MATCH (u:User {id: $user_id})-[r:RATED]->(m:Movie {imdbId: $movie_id}) DELETE r
+                MATCH (u:User {id: $user_id})-[r:RATED]->(m:Movie {tmdbId: $movie_id}) DELETE r
                 ''', {'movie_id': movie_id, 'user_id': user_id}
             )
         db = get_db()
@@ -1083,12 +1085,12 @@ api.add_resource(RateMovie, '/api/v0/movies/<string:id>/rate')
 api.add_resource(MovieList, '/api/v0/movies')
 api.add_resource(MovieListByGenre, '/api/v0/movies/genre/<string:genre_id>/')
 api.add_resource(MovieListByDateRange, '/api/v0/movies/daterange/<int:start>/<int:end>')
-api.add_resource(MovieListByPersonActedIn, '/api/v0/movies/acted_in_by/<int:person_id>')
-api.add_resource(MovieListByWrittenBy, '/api/v0/movies/written_by/<int:person_id>')
-api.add_resource(MovieListByDirectedBy, '/api/v0/movies/directed_by/<int:person_id>')
+api.add_resource(MovieListByPersonActedIn, '/api/v0/movies/acted_in_by/<string:person_id>')
+api.add_resource(MovieListByWrittenBy, '/api/v0/movies/written_by/<string:person_id>')
+api.add_resource(MovieListByDirectedBy, '/api/v0/movies/directed_by/<string:person_id>')
 api.add_resource(MovieListRatedByMe, '/api/v0/movies/rated')
 api.add_resource(MovieListRecommended, '/api/v0/movies/recommended')
-api.add_resource(Person, '/api/v0/people/<int:id>')
+api.add_resource(Person, '/api/v0/people/<string:id>')
 api.add_resource(PersonList, '/api/v0/people')
 api.add_resource(PersonBacon, '/api/v0/people/bacon')
 api.add_resource(Register, '/api/v0/register')
