@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import uuid
+from datetime import datetime
 from functools import wraps
 
 from flask import Flask, g, request, send_from_directory, abort, request_started
@@ -17,12 +18,9 @@ from neo4j.exceptions import Neo4jError
 # replace with your credentials and move to a config file, these are sandbox credentials
 
 DATABASE_USERNAME = 'neo4j'
-DATABASE_PASSWORD = 'outboards-ideals-messengers'
-DATABASE_URL = 'bolt://52.3.253.48:46488'
+DATABASE_PASSWORD = 'expiration-facts-analyzers'
+DATABASE_URL = 'bolt://34.227.92.130:34260'
 
-# DATABASE_USERNAME = 'neo4j'
-# DATABASE_PASSWORD = 'outboards-ideals-messengers'
-# DATABASE_URL = 'bolt://localhost:7687'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super secret guy'
@@ -107,7 +105,7 @@ class MovieModel(Schema):
             'type': 'string',
         },
         'released': {
-            'type': 'integer',
+            'type': 'string',
         },
         'duration': {
             'type': 'integer',
@@ -135,9 +133,6 @@ class PersonModel(Schema):
         },
         'name': {
             'type': 'string',
-        },
-        'born': {
-            'type': 'integer',
         },
         'poster_image': {
             'type': 'string',
@@ -172,7 +167,7 @@ def serialize_movie(movie, my_rating=None):
         'id': movie['tmdbId'],
         'title': movie['title'],
         'summary': movie['plot'],
-        'released': movie['year'],
+        'released': movie['released'],
         'duration': movie['runtime'],
         'rated': movie['imdbRating'],
         'tagline': movie['plot'],
@@ -185,8 +180,7 @@ def serialize_person(person):
     return {
         'id': person['tmdbId'],
         'name': person['name'],
-        'born': person['born'],
-        'poster_image': person['poster_image'],
+        'poster_image': person['poster'],
     }
 
 
@@ -297,7 +291,7 @@ class Movie(Resource):
                 collect(DISTINCT d) AS directors,
                 collect(DISTINCT p) AS producers,
                 collect(DISTINCT w) AS writers,
-                collect(DISTINCT{ name:a.name, id:a.tmdbId, poster_image:a.poster_image, role:r.role}) AS actors,
+                collect(DISTINCT{ name:a.name, id:a.tmdbId, poster_image:a.poster, role:r.role}) AS actors,
                 collect(DISTINCT related) AS related,
                 collect(DISTINCT genre) AS genres
                 ''', {'user_id': user_id , 'id': id}
@@ -310,7 +304,7 @@ class Movie(Resource):
                 'id': record['movie']['tmdbId'],
                 'title': record['movie']['title'],
                 'summary': record['movie']['plot'],
-                'released': record['movie']['year'],
+                'released': record['movie']['released'],
                 'duration': record['movie']['runtime'],
                 'rated': record['movie']['rated'],
                 'tagline': record['movie']['plot'],
@@ -696,8 +690,7 @@ class Person(Resource):
             return {
                 'id': record['person']['id'],
                 'name': record['person']['name'],
-                'born': record['person']['born'],
-                'poster_image': record['person']['poster_image'],
+                'poster_image': record['person']['poster'],
                 'directed': [
                     {
                         'id': movie['id'],

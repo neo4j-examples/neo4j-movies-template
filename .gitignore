@@ -8,6 +8,7 @@ web/package-lock.json
 api/node_modules
 api/config/settings.json
 *.pyc
+flask-api/venv
 
 database/*
 

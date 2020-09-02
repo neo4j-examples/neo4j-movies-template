@@ -103,11 +103,15 @@ From the root directory of this project:
 
 From the root directory of this project:
 
-* `cd flask-api`
-* `pip install -r requirements.txt` (you should be using a [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/))
-* set environment variables (Note, the following is for Unix, for Windows you will be using `set=...`)
-  * `export FLASK_APP=app.py`
-* `flask run` starts the API
+```
+cd flask-api
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+export FLASK_APP=app.py
+flask run
+```
+
 * Take a look at the docs at [http://localhost:5000/docs](http://localhost:5000/docs)
 
 ## Frontend
