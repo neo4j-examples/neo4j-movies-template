@@ -18,7 +18,7 @@ class Home extends React.Component {
 
   componentWillMount() {
     this.props.getFeaturedMovies();
-    this.props.getMoviesByGenres(['Action', 'Drama']);
+    this.props.getMoviesByGenres(['Adventure', 'Drama']);
   }
 
   render() {
@@ -31,7 +31,7 @@ class Home extends React.Component {
             {this.renderFeatured()}
           </div>
           <div className="large-12 columns">
-            {this.renderByGenre('Action')}
+            {this.renderByGenre('Adventure')}
             {this.renderByGenre('Drama')}
           </div>
         </div>
