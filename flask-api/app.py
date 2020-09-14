@@ -18,8 +18,8 @@ from neo4j.exceptions import Neo4jError
 # replace with your credentials and move to a config file, these are sandbox credentials
 
 DATABASE_USERNAME = 'neo4j'
-DATABASE_PASSWORD = 'brushes-pot-releases'
-DATABASE_URL = 'bolt://34.205.65.141:33237'
+DATABASE_PASSWORD = 'curl-projectiles-strobes'
+DATABASE_URL = 'bolt://18.207.112.93:33913'
 
 
 app = Flask(__name__)
