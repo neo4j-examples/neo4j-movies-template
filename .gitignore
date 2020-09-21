@@ -1,13 +1,14 @@
 import.report
 .DS_Store
-web/config/settings.js
 web/build
 web/bower_components
 web/node_modules
+web/package-lock.json
 
 api/node_modules
 api/config/settings.json
 *.pyc
+flask-api/venv
 
 database/*
 
