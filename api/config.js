@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 var nconf = require('nconf');
 
 nconf.env(['PORT', 'NODE_ENV'])

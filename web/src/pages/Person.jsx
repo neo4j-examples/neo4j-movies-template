@@ -50,9 +50,6 @@ class Person extends React.Component {
                     <div className="nt-box-title">
                       Bio
                     </div>
-                    <p className="nt-box-row">
-                      <strong>Born: </strong><span>{detail.born}</span>
-                    </p>
                   </div>
 
                   <div className="nt-box">

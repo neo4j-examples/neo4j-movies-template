@@ -5,11 +5,14 @@ var _ = require('lodash');
 var Movie = module.exports = function (_node, myRating) {
   _.extend(this, _node.properties);
 
-  if (this.id) {
-    this.id = this.id.toNumber();
-  }
+  this.id = this.tmdbId;
+  this.poster_image = this.poster;
+  this.tagline = this.plot;
+
   if (this.duration) { 
     this.duration = this.duration.toNumber();
+  } else if (this.runtime) {
+    this.duration = this.runtime.low;
   }
 
   if(myRating || myRating === 0) {

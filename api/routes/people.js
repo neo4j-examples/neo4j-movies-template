@@ -13,8 +13,6 @@ var People = require('../models/people')
  *         type: integer
  *       name:
  *         type: string
- *       born:
- *         type: integer
  *       poster_image:
  *         type: string
  */
