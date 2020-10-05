@@ -22,7 +22,7 @@ This Neo4j-based node / react web app displays movie and person data in a manner
 
 ## Database Setup: Sandbox
 
-Go to https://sandbox.neo4j.com/, pick "Recommendations", and press play to start the database. 
+Go to https://sandbox.neo4j.com/?usecase=recommendations&ref=movie-app-tutorial, pick "Recommendations", and press play to start the database.
 
 Make sure to edit the file `flask-api/.env` or `api/.env` and update the `MOVIE_DATABASE_USERNAME`, 
 `MOVIE_DATABASE_PASSWORD`, and `MOVIE_DATABASE_URL` of your chosen backend to connect to your instance.
