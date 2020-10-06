@@ -822,8 +822,7 @@ class PersonBacon(Resource):
             return list(tx.run(
                 '''
                 MATCH p = shortestPath( (p1:Person {name: $name1})-[:ACTED_IN*]-(target:Person {name: $name2}) )
-                WITH extract(n in nodes(p)|n) AS coll
-                WITH filter(thing in coll where length(thing.name)> 0) AS bacon
+                WITH [n IN nodes(p) WHERE n:Person | n] as bacon
                 UNWIND(bacon) AS person
                 RETURN DISTINCT person
                 ''', {'name1': name1, 'name2': name2}
