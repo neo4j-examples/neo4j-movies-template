@@ -1,6 +1,10 @@
 # README
 
-This Neo4j-based node / react web app displays movie and person data in a manner similar to IMDB.  It is designed to serve as a template for further development projects.  Feel encouraged to fork and update this repo!
+This Neo4j-based example app displays movie and person data in a manner similar to IMDB.
+It is designed to serve as a template for further development projects.
+There are two versions of the backend - a Python/Flask backend at `/flask-api`, and a JavaScript/Express backend at `/api`. 
+The web frontend can be found at `/web`. 
+Feel encouraged to fork and update this repo!
 
 ## The Model
 
@@ -29,7 +33,9 @@ Make sure to edit the file `flask-api/.env` or `api/.env` and update the `MOVIE_
 
 ## Node API
 
-From the root directory of this project:
+First, configure your `api/.env` file to point to your database. 
+
+Then, from the root directory of this project:
 
 * `cd api`
 * `nvm use`
@@ -39,7 +45,9 @@ From the root directory of this project:
 
 ## Alternative: Flask API
 
-From the root directory of this project:
+First, configure your `flask-api/.env` file to point to your database. 
+
+Then, from the root directory of this project:
 
 ```
 cd flask-api
@@ -63,13 +71,13 @@ From the root directory of this project, set up and start the frontend with:
 
 If you are using the Node API set `REACT_APP_API_BASE_URL` to `http://localhost:3000/api/v0`
 
-If you are using the flask api then set it to `http://localhost:5000/api/v0`
+If you are using the Flask api then set it to `http://localhost:5000/api/v0`
 
 * `npm start` starts the app on [http://localhost:3000/](http://localhost:3000/)
 
 ![image of PATH settings for NPM](./img/webUX.png)
 
-voilà! Netflix, eat your heart out ;-)
+voilà! IMDB, eat your heart out ;-)
 
 ## Ratings and Recommendations
 
@@ -99,8 +107,7 @@ The Express API is located in the `/api` folder.
 
 #### Create Endpoint
 
-The API itself is created using the [Express web framework for Node.js](https://expressjs.com/). The API endpoints
-are documented using swagger and [swagger-jsdoc](https://www.npmjs.com/package/swagger-jsdoc) module.
+The API itself is created using the [Express web framework for Node.js](https://expressjs.com/). The API endpoints are documented using Swagger.
 
 To add a new API endpoint there are 3 steps:
 
@@ -114,8 +121,8 @@ The flask API is located in the flask-api folder.  The application code is in th
 
 #### Create Endpoint
 
-The API itself is created using the [Flask-RESTful](http://flask-restful-cn.readthedocs.io/en/0.3.5/) library.  The API endpoints
-are documented using swagger with the [flask-restful-swagger-2](https://github.com/swege/flask-restful-swagger-2.0) library.
+The API itself is created using the [Flask-RESTful](http://flask-restful-cn.readthedocs.io/en/0.3.5/) library.
+The API endpoints are documented using Swagger.
 
 To add a new API endpoint there are 3 steps:
 
