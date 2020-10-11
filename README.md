@@ -117,7 +117,8 @@ To add a new API endpoint there are 3 steps:
 
 ### Flask API
 
-The flask API is located in the flask-api folder.  The application code is in the `app.py` file.
+The Flask API is located in the `/flask-api` folder.
+The application code is in the `app.py` file.
 
 #### Create Endpoint
 
