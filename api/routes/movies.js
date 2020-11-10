@@ -312,7 +312,7 @@ exports.findMoviesByWriter = function (req, res, next) {
 exports.rateMovie = function (req, res, next) {
   loginRequired(req, res, () => {
     var rating = Number(_.get(req.body, 'rating'));
-    if (isNaN(rating) || rating < 0 || rating >= 6) {
+    if (Number.isNaN(rating) || rating < 0 || rating >= 6) {
       throw {rating: 'Rating value is invalid', status: 400};
     }
 
