@@ -1,13 +1,13 @@
 "use strict"
 
-var uuid = require('node-uuid');
-var randomstring = require("randomstring");
-var _ = require('lodash');
-var dbUtils = require('../neo4j/dbUtils');
-var User = require('../models/neo4j/user');
-var crypto = require('crypto');
+const uuid = require('node-uuid');
+const randomstring = require("randomstring");
+const _ = require('lodash');
+const dbUtils = require('../neo4j/dbUtils');
+const User = require('../models/neo4j/user');
+const crypto = require('crypto');
 
-var register = function (session, username, password) {
+const register = function (session, username, password) {
   return session.readTransaction(txc => txc.run('MATCH (user:User {username: $username}) RETURN user', {username: username}))
     .then(results => {
       if (!_.isEmpty(results.records)) {
@@ -32,7 +32,7 @@ var register = function (session, username, password) {
     });
 };
 
-var me = function (session, apiKey) {
+const me = function (session, apiKey) {
   return session.readTransaction(txc => txc.run('MATCH (user:User {api_key: $api_key}) RETURN user', {api_key: apiKey}))
     .then(results => {
       if (_.isEmpty(results.records)) {
@@ -42,14 +42,14 @@ var me = function (session, apiKey) {
     });
 };
 
-var login = function (session, username, password) {
+const login = function (session, username, password) {
   return session.readTransaction(txc => txc.run('MATCH (user:User {username: $username}) RETURN user', {username: username}))
     .then(results => {
         if (_.isEmpty(results.records)) {
           throw {username: 'username does not exist', status: 400}
         }
         else {
-          var dbUser = _.get(results.records[0].get('user'), 'properties');
+          const dbUser = _.get(results.records[0].get('user'), 'properties');
           if (dbUser.password != hashPassword(username, password)) {
             throw {password: 'wrong password', status: 400}
           }
@@ -60,7 +60,7 @@ var login = function (session, username, password) {
 };
 
 function hashPassword(username, password) {
-  var s = username + ':' + password;
+  const s = username + ':' + password;
   return crypto.createHash('sha256').update(s).digest('hex');
 }
 

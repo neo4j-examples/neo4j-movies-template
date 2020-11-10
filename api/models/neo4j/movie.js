@@ -1,8 +1,8 @@
 // extracts just the data from the query results
 
-var _ = require('lodash');
+const _ = require('lodash');
 
-var Movie = module.exports = function (_node, myRating) {
+const Movie = module.exports = function (_node, myRating) {
   _.extend(this, _node.properties);
 
   this.id = this.tmdbId;

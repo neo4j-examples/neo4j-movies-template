@@ -1,12 +1,12 @@
-var _ = require('lodash');
-var dbUtils = require('../neo4j/dbUtils');
-var Movie = require('../models/neo4j/movie');
-var Person = require('../models/neo4j/person');
-var Genre = require('../models/neo4j/genre');
+const _ = require('lodash');
+const dbUtils = require('../neo4j/dbUtils');
+const Movie = require('../models/neo4j/movie');
+const Person = require('../models/neo4j/person');
+const Genre = require('../models/neo4j/genre');
 
-var _singleMovieWithDetails = function (record) {
+const _singleMovieWithDetails = function (record) {
   if (record.length) {
-    var result = {};
+    const result = {};
     _.extend(result, new Movie(record.get('movie'), record.get('my_rating')));
 
     result.directors = _.map(record.get('directors'), record => {
@@ -37,12 +37,12 @@ var _singleMovieWithDetails = function (record) {
  *  Query Functions
  */
 
-var _getByWriter = function (params, options, callback) {
-  var cypher_params = {
+const _getByWriter = function (params, options, callback) {
+  const cypher_params = {
     id: params.id
   };
 
-  var query = [
+  const query = [
     'MATCH (:Person {tmdbId: $id})-[:WRITER_OF]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
@@ -55,7 +55,7 @@ function manyMovies(neo4jResult) {
 }
 
 // get all movies
-var getAll = function (session) {
+const getAll = function (session) {
   return session.readTransaction(txc => (
       txc.run('MATCH (movie:Movie) RETURN movie')
     ))
@@ -63,8 +63,8 @@ var getAll = function (session) {
 };
 
 // get a single movie by id
-var getById = function (session, movieId, userId) {
-  var query = [
+const getById = function (session, movieId, userId) {
+  const query = [
     'MATCH (movie:Movie {tmdbId: $movieId})',
     'OPTIONAL MATCH (movie)<-[my_rated:RATED]-(me:User {id: $userId})',
     'OPTIONAL MATCH (movie)<-[r:ACTED_IN]-(a:Person)',
@@ -104,8 +104,8 @@ var getById = function (session, movieId, userId) {
 };
 
 // Get by date range
-var getByDateRange = function (session, start, end) {
-  var query = [
+const getByDateRange = function (session, start, end) {
+  const query = [
     'MATCH (movie:Movie)',
     'WHERE movie.released > $start AND movie.released < $end',
     'RETURN movie'
@@ -121,8 +121,8 @@ var getByDateRange = function (session, start, end) {
 };
 
 // Get by date range
-var getByActor = function (session, id) {
-  var query = [
+const getByActor = function (session, id) {
+  const query = [
     'MATCH (actor:Person {tmdbId: $id})-[:ACTED_IN]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
@@ -135,8 +135,8 @@ var getByActor = function (session, id) {
 };
 
 // get a movie by genre
-var getByGenre = function(session, genreId) {
-  var query = [
+const getByGenre = function(session, genreId) {
+  const query = [
     'MATCH (movie:Movie)-[:IN_GENRE]->(genre)',
     'WHERE toLower(genre.name) = toLower($genreId) OR id(genre) = toInteger($genreId)', // while transitioning to the sandbox data             
     'RETURN movie'
@@ -150,8 +150,8 @@ var getByGenre = function(session, genreId) {
 };
 
 // Get many movies directed by a person
-var getByDirector = function(session, personId) {
-  var query = [
+const getByDirector = function(session, personId) {
+  const query = [
     'MATCH (:Person {tmdbId: $personId})-[:DIRECTED]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
@@ -164,8 +164,8 @@ var getByDirector = function(session, personId) {
 };
 
 // Get many movies written by a person
-var getByWriter = function(session, personId) {
-  var query = [
+const getByWriter = function(session, personId) {
+  const query = [
     'MATCH (:Person {tmdbId: $personId})-[:WRITER_OF]->(movie:Movie)',
     'RETURN DISTINCT movie'
   ].join('\n');
@@ -177,7 +177,7 @@ var getByWriter = function(session, personId) {
     ).then(result => manyMovies(result));
 };
 
-var rate = function (session, movieId, userId, rating) {
+const rate = function (session, movieId, userId, rating) {
   return session.writeTransaction(txc =>
     txc.run(
       'MATCH (u:User {id: $userId}),(m:Movie {tmdbId: $movieId}) \
@@ -193,7 +193,7 @@ var rate = function (session, movieId, userId, rating) {
   );
 };
 
-var deleteRating = function (session, movieId, userId) {
+const deleteRating = function (session, movieId, userId) {
   return session.writeTransaction(txc =>
     txc.run(
       'MATCH (u:User {id: $userId})-[r:RATED]->(m:Movie {tmdbId: $movieId}) DELETE r',
@@ -202,7 +202,7 @@ var deleteRating = function (session, movieId, userId) {
   );
 };
 
-var getRatedByUser = function (session, userId) {
+const getRatedByUser = function (session, userId) {
   return session.readTransaction(txc =>
     txc.run(
       'MATCH (:User {id: $userId})-[rated:RATED]->(movie:Movie) \
@@ -214,7 +214,7 @@ var getRatedByUser = function (session, userId) {
   });
 };
 
-var getRecommended = function (session, userId) {
+const getRecommended = function (session, userId) {
   return session.readTransaction(txc =>
     txc.run(
       'MATCH (me:User {id: $userId})-[my:RATED]->(m:Movie) \

@@ -1,5 +1,5 @@
 // movies.js
-var Users = require('../models/users')
+const Users = require('../models/users')
   , writeResponse = require('../helpers/response').writeResponse
   , writeError = require('../helpers/response').writeError
   , loginRequired = require('../middlewares/loginRequired')
@@ -48,8 +48,8 @@ var Users = require('../models/users')
  *         description: Error message(s)
  */
 exports.register = function (req, res, next) {
-  var username = _.get(req.body, 'username');
-  var password = _.get(req.body, 'password');
+  const username = _.get(req.body, 'username');
+  const password = _.get(req.body, 'password');
 
   if (!username) {
     throw {username: 'This field is required.', status: 400};
@@ -93,8 +93,8 @@ exports.register = function (req, res, next) {
  *         description: invalid credentials
  */
 exports.login = function (req, res, next) {
-  var username = _.get(req.body, 'username');
-  var password = _.get(req.body, 'password');
+  const username = _.get(req.body, 'username');
+  const password = _.get(req.body, 'password');
 
   if (!username) {
     throw {username: 'This field is required.', status: 400};
@@ -133,13 +133,13 @@ exports.login = function (req, res, next) {
  */
 exports.me = function (req, res, next) {
   loginRequired(req, res, () => {
-    var authHeader = req.headers['authorization'];
-    var match = authHeader.match(/^Token (\S+)/);
+    const authHeader = req.headers['authorization'];
+    const match = authHeader.match(/^Token (\S+)/);
     if (!match || !match[1]) {
       throw {message: 'invalid authorization format. Follow `Token <token>`', status: 401};
     }
 
-    var token = match[1];
+    const token = match[1];
     Users.me(dbUtils.getSession(req), token)
       .then(response => writeResponse(res, response))
       .catch(next);

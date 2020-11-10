@@ -1,9 +1,9 @@
-var _ = require('lodash');
-var Person = require('../models/neo4j/person');
+const _ = require('lodash');
+const Person = require('../models/neo4j/person');
 
-var _singlePersonWithDetails = function (record) {
+const _singlePersonWithDetails = function (record) {
   if (record.length) {
-    var result = {};
+    const result = {};
     _.extend(result, new Person(record.get('person')));
     // mappings are temporary until the neo4j driver team decides what to do about numbers
     result.directed = _.map(record.get('directed'), record => {
@@ -34,8 +34,8 @@ function _manyPeople(neo4jResult) {
 }
 
 // get a single person by id
-var getById = function (session, id) {
-  var query = [
+const getById = function (session, id) {
+  const query = [
     'MATCH (person:Person {tmdbId: $id})',
     'OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)',
     'OPTIONAL MATCH (person)<-[:PRODUCED]->(p:Movie)',
@@ -63,16 +63,16 @@ var getById = function (session, id) {
 };
 
 // get all people
-var getAll = function (session) {
+const getAll = function (session) {
   return session.readTransaction(txc =>
       txc.run('MATCH (person:Person) RETURN person')
     ).then(result => _manyPeople(result));
 };
 
 // get people in Bacon path, return many persons 
-var getBaconPeople = function (session, name1, name2) {
+const getBaconPeople = function (session, name1, name2) {
 //needs to be optimized
-  var query = [
+  const query = [
     'MATCH p = shortestPath( (p1:Person {name: $name1 })-[:ACTED_IN*]-(target:Person {name: $name2 }) )',
     'WITH [n IN nodes(p) WHERE n:Person | n] as bacon',
     'UNWIND(bacon) AS person',

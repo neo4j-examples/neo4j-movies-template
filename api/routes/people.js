@@ -1,4 +1,4 @@
-var People = require('../models/people')
+const People = require('../models/people')
   , _ = require('lodash')
   , writeResponse = require('../helpers/response').writeResponse
   , dbUtils = require('../neo4j/dbUtils');
@@ -71,8 +71,8 @@ exports.list = function (req, res, next) {
  *             $ref: '#/definitions/Person'
  */
 exports.getBaconPeople = function (req, res, next) {
-  var name1 = req.query.name1;
-  var name2 = req.query.name2;
+  const name1 = req.query.name1;
+  const name2 = req.query.name2;
 
   People.getBaconPeople(dbUtils.getSession(req), req.query.name1, req.query.name2)
     .then(response => writeResponse(res, response))
@@ -106,7 +106,7 @@ exports.getBaconPeople = function (req, res, next) {
  *         description: Person not found
  */
 exports.findById = function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   if (!id) throw {message: 'Invalid id', status: 400};
 
   People.getById(dbUtils.getSession(req), id)

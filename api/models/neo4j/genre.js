@@ -1,8 +1,8 @@
 // extracts just the data from the query results
 
-var _ = require('lodash');
+const _ = require('lodash');
 
-var Genre = module.exports = function (_node) {
+const Genre = module.exports = function (_node) {
   _.extend(this, _node.properties);
   if (this.id) { 
     this.id = this.id.toNumber();

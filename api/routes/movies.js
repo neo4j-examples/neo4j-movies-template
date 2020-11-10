@@ -1,5 +1,5 @@
 // movies.js
-var Movies = require('../models/movies')
+const Movies = require('../models/movies')
   , _ = require('lodash')
   , writeResponse = require('../helpers/response').writeResponse
   , writeError = require('../helpers/response').writeError
@@ -117,7 +117,7 @@ exports.findById = function (req, res, next) {
  *         description: Invalid genre id
  */
 exports.findByGenre = function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   if (!id) throw {message: 'Invalid id', status: 400};
 
   Movies.getByGenre(dbUtils.getSession(req), id)
@@ -157,8 +157,8 @@ exports.findByGenre = function (req, res, next) {
  *         description: Error message(s)
  */
 exports.findMoviesByDateRange = function (req, res, next) {
-  var start = req.params.start;
-  var end = req.params.end;
+  const start = req.params.start;
+  const end = req.params.end;
 
   if (!start) throw {message: 'Invalid start', status: 400};
   if (!end) throw {message: 'Invalid end', status: 400};
@@ -195,7 +195,7 @@ exports.findMoviesByDateRange = function (req, res, next) {
  *         description: Error message(s)
  */
 exports.findMoviesByDirector = function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   if (!id) throw {message: 'Invalid id', status: 400};
 
   Movies.getMoviesbyDirector(dbUtils.getSession(req), id)
@@ -230,7 +230,7 @@ exports.findMoviesByDirector = function (req, res, next) {
  *         description: Error message(s)
  */
 exports.findMoviesByActor = function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   if (!id) throw {message: 'Invalid id', status: 400};
 
   Movies.getByActor(dbUtils.getSession(req), id)
@@ -265,7 +265,7 @@ exports.findMoviesByActor = function (req, res, next) {
  *         description: Error message(s)
  */
 exports.findMoviesByWriter = function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   if (!id) throw {message: 'Invalid id', status: 400};
 
   Movies.getMoviesByWriter(dbUtils.getSession(req), id)
@@ -311,7 +311,7 @@ exports.findMoviesByWriter = function (req, res, next) {
  */
 exports.rateMovie = function (req, res, next) {
   loginRequired(req, res, () => {
-    var rating = Number(_.get(req.body, 'rating'));
+    const rating = Number(_.get(req.body, 'rating'));
     if (Number.isNaN(rating) || rating < 0 || rating >= 6) {
       throw {rating: 'Rating value is invalid', status: 400};
     }

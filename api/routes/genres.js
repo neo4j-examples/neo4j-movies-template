@@ -1,4 +1,4 @@
-var Genres = require("../models/genres")
+const Genres = require("../models/genres")
   , writeResponse = require('../helpers/response').writeResponse
   , dbUtils = require('../neo4j/dbUtils');
 
