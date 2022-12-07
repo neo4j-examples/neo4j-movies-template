@@ -26,10 +26,10 @@
     "npm": "1.2.x"
   },
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "dotenv": "^8.2.0",
     "errorhandler": "^1.5.1",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "hat": "0.0.3",
     "install": "^0.13.0",
     "lodash": "^4.17.21",
